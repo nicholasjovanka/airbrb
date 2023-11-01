@@ -1,5 +1,6 @@
 import React from 'react';
-import { Box, Typography, Grid, Card, CardActions, CardContent, CardMedia, Button, Pagination, Fab, Tooltip } from '@mui/material';
+import { Box, Typography, Grid, Card, CardActions, CardContent, CardMedia, Button, Pagination, Tooltip } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import AddIcon from '@mui/icons-material/Add';
 
 const paginationStyling = {
@@ -15,6 +16,7 @@ const paginationStyling = {
 }
 
 export default function HostedListing () {
+  const navigate = useNavigate()
   const dummyData = [
     {
       name: 'test',
@@ -52,9 +54,9 @@ export default function HostedListing () {
           My Hosted Listings
         </Typography>
         <Tooltip title="Add New Listings">
-          <Fab color="primary" aria-label="Add Listing" sx={{ mx: 'auto' }}>
-              <AddIcon/>
-          </Fab>
+          <Button variant="contained" endIcon={<AddIcon />} aria-label="Add Listing" sx={{ mx: 'auto' }} onClick={() => navigate('/hostedlisting/createListing')}>
+            Create Listing
+          </Button>
         </Tooltip>
         <Box sx={{ flexGrow: 2 }}>
           <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 1, sm: 8, md: 12, lg: 12, xl: 10 }} sx={{ px: 2 }}>
