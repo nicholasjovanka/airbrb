@@ -29,6 +29,7 @@ export function apiCall (url, method, body = {}, queryString = null) {
   const config = {
     ...(token !== null && { headers: { Authorization: `Bearer ${token}` } })
   };
+  console.log(path)
   if (method === 'POST') {
     return axios.post(
       path,

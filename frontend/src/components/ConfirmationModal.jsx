@@ -1,18 +1,10 @@
 import * as React from 'react';
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
-import { styled } from '@mui/material/styles';
+import { Button, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
+import { BootstrapDialog } from './MessageModal';
 
-export const BootstrapDialog = styled(Dialog)(({ theme }) => ({
-  '& .MuiDialogContent-root': {
-    padding: theme.spacing(2),
-  },
-  '& .MuiDialogActions-root': {
-    padding: theme.spacing(1),
-  },
-}));
-export default function MessageModal ({ header, content, open, setOpen, width = 'sm', fullWidth = true }) {
+export default function ConfirmationModal ({ content, confirmFunction, open, setOpen, width = 'sm', fullWidth = true }) {
   const handleClose = () => {
     setOpen(false);
   };
@@ -29,7 +21,7 @@ export default function MessageModal ({ header, content, open, setOpen, width = 
         scroll = 'paper'
       >
         <DialogTitle sx={{ m: 0, p: 2 }} id='customized-dialog-title'>
-          {header}
+          Confirmation
         </DialogTitle>
         <IconButton
           aria-label='close'
@@ -51,6 +43,9 @@ export default function MessageModal ({ header, content, open, setOpen, width = 
         <DialogActions>
           <Button autoFocus onClick={handleClose}>
             Close
+          </Button>
+          <Button onClick={confirmFunction}>
+            Confirm
           </Button>
         </DialogActions>
       </BootstrapDialog>

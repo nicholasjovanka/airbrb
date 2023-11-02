@@ -2,7 +2,7 @@ import React from 'react';
 import { Route, Routes } from 'react-router-dom'
 import CssBaseline from '@mui/material/CssBaseline';
 import HostedListing from './pages/hosted-listing';
-import CreateListing from './pages/hosted-listing/createListing';
+import CreateListing from './pages/hosted-listing/CreateListing';
 import NotFound from './pages/not-found';
 import Navbar from './components/Navbar';
 import { Box } from '@mui/material';

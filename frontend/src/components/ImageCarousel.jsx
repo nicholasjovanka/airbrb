@@ -10,6 +10,12 @@ function ImageCarousel ({ images }) {
         <Carousel
         navButtonsAlwaysVisible
         fullHeightHover={false}
+        navButtonsWrapperProps={{
+          style: {
+            bottom: '-20px',
+            top: 'unset'
+          }
+        }}
         indicatorIconButtonProps={{
           style: {
             padding: '10px', // 1
