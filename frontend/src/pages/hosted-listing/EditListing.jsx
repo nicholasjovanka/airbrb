@@ -1,10 +1,27 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import ListingForm from '../../components/ListingForm';
 import { apiCall } from '../../utils/utils';
 import { StoreContext } from '../../utils/states';
 
-export default function CreateListing () {
+export default function EditListing () {
   const { openModal, modalHeader, modalMessage } = useContext(StoreContext);
+  const { id } = useParams();
+  const [listingObj, setListingObj] = useState({});
+  const getListingDetail = async () => {
+    try {
+      const listingDetail = await apiCall(`listings/${id}`, 'GET');
+      setListingObj(listingDetail.data.listing);
+    } catch (error) {
+      modalHeader[1]('Error');
+      const errorMessage = error.response ? error.response.data.error : error.message;
+      modalMessage[1](errorMessage);
+      openModal[1](true);
+    }
+  }
+  useEffect(() => {
+    getListingDetail();
+  }, [])
   const handleSubmit = async (formObject, bedroomArray, amenities) => {
     try {
       const nonEmptyTextFields = ['title', 'type', 'price', 'address', 'thumbnail']
@@ -40,10 +57,10 @@ export default function CreateListing () {
           ...metadata
         }
       }
-      const request = await apiCall('listings/new', 'POST', requestObject);
+      const request = await apiCall(`listings/${id}`, 'PUT', requestObject);
       console.log(request);
       modalHeader[1]('Success');
-      modalMessage[1]('Sucessfully Created Listing');
+      modalMessage[1]('Sucessfully Edited Listing');
       openModal[1](true);
     } catch (error) {
       modalHeader[1]('Error');
@@ -54,6 +71,6 @@ export default function CreateListing () {
   }
 
   return (
-    <ListingForm mode='Create' buttonSubmitFunction={handleSubmit} existingListingObject={{}}/>
+    <ListingForm mode='Edit' buttonSubmitFunction={handleSubmit} existingListingObject={listingObj}/>
   )
 }

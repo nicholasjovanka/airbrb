@@ -16,9 +16,7 @@ function Navbar () {
   const location = useLocation()
   useEffect(() => {
     const currentPage = location.pathname.split('/');
-    if (currentPage[1] === '') {
-      navigate('/home');
-    } else if (currentPage[1] === 'login' || currentPage[1] === 'register') {
+    if (currentPage[1] === 'login' || currentPage[1] === 'register') {
       setShowNavBar(false);
     } else if (currentPage[1] === 'test') {
       setShowNavBar(true);
@@ -88,7 +86,7 @@ function Navbar () {
 
   if (showNavBar) {
     return (
-      <AppBar position='static'>
+      <AppBar position='fixed'>
       <Container maxWidth='xl'>
         <Toolbar disableGutters>
           <OtherHousesIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useContext } from 'react';
 import { styled } from '@mui/material/styles';
 import { Grid, Typography, TextField, Container, Box, IconButton, Button } from '@mui/material';
 import RemoveIcon from '@mui/icons-material/Remove';
@@ -8,7 +8,7 @@ import BathtubIcon from '@mui/icons-material/Bathtub';
 import BedIcon from '@mui/icons-material/Bed';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import YouTubeIcon from '@mui/icons-material/YouTube';
-import MessageModal from './MessageModal'
+import { StoreContext } from '../utils/states';
 import { fileToDataUrl } from '../utils/utils';
 import ImageCarousel from './ImageCarousel';
 import ImageCard from './ImageCard';
@@ -28,7 +28,7 @@ export default function ListingForm ({ mode, buttonSubmitFunction, existingListi
   const [formFields, setFormFields] = useState(
     {
       title: '',
-      type: '',
+      type: 'Private',
       price: 0,
       address: '',
       bathrooms: 0,
@@ -36,10 +36,7 @@ export default function ListingForm ({ mode, buttonSubmitFunction, existingListi
       url: '',
       files: []
     })
-
-  const [openModal, setOpenModal] = useState(false);
-  const [modalHeader, setModalHeader] = useState('');
-  const [modalMessage, setModalMessage] = useState('');
+  const { openModal, modalHeader, modalMessage } = useContext(StoreContext);
 
   const [bedroomField, setBedroomField] = useState([{ type: '', beds: 1 },]);
   const [amenitiesField, setAmenitiesField] = useState(['']);
@@ -50,22 +47,24 @@ export default function ListingForm ({ mode, buttonSubmitFunction, existingListi
   };
 
   const resetForm = () => {
-    const existingFormFieldObject = {
-      title: existingListingObject.title,
-      type: existingListingObject.metadata.type,
-      price: existingListingObject.price,
-      address: existingListingObject.address,
-      bathrooms: Number(existingListingObject.metadata.bathrooms),
-      thumbnail: existingListingObject.thumbnail,
-      url: existingListingObject.metadata.url,
-      files: existingListingObject.metadata.files
-    }
-    const existingBedrooms = existingListingObject.metadata.bedrooms.length > 0 ? existingListingObject.metadata.bedrooms : []
-    const exitingAmenities = existingListingObject.metadata.amenities.length > 0 ? existingListingObject.metadata.amenities : []
+    if (Object.keys(existingListingObject).length > 0) {
+      const existingFormFieldObject = {
+        title: existingListingObject.title,
+        type: existingListingObject.metadata.type,
+        price: existingListingObject.price,
+        address: existingListingObject.address,
+        bathrooms: Number(existingListingObject.metadata.bathrooms),
+        thumbnail: existingListingObject.thumbnail,
+        url: existingListingObject.metadata.url,
+        files: existingListingObject.metadata.files
+      }
+      const existingBedrooms = existingListingObject.metadata.bedrooms.length > 0 ? existingListingObject.metadata.bedrooms : []
+      const exitingAmenities = existingListingObject.metadata.amenities.length > 0 ? existingListingObject.metadata.amenities : []
 
-    setFormFields(existingFormFieldObject);
-    setBedroomField([...existingBedrooms]);
-    setAmenitiesField([...exitingAmenities]);
+      setFormFields(existingFormFieldObject);
+      setBedroomField([...existingBedrooms]);
+      setAmenitiesField([...exitingAmenities]);
+    }
   }
 
   useEffect(() => {
@@ -134,10 +133,11 @@ export default function ListingForm ({ mode, buttonSubmitFunction, existingListi
       }
     } catch (error) {
       e.target.value = '';
+      console.log(openModal);
       setFormFields({ ...formFields, files: previousFiles, thumbnail: previousThumbnail });
-      setModalHeader('Error');
-      setModalMessage(error.message);
-      setOpenModal(true);
+      modalHeader[1]('Error');
+      modalMessage[1](error.message);
+      openModal[1](true);
     }
   }
 
@@ -361,18 +361,17 @@ export default function ListingForm ({ mode, buttonSubmitFunction, existingListi
             <ImageCarousel images={formFields.files}/>
           </Grid>
           <Grid item xs={12} sx={{ mb: 2 }}>
-            <Button sx={{ float: 'right' }} variant='contained' onClick={(e) => { buttonSubmitFunction(formFields, bedroomField, amenitiesField, setOpenModal, setModalHeader, setModalMessage) }}>
+            <Button sx={{ float: 'right' }} variant='contained' onClick={(e) => { buttonSubmitFunction(formFields, bedroomField, amenitiesField) }}>
               {mode} Listing
             </Button>
-            {mode === 'edit' && (
-              <Button sx={{ float: 'right', mr: 3, backgroundColor: '#002D62' }} variant='contained' >
+            {mode === 'Edit' && (
+              <Button sx={{ float: 'right', mr: 3, backgroundColor: '#002D62' }} variant='contained' onClick={resetForm} >
                 Reset Form
               </Button>
             )}
           </Grid>
         </Grid>
       </Box>
-      <MessageModal header={modalHeader} content={modalMessage} open={openModal} setOpen={setOpenModal} ></MessageModal>
   </Container>
   )
 }

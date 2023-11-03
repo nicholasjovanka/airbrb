@@ -1,21 +1,31 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Box, Typography, Button, Tooltip } from '@mui/material';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Box, Typography, TextField, Button } from '@mui/material';
 import { apiCall } from '../../utils/utils';
-import AddIcon from '@mui/icons-material/Add';
 import { StoreContext } from '../../utils/states';
 import ListingPagination from '../../components/ListingPagination';
 
-export default function HostedListing () {
-  const navigate = useNavigate()
+export default function Home () {
   const { openModal, modalHeader, modalMessage } = useContext(StoreContext);
   const [listings, setListings] = useState([]);
-  const { email } = useParams();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [originalListings, setOriginalListings] = useState([]);
+
+  const handleBasicInput = (event) => {
+    setSearchQuery(event.target.value);
+  };
+
+  const searchFilter = () => {
+    const regex = new RegExp(`${searchQuery}`, 'i');
+    const filteredListings = originalListings.filter((listing) => regex.test(listing.title) || regex.test(listing.address))
+    setListings(filteredListings);
+  }
+
   useEffect(() => {
     const getListings = async () => {
       try {
         const listingsApiCall = await apiCall('listings', 'GET');
-        const listingsArray = listingsApiCall.data.listings.filter((listing) => listing.owner === email).sort((a, b) => {
+        console.log(listingsApiCall.data.listings)
+        const listingsArray = listingsApiCall.data.listings.sort((a, b) => {
           if (a.title.toLowerCase() < b.title.toLowerCase()) {
             return -1;
           } else if (a.title.toLowerCase() === b.title.toLowerCase()) {
@@ -24,6 +34,7 @@ export default function HostedListing () {
             return 1;
           }
         });
+        console.log(originalListings);
         let listingsBelongingToOwner = []
         for (const listing of listingsArray) {
           const listingDetails = await apiCall(`listings/${listing.id}`, 'GET');
@@ -42,6 +53,7 @@ export default function HostedListing () {
           averageRating = listing.reviews.length > 0 ? (averageRating / listing.reviews.length).toFixed(2) : null
           return { ...listing, numberOfBedrooms, averageRating }
         })
+        setOriginalListings(listingsBelongingToOwner);
         setListings(listingsBelongingToOwner);
       } catch (error) {
         modalHeader[1]('Error');
@@ -50,20 +62,31 @@ export default function HostedListing () {
         openModal[1](true);
       }
     }
-
     getListings();
   }, [])
 
   return (
       <Box sx={{ height: 'auto', flexGrow: 1, display: 'flex', flexDirection: 'column', gap: 2, pt: 1 }}>
         <Typography align='center' variant= 'h4' sx={{ mt: 1 }}>
-          My Hosted Listings
+          Welcome To AirBRB
         </Typography>
-        <Tooltip title="Add New Listings">
-          <Button variant="contained" endIcon={<AddIcon />} aria-label="Add Listing" sx={{ mx: 'auto' }} onClick={() => navigate('/hostedlisting/createListing')}>
-            Create Listing
-          </Button>
-        </Tooltip>
+        <Box sx={{ display: 'flex', flexDirection: 'row', gap: 1, justifyContent: 'center', mx: 3 }}>
+        <TextField
+              required
+              id='search'
+              name='search'
+              label='Search Filter'
+              fullWidth
+              type= 'text'
+              variant='standard'
+              value={searchQuery}
+              onChange={handleBasicInput}
+              sx={{ maxWidth: 'sm' }}
+            />
+        <Button sx={{ float: 'right' }} variant='contained' onClick={searchFilter}>
+          Search
+        </Button>
+        </Box>
         <ListingPagination listingsArray={listings}></ListingPagination>
       </Box>
   )
