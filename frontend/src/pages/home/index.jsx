@@ -3,13 +3,14 @@ import { Box, Typography, TextField, Button } from '@mui/material';
 import { apiCall } from '../../utils/utils';
 import { StoreContext } from '../../utils/states';
 import ListingPagination from '../../components/ListingPagination';
+import CircularProgress from '@mui/material/CircularProgress';
 
 export default function Home () {
   const { openModal, modalHeader, modalMessage } = useContext(StoreContext);
   const [listings, setListings] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [originalListings, setOriginalListings] = useState([]);
-
+  const [showLoadingBar, setShowLoadingBar] = useState({ display: 'none', mx: 'auto', mt: 5 });
   const handleBasicInput = (event) => {
     setSearchQuery(event.target.value);
   };
@@ -23,6 +24,7 @@ export default function Home () {
   useEffect(() => {
     const getListings = async () => {
       try {
+        setShowLoadingBar({ ...showLoadingBar, display: 'flex' });
         const listingsApiCall = await apiCall('listings', 'GET');
         console.log(listingsApiCall.data.listings)
         const listingsArray = listingsApiCall.data.listings.sort((a, b) => {
@@ -60,6 +62,8 @@ export default function Home () {
         const errorMessage = error.response ? error.response.data.error : error.message;
         modalMessage[1](errorMessage);
         openModal[1](true);
+      } finally {
+        setShowLoadingBar({ ...showLoadingBar, display: 'none' });
       }
     }
     getListings();
@@ -70,23 +74,23 @@ export default function Home () {
         <Typography align='center' variant= 'h4' sx={{ mt: 1 }}>
           Welcome To AirBRB
         </Typography>
-        <Box sx={{ display: 'flex', flexDirection: 'row', gap: 1, justifyContent: 'center', mx: 3 }}>
-        <TextField
-              required
-              id='search'
-              name='search'
-              label='Search Filter'
-              fullWidth
-              type= 'text'
-              variant='standard'
-              value={searchQuery}
-              onChange={handleBasicInput}
-              sx={{ maxWidth: 'sm' }}
-            />
-        <Button sx={{ float: 'right' }} variant='contained' onClick={searchFilter}>
-          Search
-        </Button>
+        <Box sx={{ display: 'flex', flexDirection: 'row', gap: 1, mx: 3, justifyContent: 'center' }}>
+          <TextField
+                id='search'
+                name='search'
+                label='Search By Property Name or City'
+                fullWidth
+                type= 'text'
+                variant='standard'
+                value={searchQuery}
+                onChange={handleBasicInput}
+                sx={{ maxWidth: 'sm' }}
+              />
+          <Button sx={{ float: 'right' }} variant='contained' onClick={searchFilter}>
+            Search
+          </Button>
         </Box>
+        <CircularProgress sx={showLoadingBar} size="10rem"/>
         <ListingPagination listingsArray={listings}></ListingPagination>
       </Box>
   )

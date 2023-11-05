@@ -22,6 +22,12 @@ export default function CreateListing () {
       if (formObject.bathrooms < 0) {
         throw new Error('Number of Bathroom cannot be below 0')
       }
+      if (formObject.url !== '') {
+        const regex = /^(https?:\/\/)?((www.)?youtube.com|youtu.be)\/.+$/i;
+        if (!regex.test(formObject.url)) {
+          throw new Error('Invalid Youtube URL')
+        }
+      }
       bedroomArray.forEach(element => {
         if (element.beds < 0) {
           throw new Error('Number of Beds cannot be below 0')

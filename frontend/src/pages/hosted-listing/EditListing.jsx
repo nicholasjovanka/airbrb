@@ -44,6 +44,12 @@ export default function EditListing () {
           throw new Error('Number of Beds cannot be below 0')
         }
       });
+      if (formObject.url !== '') {
+        const regex = /^(https?:\/\/)?((www.)?youtube.com|youtu.be)\/.+$/i;
+        if (!regex.test(formObject.url)) {
+          throw new Error('Invalid Youtube URL')
+        }
+      }
       const { title, address, price, thumbnail, ...metadata } = formObject
       const requestObject = {
         title,

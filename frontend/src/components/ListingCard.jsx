@@ -1,5 +1,5 @@
 import React from 'react';
-import { Typography, Grid, Rating } from '@mui/material';
+import { Typography, Grid, Rating, Box } from '@mui/material';
 import BedIcon from '@mui/icons-material/Bed';
 import BathtubIcon from '@mui/icons-material/Bathtub';
 
@@ -32,20 +32,15 @@ export default function ListingCard ({ listing, children }) {
       <Typography gutterBottom variant="h6" component="div">
         Address: {listing.address}
       </Typography>
-      {listing.averageRating != null && (
-      <React.Fragment>
-        <Typography component="legend">Average Rating</Typography>
-        <Rating name="simple-controlled" value={Number(listing.averageRating)} readOnly/>
-      </React.Fragment>)
-      }
-      {listing.reviews.length > 0
-        ? <Typography gutterBottom variant="h6" component="div" align='right'>
-            {listing.reviews.length} Reviews
-          </Typography>
-        : <Typography gutterBottom variant="h6" component="div" align='left'>
-            No Reviews
-          </Typography>
-      }
+      <Box sx={{ mb: 2, display: 'flex', flexDirection: 'row', gap: 1, justifyContent: 'space-between' }}>
+        <Box>
+            <Typography component="legend">Average Rating</Typography>
+            <Rating name="simple-controlled" value={listing.averageRating !== null ? Number(listing.averageRating) : null } readOnly/>
+        </Box>
+        <Typography gutterBottom variant="h6" component="div" align='left'>
+          {listing.reviews.length > 0 ? listing.reviews.length : 'No' } Reviews
+        </Typography>
+      </Box>
   </React.Fragment>
   )
 }

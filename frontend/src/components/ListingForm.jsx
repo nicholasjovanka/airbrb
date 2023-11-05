@@ -28,7 +28,7 @@ export default function ListingForm ({ mode, buttonSubmitFunction, existingListi
   const [formFields, setFormFields] = useState(
     {
       title: '',
-      type: 'Private',
+      type: 'Home',
       price: 0,
       address: '',
       bathrooms: 0,
@@ -38,7 +38,7 @@ export default function ListingForm ({ mode, buttonSubmitFunction, existingListi
     })
   const { openModal, modalHeader, modalMessage } = useContext(StoreContext);
 
-  const [bedroomField, setBedroomField] = useState([{ type: '', beds: 1 },]);
+  const [bedroomField, setBedroomField] = useState([{ type: 'Private', beds: 1 },]);
   const [amenitiesField, setAmenitiesField] = useState(['']);
   const thumbnailInputRef = useRef(null);
   const filesInputRef = useRef(null);
