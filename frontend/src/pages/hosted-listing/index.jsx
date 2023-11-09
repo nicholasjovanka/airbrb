@@ -70,7 +70,7 @@ export default function HostedListing () {
           </Button>
         </Tooltip>
         <CircularProgress sx={showLoadingBar} size="10rem"/>
-        <ListingPagination listingsArray={listings} page='hostedlisting' ></ListingPagination>
+        <ListingPagination listingsArray={listings} displayPage='hostedlisting' ></ListingPagination>
       </Box>
   )
 }

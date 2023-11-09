@@ -90,7 +90,7 @@ export default function ListingForm ({ mode, buttonSubmitFunction, existingListi
   };
 
   const handleAddBedroom = () => {
-    setBedroomField([...bedroomField, { type: '', beds: 1 }]);
+    setBedroomField([...bedroomField, { type: 'Private', beds: 1 }]);
   };
 
   const handleBedroomInput = (index, event) => {

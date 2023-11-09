@@ -9,23 +9,23 @@ import AddIcon from '@mui/icons-material/Add';
 import { StoreContext } from '../utils/states';
 
 export default function DatePickerModal ({ open, setOpen, goLiveFunction }) {
-  const [dates, setDates] = useState([{ startdate: DateTime.now(), enddate: DateTime.now().plus({ days: 1 }) }]);
+  const [dates, setDates] = useState([{ startDate: DateTime.now().startOf('day'), endDate: DateTime.now().startOf('day').plus({ days: 1 }) }]);
   const { openModal, modalHeader, modalMessage } = useContext(StoreContext);
   const handleAddDates = () => {
-    setDates([...dates, { startdate: DateTime.now(), enddate: DateTime.now().plus({ days: 1 }) }]);
+    setDates([...dates, { startDate: DateTime.now().startOf('day'), endDate: DateTime.now().startOf('day').plus({ days: 1 }) }]);
   };
 
   useEffect(() => {
     if (open === true) {
-      setDates([{ startdate: DateTime.now(), enddate: DateTime.now().plus({ days: 1 }) }]);
+      setDates([{ startDate: DateTime.now().startOf('day'), endDate: DateTime.now().startOf('day').plus({ days: 1 }) }]);
     }
   }, [open])
 
   const handleDatesInput = (index, newValue, fieldname) => {
     try {
-      const currentEndDate = fieldname === 'enddate' ? newValue : dates[index].enddate;
-      const currentStartDate = fieldname === 'startdate' ? newValue : dates[index].startdate;
-      if (currentEndDate.diff(currentStartDate, ['days']).days <= 0) {
+      const currentendDate = fieldname === 'endDate' ? newValue : dates[index].endDate;
+      const currentstartDate = fieldname === 'startDate' ? newValue : dates[index].startDate;
+      if (currentendDate.diff(currentstartDate, ['days']).days <= 0) {
         throw new Error('Start Date must be less than end date')
       }
       const values = [...dates];
@@ -67,14 +67,14 @@ export default function DatePickerModal ({ open, setOpen, goLiveFunction }) {
           {dates.map((dateObj, index) => (
             <Box key={index} sx={{ display: 'flex', flexDirection: 'row', gap: 1, mb: index === (dates.length - 1) ? 0 : 2, justifyContent: 'center' }}>
               <Box>
-                <Typography>
+                <Typography id={`label-for-start-date-${index}`}>
                   Start Date
                 </Typography>
-                <DatePicker maxDate={dateObj.enddate.minus({ days: 1 })} value={dateObj.startdate} onChange={(newValue) => { handleDatesInput(index, newValue, 'startdate') }} disableHighlightToday/>
-                <Typography>
+                <DatePicker aria-labelledby={`label-for-start-date-${index}`} maxDate={dateObj.endDate.minus({ days: 1 })} value={dateObj.startDate} onChange={(newValue) => { handleDatesInput(index, newValue, 'startDate') }} disableHighlightToday/>
+                <Typography id={`label-for-end-date-${index}`}>
                   End Date
                 </Typography>
-                <DatePicker minDate={dateObj.startdate.plus({ days: 1 })} value={dateObj.enddate} onChange={(newValue) => { handleDatesInput(index, newValue, 'enddate') }} disableHighlightToday/>
+                <DatePicker aria-labelledby={`label-for-end-date-${index}`} minDate={dateObj.startDate.plus({ days: 1 })} value={dateObj.endDate} onChange={(newValue) => { handleDatesInput(index, newValue, 'endDate') }} disableHighlightToday/>
               </Box>
               <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignContent: 'center' }}>
                 <IconButton onClick={() => handleAddDates()}>

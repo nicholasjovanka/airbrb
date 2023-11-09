@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import ListingForm from '../../components/ListingForm';
-import { apiCall } from '../../utils/utils';
+import { apiCall, listingObjectValidator } from '../../utils/utils';
 import { StoreContext } from '../../utils/states';
 
 export default function EditListing () {
@@ -24,32 +24,9 @@ export default function EditListing () {
   }, [])
   const handleSubmit = async (formObject, bedroomArray, amenities) => {
     try {
-      const nonEmptyTextFields = ['title', 'type', 'price', 'address', 'thumbnail']
-      for (const textFields of nonEmptyTextFields) {
-        if (formObject[nonEmptyTextFields] === '' || formObject[nonEmptyTextFields] === null) {
-          throw new Error(`${textFields} cannot be empty`)
-        }
-      }
-      if (formObject.files.length < 1) {
-        throw new Error('You must atleast upload 1 property image')
-      }
-      if (formObject.price <= 0) {
-        throw new Error('Price must be above 0')
-      }
-      if (formObject.bathrooms < 0) {
-        throw new Error('Number of Bathroom cannot be below 0')
-      }
-      bedroomArray.forEach(element => {
-        if (element.beds < 0) {
-          throw new Error('Number of Beds cannot be below 0')
-        }
-      });
-      if (formObject.url !== '') {
-        const regex = /^(https?:\/\/)?((www.)?youtube.com|youtu.be)\/.+$/i;
-        if (!regex.test(formObject.url)) {
-          throw new Error('Invalid Youtube URL')
-        }
-      }
+      formObject = { ...formObject, price: Number(formObject.price), bathrooms: Number(formObject.bathrooms) };
+      bedroomArray = bedroomArray.map((e) => { return { type: e.type, beds: Number(e.beds) } });
+      listingObjectValidator(formObject, bedroomArray, amenities);
       const { title, address, price, thumbnail, ...metadata } = formObject
       const requestObject = {
         title,

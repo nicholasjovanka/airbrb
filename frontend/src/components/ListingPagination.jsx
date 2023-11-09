@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Box, Grid, Card, CardActions, CardContent, CardMedia, Button, Pagination, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { apiCall } from '../utils/utils';
+import { apiCall, getId } from '../utils/utils';
 import { StoreContext } from '../utils/states';
 import ListingCard from './ListingCard';
 import ConfirmationModal from './ConfirmationModal';
@@ -18,7 +18,7 @@ export const paginationStyling = {
   p: 1
 }
 
-export default function ListingPagination ({ listingsArray, page, loggedIn }) {
+export default function ListingPagination ({ listingsArray, displayPage, loggedIn }) {
   const navigate = useNavigate()
   const [listings, setListings] = useState([]);
   const [selectedListing, setSelectedListing] = useState({
@@ -67,20 +67,20 @@ export default function ListingPagination ({ listingsArray, page, loggedIn }) {
     try {
       for (let i = 0; i < datearray.length; i++) {
         for (let z = i + 1; z < datearray.length; z++) {
-          const startDateDifference = Math.ceil(datearray[i].startdate.diff(datearray[z].startdate, ['days']).toObject().days)
-          const firstDateStartDateString = datearray[i].startdate.setLocale('en-gb').toLocaleString();
-          const firstDateEndDateString = datearray[i].enddate.setLocale('en-gb').toLocaleString();
-          const secondDateStartDateString = datearray[z].startdate.setLocale('en-gb').toLocaleString();
-          const secondDateEndDateString = datearray[z].enddate.setLocale('en-gb').toLocaleString();
-          // console.log(datearray[i].startdate.toISODate());
+          console.log(datearray[i]);
+          const startDateDifference = datearray[i].startDate.diff(datearray[z].startDate, ['days']).toObject().days
+          const firstDateStartDateString = datearray[i].startDate.setLocale('en-gb').toLocaleString();
+          const firstDateEndDateString = datearray[i].endDate.setLocale('en-gb').toLocaleString();
+          const secondDateStartDateString = datearray[z].startDate.setLocale('en-gb').toLocaleString();
+          const secondDateEndDateString = datearray[z].endDate.setLocale('en-gb').toLocaleString();
           if (startDateDifference === 0) {
             throw new Error(`The date ${firstDateStartDateString} - ${firstDateEndDateString} has the same start date with  ${secondDateStartDateString} - ${secondDateEndDateString} `);
           } else if (startDateDifference < 0) {
-            if (datearray[i].enddate.diff(datearray[z].startdate, ['days']).toObject().days >= 0) {
+            if (datearray[i].endDate.diff(datearray[z].startDate, ['days']).toObject().days >= 0) {
               throw new Error(`The date ${firstDateStartDateString} - ${firstDateEndDateString} end date must be smaller than the start date of ${secondDateStartDateString} - ${secondDateEndDateString} `);
             }
           } else if (startDateDifference > 0) {
-            if (datearray[z].enddate.diff(datearray[i].startdate, ['days']).toObject().days >= 0) {
+            if (datearray[z].endDate.diff(datearray[i].startDate, ['days']).toObject().days >= 0) {
               throw new Error(`The date ${secondDateStartDateString} - ${secondDateEndDateString} end date must be smaller than the start date of ${firstDateStartDateString} - ${firstDateEndDateString} `);
             }
           }
@@ -88,8 +88,8 @@ export default function ListingPagination ({ listingsArray, page, loggedIn }) {
       }
       const dateArrayToBeSubmitted = datearray.map((dateObj) => {
         return {
-          startdate: dateObj.startdate.toISODate(),
-          enddate: dateObj.enddate.toISODate()
+          startDate: dateObj.startDate.toISODate(),
+          endDate: dateObj.endDate.toISODate()
         }
       })
       await apiCall(`listings/publish/${selectedListing.id}`, 'PUT', { availability: dateArrayToBeSubmitted });
@@ -150,22 +150,24 @@ export default function ListingPagination ({ listingsArray, page, loggedIn }) {
               <Card sx={{ maxWidth: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
                 <CardMedia
                   sx={{ height: 200, position: 'relative' }}
-                  image= {obj.thumbnail}
+                  component={obj.metadata.url !== '' ? 'iframe' : 'img'}
+                  src= {obj.metadata.url !== '' ? `https://www.youtube.com/embed/${getId(obj.metadata.url)}` : obj.thumbnail}
                   title="Thumbnail"
+                  controls
                 >
+                </CardMedia>
+                <CardContent sx={{ pt: 0, mt: 1, px: 0, position: 'relative' }}>
                 { index === 1 && (
-                    <Box sx={{ position: 'absolute', bottom: 0, width: 1 }}>
+                    <Box sx={{ position: 'relative', top: 0, width: 1, mt: '-12%', mb: '0%' }}>
                     <Typography align='center' variant= 'h6' sx={{ mt: 0, width: 1, backgroundColor: '#888888', mx: 'auto' }}>
                       Available
                     </Typography>
                     </Box>
                 )}
-                </CardMedia>
-                <CardContent sx={{ pt: 0, mt: 1 }}>
-                  <ListingCard listing={obj}/>
+                  <ListingCard listing={obj} displayPage={displayPage}/>
                 </CardContent>
                 <CardActions sx={{ mt: 'auto' }}>
-                  { page === 'hostedlisting' && (
+                  { displayPage === 'hostedlisting' && (
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, width: 1 }}>
                       <Box sx={{ display: 'flex', gap: 1, justifyContent: 'end' }}>
                         <Button variant='outlined' size="small" onClick={() => navigate(`/hostedlisting/editlisting/${obj.id}`)}>Edit Listing</Button>

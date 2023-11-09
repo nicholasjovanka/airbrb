@@ -3,9 +3,9 @@ import { Typography, Grid, Rating, Box } from '@mui/material';
 import BedIcon from '@mui/icons-material/Bed';
 import BathtubIcon from '@mui/icons-material/Bathtub';
 
-export default function ListingCard ({ listing, children }) {
+export default function ListingCard ({ listing, displayPage, children }) {
   return (
-    <React.Fragment>
+    <Box sx={{ mx: 1 }}>
       <Typography gutterBottom variant="h5" component="div">
         {listing.title}
       </Typography>
@@ -13,10 +13,20 @@ export default function ListingCard ({ listing, children }) {
         Type: {listing.metadata.type}
       </Typography>
       <Grid container spacing={{ xs: 1 }} justifyContent="space-between">
-        <Grid item xs={2}>
-          <Typography gutterBottom variant="h6" component="div" sx={{ display: 'flex', alignItems: 'center' }}>
-            {listing.numberOfBedrooms} <BedIcon sx={{ ml: 1 }}/>
-          </Typography>
+        <Grid item xs={ displayPage === 'hostedlisting' ? 12 : 2}>
+          {
+            displayPage === 'hostedlisting'
+              ? (
+                  <Typography gutterBottom variant="h6" component="div" noWrap >
+                    {listing.numberOfBedrooms}5 Beds
+                  </Typography>
+                )
+              : (
+                  <Typography gutterBottom variant="h6" component="div" sx={{ display: 'flex', alignItems: 'center' }}>
+                    { listing.metadata.bedrooms.length } <BedIcon sx={{ ml: 1 }}/>
+                  </Typography>
+                )
+          }
         </Grid>
         <Grid item xs={2}>
           <Typography gutterBottom variant="h6" component="div" sx={{ display: 'flex', alignItems: 'center' }}>
@@ -41,6 +51,6 @@ export default function ListingCard ({ listing, children }) {
           {listing.reviews.length > 0 ? listing.reviews.length : 'No' } Reviews
         </Typography>
       </Box>
-  </React.Fragment>
+  </Box>
   )
 }
