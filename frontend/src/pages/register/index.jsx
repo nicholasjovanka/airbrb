@@ -4,7 +4,7 @@ import { Box } from '@mui/material';
 const Register = () => {
   return (
      <Box>
-
+        Welcome to Register
      </Box>
   )
 }
