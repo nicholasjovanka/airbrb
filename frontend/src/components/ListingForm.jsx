@@ -24,7 +24,7 @@ const VisuallyHiddenInput = styled('input')({
   width: 1,
 });
 
-export default function ListingForm ({ mode, buttonSubmitFunction, existingListingObject }) {
+const ListingForm = ({ mode, buttonSubmitFunction, existingListingObject }) => {
   const [formFields, setFormFields] = useState(
     {
       title: '',
@@ -375,3 +375,5 @@ export default function ListingForm ({ mode, buttonSubmitFunction, existingListi
   </Container>
   )
 }
+
+export default ListingForm;

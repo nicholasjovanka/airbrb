@@ -18,7 +18,7 @@ export const paginationStyling = {
   p: 1
 }
 
-export default function ListingPagination ({ listingsArray, displayPage, loggedIn }) {
+const ListingPagination = ({ listingsArray, displayPage, loggedIn }) => {
   const navigate = useNavigate()
   const [listings, setListings] = useState([]);
   const [selectedListing, setSelectedListing] = useState({
@@ -26,7 +26,8 @@ export default function ListingPagination ({ listingsArray, displayPage, loggedI
     index: 0,
   });
   const { openModal, modalHeader, modalMessage } = useContext(StoreContext);
-  const [openConfirmationModal, setOpenConfirmationModal] = React.useState(false);
+  const [openDeleteConfirmationModal, setOpenDeleteConfirmationModal] = React.useState(false);
+  const [openUnpublishConfirmationModal, setOpenUnpublishConfirmationModal] = React.useState(false);
   const [confirmationModalContent, setConfirmationModalContent] = React.useState('');
   const [openDatePickerModal, setOpenDatePickerModal] = React.useState(false);
   const [paginationObj, setPaginationObj] = useState({
@@ -52,7 +53,7 @@ export default function ListingPagination ({ listingsArray, displayPage, loggedI
       index: (paginationObj.currentPage - 1) * 12 + index
     })
     setConfirmationModalContent('Are you sure you want to delete this listing');
-    setOpenConfirmationModal(true);
+    setOpenDeleteConfirmationModal(true);
   }
 
   const openPublishModal = (id, index) => {
@@ -61,6 +62,15 @@ export default function ListingPagination ({ listingsArray, displayPage, loggedI
       index: (paginationObj.currentPage - 1) * 12 + index
     })
     setOpenDatePickerModal(true)
+  }
+
+  const openUnpublishModal = (id, index) => {
+    setSelectedListing({
+      id,
+      index: (paginationObj.currentPage - 1) * 12 + index
+    });
+    setConfirmationModalContent('Are you sure you want to unpublish this listing');
+    setOpenUnpublishConfirmationModal(true);
   }
 
   const makeListingGoLive = async (datearray) => {
@@ -107,10 +117,28 @@ export default function ListingPagination ({ listingsArray, displayPage, loggedI
     }
   }
 
+  const unpublishListing = async () => {
+    try {
+      setOpenUnpublishConfirmationModal(false);
+      await apiCall(`listings/unpublish/${selectedListing.id}`, 'PUT', {});
+      const modifiedListing = paginationObj.listingsArray;
+      modifiedListing[selectedListing.index].availability = [];
+      setPaginationObj({ ...paginationObj, listingsArray: modifiedListing });
+      setOpenDatePickerModal(false);
+      modalHeader[1]('Success');
+      modalMessage[1]('Succesfully Unpublished Listing');
+      openModal[1](true);
+    } catch (error) {
+      modalHeader[1]('Error');
+      modalMessage[1](error.message);
+      openModal[1](true);
+    }
+  }
+
   const deleteListing = async () => {
     try {
       await apiCall(`listings/${selectedListing.id}`, 'DELETE');
-      setOpenConfirmationModal(false);
+      setOpenDeleteConfirmationModal(false);
       const previousListingArray = paginationObj.listingsArray;
       previousListingArray.splice(selectedListing.index, 1);
       const newNumberOfPage = Math.ceil(previousListingArray.length / 12);
@@ -174,7 +202,8 @@ export default function ListingPagination ({ listingsArray, displayPage, loggedI
                         <Button variant='outlined' size="small" color='error'onClick={() => openDeleteModal(obj.id, index)} >Delete Listing</Button>
                       </Box>
                       <Box sx={{ display: 'flex', gap: 1, mx: 0, justifyContent: 'start' }}>
-                          <Button variant='outlined' size="small" onClick={() => openPublishModal(obj.id, index) } >{obj.availability.length > 0 ? 'Unpublish' : 'Go Live' }</Button>
+                          {obj.availability.length === 0 && (<Button variant='outlined' size="small" onClick={() => openPublishModal(obj.id, index) } >Go Live</Button>)}
+                          {obj.availability.length > 0 && (<Button variant='outlined' size="small" color='error' onClick={() => openUnpublishModal(obj.id, index) } >Unpublish</Button>)}
                       </Box>
                     </Box>
                   )}
@@ -188,11 +217,19 @@ export default function ListingPagination ({ listingsArray, displayPage, loggedI
       <Pagination siblingCount={1} boundaryCount={1} count={paginationObj.numberOfPage} page={paginationObj.currentPage} variant="outlined" shape="rounded" size="medium" onChange={onChangeButton} sx={paginationStyling} />
        <ConfirmationModal
         content={confirmationModalContent}
-        open={openConfirmationModal}
-        setOpen={setOpenConfirmationModal}
+        open={openDeleteConfirmationModal}
+        setOpen={setOpenDeleteConfirmationModal}
         confirmFunction={deleteListing}
+        />
+        <ConfirmationModal
+        content={confirmationModalContent}
+        open={openUnpublishConfirmationModal}
+        setOpen={setOpenUnpublishConfirmationModal}
+        confirmFunction={unpublishListing}
         />
       <DatePickerModal open={openDatePickerModal} setOpen={setOpenDatePickerModal} goLiveFunction={makeListingGoLive}/>
   </React.Fragment>
   )
 }
+
+export default ListingPagination

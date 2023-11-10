@@ -4,7 +4,7 @@ import ListingForm from '../../components/ListingForm';
 import { apiCall, listingObjectValidator } from '../../utils/utils';
 import { StoreContext } from '../../utils/states';
 
-export default function EditListing () {
+const EditListing = () => {
   const { openModal, modalHeader, modalMessage } = useContext(StoreContext);
   const { id } = useParams();
   const [listingObj, setListingObj] = useState({});
@@ -57,3 +57,5 @@ export default function EditListing () {
     <ListingForm mode='Edit' buttonSubmitFunction={handleSubmit} existingListingObject={listingObj}/>
   )
 }
+
+export default EditListing;

@@ -4,7 +4,7 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import { BootstrapDialog } from './MessageModal';
 
-export default function ConfirmationModal ({ content, confirmFunction, open, setOpen, width = 'sm', fullWidth = true }) {
+const ConfirmationModal = ({ content, confirmFunction, open, setOpen, width = 'sm', fullWidth = true }) => {
   const handleClose = () => {
     setOpen(false);
   };
@@ -52,3 +52,5 @@ export default function ConfirmationModal ({ content, confirmFunction, open, set
     </React.Fragment>
   );
 }
+
+export default ConfirmationModal;

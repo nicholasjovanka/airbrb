@@ -10,6 +10,8 @@ import Navbar from './components/Navbar';
 import { Box, styled } from '@mui/material';
 import MessageModal from './components/MessageModal';
 import { StoreContext } from './utils/states';
+import Login from './pages/login';
+import Register from './pages/register';
 
 const Offset = styled('div')(({ theme }) => theme.mixins.toolbar);
 
@@ -24,6 +26,8 @@ function App () {
         <Box sx={{ flexGrow: 1, width: '100%', display: 'flex', flexDirection: 'column' }}>
           <Routes>
               <Route path='home' element={<Home/>} />
+              <Route path='login' element={<Login/>} />
+              <Route path='register' element={<Register/>} />
               <Route path='/hostedlisting'>
                 <Route path=':email' element={<HostedListing/>} />
                 <Route path='createlisting' element={<CreateListing/>} />

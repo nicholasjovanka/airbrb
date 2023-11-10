@@ -2,7 +2,7 @@ import React from 'react';
 import Carousel from 'react-material-ui-carousel'
 import ImageCard from './ImageCard';
 
-function ImageCarousel ({ images }) {
+const ImageCarousel = ({ images }) => {
   if (images.length === 0) {
     return null
   }

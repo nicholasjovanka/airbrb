@@ -3,7 +3,7 @@ import { Typography, Grid, Rating, Box } from '@mui/material';
 import BedIcon from '@mui/icons-material/Bed';
 import BathtubIcon from '@mui/icons-material/Bathtub';
 
-export default function ListingCard ({ listing, displayPage, children }) {
+const ListingCard = ({ listing, displayPage, children }) => {
   return (
     <Box sx={{ mx: 1 }}>
       <Typography gutterBottom variant="h5" component="div">
@@ -54,3 +54,5 @@ export default function ListingCard ({ listing, displayPage, children }) {
   </Box>
   )
 }
+
+export default ListingCard

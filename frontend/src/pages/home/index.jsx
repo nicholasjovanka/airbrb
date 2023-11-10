@@ -9,7 +9,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterLuxon } from '@mui/x-date-pickers/AdapterLuxon';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 
-export default function Home () {
+const Home = () => {
   const { openModal, modalHeader, modalMessage } = useContext(StoreContext);
   const [listings, setListings] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -307,3 +307,5 @@ export default function Home () {
       </Box>
   )
 }
+
+export default Home

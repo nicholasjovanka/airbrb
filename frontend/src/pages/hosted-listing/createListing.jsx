@@ -3,7 +3,7 @@ import ListingForm from '../../components/ListingForm';
 import { apiCall, listingObjectValidator } from '../../utils/utils';
 import { StoreContext } from '../../utils/states';
 
-export default function CreateListing () {
+const CreateListing = () => {
   const { openModal, modalHeader, modalMessage } = useContext(StoreContext);
   const handleSubmit = async (formObject, bedroomArray, amenities) => {
     try {
@@ -40,3 +40,5 @@ export default function CreateListing () {
     <ListingForm mode='Create' buttonSubmitFunction={handleSubmit} existingListingObject={{}}/>
   )
 }
+
+export default CreateListing;

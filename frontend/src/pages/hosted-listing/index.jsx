@@ -7,7 +7,7 @@ import { StoreContext } from '../../utils/states';
 import ListingPagination from '../../components/ListingPagination';
 import CircularProgress from '@mui/material/CircularProgress';
 
-export default function HostedListing () {
+const HostedListing = () => {
   const navigate = useNavigate()
   const { openModal, modalHeader, modalMessage } = useContext(StoreContext);
   const [listings, setListings] = useState([]);
@@ -74,3 +74,5 @@ export default function HostedListing () {
       </Box>
   )
 }
+
+export default HostedListing

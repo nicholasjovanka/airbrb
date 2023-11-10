@@ -5,7 +5,7 @@ import { AppBar, Box, Toolbar, IconButton, Typography, Menu, Container, Avatar, 
 import MenuIcon from '@mui/icons-material/Menu';
 import OtherHousesIcon from '@mui/icons-material/OtherHouses';
 
-function Navbar () {
+const Navbar = () => {
   const navigate = useNavigate()
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
@@ -74,6 +74,13 @@ function Navbar () {
       }
       case 'Profile': {
         navigationRoute = `/profile/${userEmail}`;
+        break;
+      }
+      case 'Logout': {
+        localStorage.removeItem('token');
+        localStorage.removeItem('userEmail');
+        
+        navigationRoute = '/login';
         break;
       }
     }

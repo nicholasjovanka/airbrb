@@ -12,7 +12,7 @@ export const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     padding: theme.spacing(1),
   },
 }));
-export default function MessageModal ({ header, content, open, setOpen, width = 'sm', fullWidth = true }) {
+const MessageModal = ({ header, content, open, setOpen, width = 'sm', fullWidth = true }) => {
   const handleClose = () => {
     setOpen(false);
   };
@@ -57,3 +57,5 @@ export default function MessageModal ({ header, content, open, setOpen, width = 
     </React.Fragment>
   );
 }
+
+export default MessageModal;
