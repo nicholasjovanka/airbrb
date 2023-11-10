@@ -79,7 +79,7 @@ const Navbar = () => {
       case 'Logout': {
         localStorage.removeItem('token');
         localStorage.removeItem('userEmail');
-        
+        loggedIn[1](false);
         navigationRoute = '/login';
         break;
       }
