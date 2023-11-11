@@ -53,6 +53,10 @@ export const getId = (url) => { // Function to get the youtube video id from  ht
     : null;
 }
 
+export const capitalizeFirstLetter = (string) => { // https://stackoverflow.com/questions/1026069/how-do-i-make-the-first-letter-of-a-string-uppercase-in-javascript
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
 export const listingObjectValidator = (formObject, bedroomArray, amenities) => {
   const nonEmptyTextFields = ['title', 'type', 'price', 'address', 'thumbnail']
   console.log(formObject);

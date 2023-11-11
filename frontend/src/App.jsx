@@ -13,6 +13,7 @@ import { StoreContext } from './utils/states';
 import Login from './pages/login';
 import Register from './pages/register';
 import Listing from './pages/listing';
+import BookingTest from './pages/bookingtest';
 
 const Offset = styled('div')(({ theme }) => theme.mixins.toolbar);
 
@@ -29,6 +30,7 @@ function App () {
               <Route path='home' element={<Home/>} />
               <Route path='login' element={<Login/>} />
               <Route path='register' element={<Register/>} />
+              <Route path='bookingtest' element={<BookingTest/>} />
               <Route path='/listing'>
                 <Route path=':id' element={<Listing/>} />
               </Route>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Box, Grid, Card, CardActions, CardContent, CardMedia, Button, Pagination, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { apiCall, getId } from '../utils/utils';
+import { apiCall, getId, capitalizeFirstLetter } from '../utils/utils';
 import { StoreContext } from '../utils/states';
 import ListingCard from './ListingCard';
 import ConfirmationModal from './ConfirmationModal';
@@ -26,10 +26,10 @@ const ListingPagination = ({ listingsArray, displayPage, loggedIn }) => {
     index: 0,
   });
   const { openModal, modalHeader, modalMessage } = useContext(StoreContext);
-  const [openDeleteConfirmationModal, setOpenDeleteConfirmationModal] = React.useState(false);
-  const [openUnpublishConfirmationModal, setOpenUnpublishConfirmationModal] = React.useState(false);
-  const [confirmationModalContent, setConfirmationModalContent] = React.useState('');
-  const [openDatePickerModal, setOpenDatePickerModal] = React.useState(false);
+  const [openDeleteConfirmationModal, setOpenDeleteConfirmationModal] = useState(false);
+  const [openUnpublishConfirmationModal, setOpenUnpublishConfirmationModal] = useState(false);
+  const [confirmationModalContent, setConfirmationModalContent] = useState('');
+  const [openDatePickerModal, setOpenDatePickerModal] = useState(false);
   const [paginationObj, setPaginationObj] = useState({
     numberOfPage: 1,
     listingsArray: [],
@@ -185,10 +185,10 @@ const ListingPagination = ({ listingsArray, displayPage, loggedIn }) => {
                 >
                 </CardMedia>
                 <CardContent sx={{ pt: 0, mt: 1, px: 0, position: 'relative' }}>
-                { index === 1 && (
-                    <Box sx={{ position: 'relative', top: 0, width: 1, mt: '-12%', mb: '0%' }}>
+                { obj.status && (
+                    <Box sx={{ position: 'relative', top: 0, width: 1, mt: '-11%', mb: '0%' }}>
                     <Typography align='center' variant= 'h6' sx={{ mt: 0, width: 1, backgroundColor: '#888888', mx: 'auto' }}>
-                      Available
+                      {capitalizeFirstLetter(obj.status)}
                     </Typography>
                     </Box>
                 )}

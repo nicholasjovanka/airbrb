@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DateTime } from 'luxon';
 import { Box, IconButton, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Typography } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -6,11 +6,9 @@ import { AdapterLuxon } from '@mui/x-date-pickers/AdapterLuxon';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import RemoveIcon from '@mui/icons-material/Remove';
 import AddIcon from '@mui/icons-material/Add';
-import { StoreContext } from '../utils/states';
 
 const DatePickerModal = ({ open, setOpen, goLiveFunction }) => {
   const [dates, setDates] = useState([{ startDate: DateTime.now().startOf('day'), endDate: DateTime.now().startOf('day').plus({ days: 1 }) }]);
-  const { openModal, modalHeader, modalMessage } = useContext(StoreContext);
   const handleAddDates = () => {
     setDates([...dates, { startDate: DateTime.now().startOf('day'), endDate: DateTime.now().startOf('day').plus({ days: 1 }) }]);
   };
@@ -22,20 +20,9 @@ const DatePickerModal = ({ open, setOpen, goLiveFunction }) => {
   }, [open])
 
   const handleDatesInput = (index, newValue, fieldname) => {
-    try {
-      const currentendDate = fieldname === 'endDate' ? newValue : dates[index].endDate;
-      const currentstartDate = fieldname === 'startDate' ? newValue : dates[index].startDate;
-      if (currentendDate.diff(currentstartDate, ['days']).days <= 0) {
-        throw new Error('Start Date must be less than end date')
-      }
-      const values = [...dates];
-      values[index] = { ...values[index], [fieldname]: newValue };
-      setDates(values);
-    } catch (error) {
-      modalHeader[1]('Error');
-      modalMessage[1]('Start Date must be less than end date');
-      openModal[1](true);
-    }
+    const values = [...dates];
+    values[index] = { ...values[index], [fieldname]: newValue };
+    setDates(values);
   };
 
   const handleRemoveDate = (index) => {

@@ -13,8 +13,8 @@ const Login = () => {
   const handleLogin = async () => {
     try {
       const response = await apiCall('user/auth/login', 'POST', {
-        email: email,
-        password: password
+        email,
+        password
       });
 
       localStorage.setItem('token', response.data.token);

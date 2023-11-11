@@ -10,7 +10,7 @@ import { AdapterLuxon } from '@mui/x-date-pickers/AdapterLuxon';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 
 const Home = () => {
-  const { openModal, modalHeader, modalMessage } = useContext(StoreContext);
+  const { openModal, modalHeader, modalMessage, loggedIn } = useContext(StoreContext);
   const [listings, setListings] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [originalListings, setOriginalListings] = useState([]);
@@ -32,6 +32,72 @@ const Home = () => {
     ratingFilterOn: false,
     sortBy: 'highest-rating'
   });
+
+  useEffect(() => {
+    const getListings = async () => {
+      try {
+        setShowLoadingBar({ ...showLoadingBar, display: 'flex' });
+        const listingsApiCall = await apiCall('listings', 'GET');
+        console.log(listingsApiCall.data.listings)
+        const listingsArray = listingsApiCall.data.listings.sort((a, b) => {
+          if (a.title.toLowerCase() < b.title.toLowerCase()) {
+            return -1;
+          } else if (a.title.toLowerCase() === b.title.toLowerCase()) {
+            return 0;
+          } else {
+            return 1;
+          }
+        });
+        let listingWithDetails = []
+        for (const listing of listingsArray) {
+          const listingDetails = await apiCall(`listings/${listing.id}`, 'GET');
+          listingWithDetails.push({ ...listingDetails.data.listing, id: listing.id });
+        }
+        listingWithDetails = listingWithDetails.filter((listing) => listing.availability.length > 0)
+        listingWithDetails = listingWithDetails.map((listing) => {
+          let numberOfBedrooms = 0;
+          let averageRating = 0;
+          listing.metadata.bedrooms.forEach((room) => {
+            numberOfBedrooms += room.beds
+          })
+
+          listing.reviews.forEach((review) => {
+            averageRating += review.rating
+          })
+          averageRating = listing.reviews.length > 0 ? (averageRating / listing.reviews.length).toFixed(2) : null
+          return { ...listing, numberOfBedrooms, averageRating }
+        })
+        console.log(loggedIn[0]);
+        loggedIn[1](true);
+        if (loggedIn[0]) {
+          const userEmail = localStorage.getItem('userEmail');
+          const bookings = await apiCall('bookings', 'GET');
+          console.log(bookings);
+          const bookingTiedToUser = bookings.data.bookings.filter((booking) => booking.owner === userEmail);
+          const listingsWithBooking = []
+          for (let i = 0; i < bookingTiedToUser.length; i++) {
+            const listingWithBookingIndex = listingWithDetails.map(listing => listing.id).indexOf(bookingTiedToUser[i].id);
+            const splicedListing = listingWithDetails.splice(listingWithBookingIndex, 1);
+            console.log(listingWithDetails);
+            const listingWithStatus = { ...splicedListing[0], status: bookingTiedToUser[i].status };
+            listingsWithBooking.push(listingWithStatus)
+          }
+          listingWithDetails = [...listingsWithBooking, ...listingWithDetails];
+        }
+        setOriginalListings(listingWithDetails);
+        setListings(listingWithDetails);
+        console.log(listingWithDetails);
+      } catch (error) {
+        modalHeader[1]('Error');
+        const errorMessage = error.response ? error.response.data.error : error.message;
+        modalMessage[1](errorMessage);
+        openModal[1](true);
+      } finally {
+        setShowLoadingBar({ ...showLoadingBar, display: 'none' });
+      }
+    }
+    getListings();
+  }, [])
 
   const handlExtraFilterInput = (event) => {
     const regex = /FilterOn$/i;
@@ -112,55 +178,6 @@ const Home = () => {
       openModal[1](true);
     }
   }
-
-  useEffect(() => {
-    const getListings = async () => {
-      try {
-        setShowLoadingBar({ ...showLoadingBar, display: 'flex' });
-        const listingsApiCall = await apiCall('listings', 'GET');
-        console.log(listingsApiCall.data.listings)
-        const listingsArray = listingsApiCall.data.listings.sort((a, b) => {
-          if (a.title.toLowerCase() < b.title.toLowerCase()) {
-            return -1;
-          } else if (a.title.toLowerCase() === b.title.toLowerCase()) {
-            return 0;
-          } else {
-            return 1;
-          }
-        });
-        let listingWithDetails = []
-        for (const listing of listingsArray) {
-          const listingDetails = await apiCall(`listings/${listing.id}`, 'GET');
-          listingWithDetails.push({ ...listingDetails.data.listing, id: listing.id });
-        }
-        listingWithDetails = listingWithDetails.filter((listing) => listing.availability.length > 0)
-        listingWithDetails = listingWithDetails.map((listing) => {
-          let numberOfBedrooms = 0;
-          let averageRating = 0;
-          listing.metadata.bedrooms.forEach((room) => {
-            numberOfBedrooms += room.beds
-          })
-
-          listing.reviews.forEach((review) => {
-            averageRating += review.rating
-          })
-          averageRating = listing.reviews.length > 0 ? (averageRating / listing.reviews.length).toFixed(2) : null
-          return { ...listing, numberOfBedrooms, averageRating }
-        })
-        setOriginalListings(listingWithDetails);
-        setListings(listingWithDetails);
-        console.log(listingWithDetails);
-      } catch (error) {
-        modalHeader[1]('Error');
-        const errorMessage = error.response ? error.response.data.error : error.message;
-        modalMessage[1](errorMessage);
-        openModal[1](true);
-      } finally {
-        setShowLoadingBar({ ...showLoadingBar, display: 'none' });
-      }
-    }
-    getListings();
-  }, [])
 
   return (
       <Box sx={{ height: 'auto', flexGrow: 1, display: 'flex', flexDirection: 'column', gap: 2, pt: 1 }}>
