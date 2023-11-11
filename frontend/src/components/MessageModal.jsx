@@ -1,17 +1,9 @@
 import * as React from 'react';
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
-import { styled } from '@mui/material/styles';
+import { Button, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
+import { BootstrapDialog } from '../utils/styles';
 
-export const BootstrapDialog = styled(Dialog)(({ theme }) => ({
-  '& .MuiDialogContent-root': {
-    padding: theme.spacing(2),
-  },
-  '& .MuiDialogActions-root': {
-    padding: theme.spacing(1),
-  },
-}));
 const MessageModal = ({ header, content, open, setOpen, width = 'sm', fullWidth = true }) => {
   const handleClose = () => {
     setOpen(false);
@@ -28,7 +20,7 @@ const MessageModal = ({ header, content, open, setOpen, width = 'sm', fullWidth 
         fullWidth={fullWidth}
         scroll = 'paper'
       >
-        <DialogTitle sx={{ m: 0, p: 2 }} id='customized-dialog-title'>
+        <DialogTitle sx={{ m: 0, p: 2 }} id='message-dialog-title'>
           {header}
         </DialogTitle>
         <IconButton

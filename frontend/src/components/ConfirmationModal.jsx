@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Button, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
-import { BootstrapDialog } from './MessageModal';
+import { BootstrapDialog } from '../utils/styles';
 
 const ConfirmationModal = ({ content, confirmFunction, open, setOpen, width = 'sm', fullWidth = true }) => {
   const handleClose = () => {
@@ -13,8 +13,8 @@ const ConfirmationModal = ({ content, confirmFunction, open, setOpen, width = 's
     <React.Fragment>
        <BootstrapDialog
         onClose = {handleClose}
-        aria-labelledby ='message-dialog-title'
-        aria-describedby = 'message-dialog-description'
+        aria-labelledby ='confirmation-dialog-title'
+        aria-describedby = 'confirmation-dialog-description'
         open = {open}
         maxWidth = {width}
         fullWidth={fullWidth}
@@ -36,7 +36,7 @@ const ConfirmationModal = ({ content, confirmFunction, open, setOpen, width = 's
           <CloseIcon />
         </IconButton>
         <DialogContent>
-          <DialogContentText id='message-dialog-description'>
+          <DialogContentText id='confirmation-dialog-description'>
             {content}
           </DialogContentText>
         </DialogContent>
