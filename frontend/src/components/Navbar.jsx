@@ -20,7 +20,6 @@ const Navbar = () => {
       setShowNavBar(false);
     } else if (currentPage[1] === 'test') {
       setShowNavBar(true);
-      loggedIn[1](false);
     } else {
       setShowNavBar(true);
       loggedIn[1](true);
@@ -84,11 +83,9 @@ const Navbar = () => {
         break;
       }
     }
-    return () => {
-      navigate(navigationRoute);
-      setAnchorElNav(null);
-      setAnchorElUser(null);
-    }
+    navigate(navigationRoute);
+    setAnchorElNav(null);
+    setAnchorElUser(null);
   }
 
   if (showNavBar) {
@@ -145,7 +142,7 @@ const Navbar = () => {
               }}
             >
               {pages.map((page) => (
-                <MenuItem key={page} onClick={handleNavigation(page)}>
+                <MenuItem key={page} onClick={() => { handleNavigation(page) }}>
                   <Typography textAlign='center'>{page}</Typography>
                 </MenuItem>
               ))}
@@ -174,7 +171,7 @@ const Navbar = () => {
             {pages.map((page) => (
               <Button
                 key={page}
-                onClick={handleNavigation(page)}
+                onClick={() => { handleNavigation(page) }}
                 sx={{ my: 2, color: 'white', display: 'block' }}
               >
                 {page}
@@ -205,7 +202,7 @@ const Navbar = () => {
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleNavigation(setting)}>
+                <MenuItem key={setting} onClick={() => { handleNavigation(setting) } }>
                   <Typography textAlign='center'>{setting}</Typography>
                 </MenuItem>
               ))}

@@ -12,6 +12,7 @@ import MessageModal from './components/MessageModal';
 import { StoreContext } from './utils/states';
 import Login from './pages/login';
 import Register from './pages/register';
+import Listing from './pages/listing';
 
 const Offset = styled('div')(({ theme }) => theme.mixins.toolbar);
 
@@ -28,6 +29,9 @@ function App () {
               <Route path='home' element={<Home/>} />
               <Route path='login' element={<Login/>} />
               <Route path='register' element={<Register/>} />
+              <Route path='/listing'>
+                <Route path=':id' element={<Listing/>} />
+              </Route>
               <Route path='/hostedlisting'>
                 <Route path=':email' element={<HostedListing/>} />
                 <Route path='createlisting' element={<CreateListing/>} />

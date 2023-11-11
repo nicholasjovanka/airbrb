@@ -292,10 +292,10 @@ const Home = () => {
                   value={extraFilterObj.sortBy}
                   onChange={handlExtraFilterInput}
                   sx={{ width: 1 }}
-                >
+                  >
                   <MenuItem value={'highest-rating'}>Highest Rating</MenuItem>
                   <MenuItem value={'lowest-rating'}>Lowest Rating</MenuItem>
-                </Select>
+                  </Select>
                   </Box>
               </Box>
               <Checkbox name='ratingFilterOn' value={extraFilterObj.ratingFilterOn} onChange={handlExtraFilterInput} inputProps={{ 'aria-label': 'Enable Number of Bedroom Filter Checkbox' }}/>
