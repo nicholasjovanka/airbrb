@@ -14,6 +14,7 @@ import Login from './pages/login';
 import Register from './pages/register';
 import Listing from './pages/listing';
 import BookingTest from './pages/bookingtest';
+import ManageBookings from './pages/hosted-listing/ManageBookings';
 
 const Offset = styled('div')(({ theme }) => theme.mixins.toolbar);
 
@@ -38,6 +39,7 @@ function App () {
                 <Route path=':email' element={<HostedListing/>} />
                 <Route path='createlisting' element={<CreateListing/>} />
                 <Route path='editlisting/:id' element={<EditListing/>} />
+                <Route path='managebookings/:id' element={<ManageBookings/>} />
               </Route>
               <Route path='/' element={<Navigate to='/home' replace={true} />}/>
               <Route path='*' element={<NotFound/>} />

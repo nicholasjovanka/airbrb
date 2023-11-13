@@ -67,13 +67,11 @@ const Home = () => {
           averageRating = listing.reviews.length > 0 ? (averageRating / listing.reviews.length).toFixed(2) : null
           return { ...listing, numberOfBedrooms, averageRating }
         })
-        console.log(loggedIn[0]);
-        loggedIn[1](true);
         if (loggedIn[0]) {
           const userEmail = localStorage.getItem('userEmail');
           const bookings = await apiCall('bookings', 'GET');
           console.log(bookings);
-          const bookingTiedToUser = bookings.data.bookings.filter((booking) => booking.owner === userEmail);
+          const bookingTiedToUser = bookings.data.bookings.filter((booking) => booking.owner === userEmail && booking.status !== 'declined');
           const listingsWithBooking = []
           for (let i = 0; i < bookingTiedToUser.length; i++) {
             const listingWithBookingIndex = listingWithDetails.map(listing => listing.id).indexOf(bookingTiedToUser[i].id);
@@ -86,7 +84,6 @@ const Home = () => {
         }
         setOriginalListings(listingWithDetails);
         setListings(listingWithDetails);
-        console.log(listingWithDetails);
       } catch (error) {
         modalHeader[1]('Error');
         const errorMessage = error.response ? error.response.data.error : error.message;

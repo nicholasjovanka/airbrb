@@ -204,6 +204,14 @@ const ListingPagination = ({ listingsArray, displayPage, loggedIn }) => {
                       <Box sx={{ display: 'flex', gap: 1, mx: 0, justifyContent: 'start' }}>
                           {obj.availability.length === 0 && (<Button variant='outlined' size="small" onClick={() => openPublishModal(obj.id, index) } >Go Live</Button>)}
                           {obj.availability.length > 0 && (<Button variant='outlined' size="small" color='error' onClick={() => openUnpublishModal(obj.id, index) } >Unpublish</Button>)}
+                          <Button variant='outlined' size="small" onClick={() => navigate(`/hostedlisting/managebookings/${obj.id}`)}>Manage Bookings</Button>
+                      </Box>
+                    </Box>
+                  )}
+                  { displayPage === 'home' && (
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, width: 1 }}>
+                      <Box sx={{ display: 'flex', gap: 1, justifyContent: 'end' }}>
+                        <Button variant='outlined' size="small" onClick={() => navigate(`/listing/${obj.id}`)}>View Listing Details</Button>
                       </Box>
                     </Box>
                   )}

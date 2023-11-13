@@ -1,14 +1,24 @@
 import React from 'react';
-import { Typography, Grid, Rating, Box } from '@mui/material';
+import { Typography, Grid, Rating, Box, Link } from '@mui/material';
 import BedIcon from '@mui/icons-material/Bed';
 import BathtubIcon from '@mui/icons-material/Bathtub';
+import { useNavigate } from 'react-router-dom';
 
 const ListingCard = ({ listing, displayPage, children }) => {
+  const navigate = useNavigate()
   return (
     <Box sx={{ mx: 1 }}>
-      <Typography gutterBottom variant="h5" component="div">
+      { displayPage === 'home' &&
+      <Link component="button" variant="h5" onClick={() => navigate(`/listing/${listing.id}`)}>
         {listing.title}
-      </Typography>
+        </Link>
+      }
+      { displayPage === 'hostedlisting' &&
+        <Typography gutterBottom variant="h5" component="div">
+          {listing.title}
+        </Typography>
+      }
+
       <Typography gutterBottom variant="h6" component="div">
         Type: {listing.metadata.type}
       </Typography>
@@ -18,7 +28,7 @@ const ListingCard = ({ listing, displayPage, children }) => {
             displayPage === 'hostedlisting'
               ? (
                   <Typography gutterBottom variant="h6" component="div" noWrap >
-                    {listing.numberOfBedrooms}5 Beds
+                    {listing.numberOfBedrooms} Beds
                   </Typography>
                 )
               : (
