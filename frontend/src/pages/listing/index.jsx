@@ -1,11 +1,12 @@
 import React from 'react';
-import { Box } from '@mui/material';
+import { Box, Container } from '@mui/material';
 
 const Listing = () => {
   return (
-     <Box>
-        Welcome to Listing
-     </Box>
+   <Container maxWidth ='md'>
+   <Box sx = {{ boxShadow: 3, my: 1, px: 2, py: 1 }}>
+   </Box>
+</Container>
   )
 }
 

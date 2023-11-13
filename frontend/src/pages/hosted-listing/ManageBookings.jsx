@@ -1,33 +1,51 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { apiCall } from '../../utils/utils';
 import { Typography, Container, Box } from '@mui/material';
 import { DateTime } from 'luxon';
 import { useParams } from 'react-router-dom';
 import BookingPagination from '../../components/BookingPagination';
+import { StoreContext } from '../../utils/states';
 const ManageBookings = () => {
   const [listingDetail, setListingDetail] = useState({});
-  const [bookings, setBookings] = useState({});
+  const [bookings, setBookings] = useState([]);
   const { id } = useParams();
-
+  const { openModal, modalHeader, modalMessage } = useContext(StoreContext);
   useEffect(() => {
     const getListingDetail = async () => {
-      const listingApi = await apiCall(`listings/${id}`, 'GET');
-      let listingObject = listingApi.data.listing;
-      const currentTime = DateTime.now();
-      if (listingObject.postedOn) {
-        const onlineDuration = currentTime.diff(DateTime.fromISO(listingObject.postedOn), ['years', 'months', 'days', 'hours']).toObject();
-        listingObject = { ...listingObject, onlineDuration }
+      try {
+        const listingApi = await apiCall(`listings/${id}`, 'GET');
+        let listingObject = listingApi.data.listing;
+        const currentTime = DateTime.now();
+        if (listingObject.postedOn) {
+          const onlineDuration = currentTime.diff(DateTime.fromISO(listingObject.postedOn), ['years', 'months', 'days', 'hours']).toObject();
+          listingObject = { ...listingObject, onlineDuration }
+        }
+        const bookingsApi = await apiCall('bookings', 'GET');
+        let currentListingBookings = bookingsApi.data.bookings.filter((booking) => booking.listingId === id);
+        currentListingBookings = currentListingBookings.map((booking) => {
+          const duration = DateTime.fromSQL(booking.dateRange.endDate).diff(DateTime.fromSQL(booking.dateRange.startDate), ['days']).toObject().days
+          return { ...booking, duration: `${duration} days`, date: `${booking.dateRange.startDate} - ${booking.dateRange.endDate}` }
+        })
+        console.log(currentListingBookings);
+        setBookings(currentListingBookings.reverse());
+        const [amountOfDayBooked, amountOfProfit] = getAmountOfDayBookedAndProfit(currentListingBookings);
+        listingObject = { ...listingObject, profit: amountOfProfit, daysBooked: amountOfDayBooked }
+        console.log(bookings);
+        setListingDetail(listingObject);
+      } catch (error) {
+        modalHeader[1]('Error');
+        modalMessage[1](error.message);
+        openModal[1](true);
       }
-      const bookingsApi = await apiCall('bookings', 'GET');
-      const currentListingBookings = bookingsApi.data.bookings.filter((booking) => booking.listingId === id);
-      setBookings(currentListingBookings);
-      const [amountOfDayBooked, amountOfProfit] = getAmountOfDayBookedAndProfit(currentListingBookings);
-      listingObject = { ...listingObject, profit: amountOfProfit, daysBooked: amountOfDayBooked }
-      console.log(bookings);
-      setListingDetail(listingObject);
     }
     getListingDetail();
   }, [])
+
+  useEffect(() => {
+    const [amountOfDayBooked, amountOfProfit] = getAmountOfDayBookedAndProfit(bookings);
+    const updatedlistingObject = { ...listingDetail, profit: amountOfProfit, daysBooked: amountOfDayBooked }
+    setListingDetail(updatedlistingObject);
+  }, [bookings])
 
   const getAmountOfDayBookedAndProfit = (bookingArray) => {
     const currentYear = DateTime.now().startOf('day').toObject().year;
@@ -63,10 +81,13 @@ const ManageBookings = () => {
       <Typography variant='h6' gutterBottom sx = {{ mt: 1 }}>
         {`Has been booked for ${listingDetail.daysBooked} days this year`}
       </Typography>
-      <Typography variant='h6' gutterBottom sx = {{ mt: 1 }}>
+      <Typography variant='h6' gutterBottom sx = {{ mt: 1, mb: 5 }}>
         {`Has made ${listingDetail.profit} AUD this year`}
       </Typography>
-      <BookingPagination bookingArray={bookings} />
+      <Typography variant='h5' gutterBottom sx = {{ mt: 1 }}>
+        Manage Bookings
+      </Typography>
+      <BookingPagination bookingArray={bookings} setBookingArray={setBookings} />
     </Box>
 </Container>
   )

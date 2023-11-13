@@ -103,7 +103,7 @@ const ListingPagination = ({ listingsArray, displayPage, loggedIn }) => {
         }
       })
       await apiCall(`listings/publish/${selectedListing.id}`, 'PUT', { availability: dateArrayToBeSubmitted });
-      const modifiedListing = paginationObj.listingsArray;
+      const modifiedListing = [...paginationObj.listingsArray];
       modifiedListing[selectedListing.index].availability = dateArrayToBeSubmitted;
       setPaginationObj({ ...paginationObj, listingsArray: modifiedListing })
       setOpenDatePickerModal(false);
@@ -121,7 +121,7 @@ const ListingPagination = ({ listingsArray, displayPage, loggedIn }) => {
     try {
       setOpenUnpublishConfirmationModal(false);
       await apiCall(`listings/unpublish/${selectedListing.id}`, 'PUT', {});
-      const modifiedListing = paginationObj.listingsArray;
+      const modifiedListing = [...paginationObj.listingsArray];
       modifiedListing[selectedListing.index].availability = [];
       setPaginationObj({ ...paginationObj, listingsArray: modifiedListing });
       setOpenDatePickerModal(false);
@@ -139,7 +139,7 @@ const ListingPagination = ({ listingsArray, displayPage, loggedIn }) => {
     try {
       await apiCall(`listings/${selectedListing.id}`, 'DELETE');
       setOpenDeleteConfirmationModal(false);
-      const previousListingArray = paginationObj.listingsArray;
+      const previousListingArray = [...paginationObj.listingsArray];
       previousListingArray.splice(selectedListing.index, 1);
       const newNumberOfPage = Math.ceil(previousListingArray.length / 12);
       const pageToGoTo = paginationObj.currentPage > newNumberOfPage ? newNumberOfPage : paginationObj.currentPage;
