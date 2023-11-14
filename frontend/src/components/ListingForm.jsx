@@ -115,7 +115,7 @@ const ListingForm = ({ mode, buttonSubmitFunction, existingListingObject }) => {
       if (type === 'files') {
         setFormFields({ ...formFields, files: [] });
       }
-      const requiredAmountOfFiles = type === 'thumbnail' ? 1 : 4;
+      const requiredAmountOfFiles = type === 'thumbnail' ? 1 : 6;
       if (files.length > requiredAmountOfFiles) {
         throw new Error(`Amount of files exceeded for ${type}, only ${requiredAmountOfFiles} image is needed`)
       }
@@ -340,7 +340,7 @@ const ListingForm = ({ mode, buttonSubmitFunction, existingListingObject }) => {
                 Reset Image
               </Button>
             </Box>
-            <ImageCard key={null} image={formFields.thumbnail} sx={{ my: 1 }}/>
+            <ImageCard key={null} src={formFields.thumbnail} sx={{ my: 1 }}/>
           </Grid>
           <Grid item xs={12}>
             <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
@@ -355,7 +355,7 @@ const ListingForm = ({ mode, buttonSubmitFunction, existingListingObject }) => {
                 Reset Image
               </Button>
               <Typography id='hosting-images-description' variant='caption' sx={{ width: 1 }}>
-                Note: You can only upload up to 4 images at max
+                Note: You can only upload up to 6 images at max
               </Typography>
             </Box>
             <ImageCarousel images={formFields.files}/>

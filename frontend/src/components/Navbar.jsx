@@ -12,7 +12,6 @@ const Navbar = () => {
   const [pages, setPages] = useState(['Home', 'Hosted Listings']);
   const [settings, setSettings] = useState(['Profile', 'Logout'])
   const { loggedIn } = useContext(StoreContext);
-
   useEffect(() => {
     if (!loggedIn[0]) {
       setPages(['Home']);
@@ -70,7 +69,7 @@ const Navbar = () => {
         localStorage.removeItem('token');
         localStorage.removeItem('userEmail');
         loggedIn[1](false);
-        navigationRoute = '/login';
+        navigationRoute = '/home';
         break;
       }
     }
@@ -171,11 +170,11 @@ const Navbar = () => {
         <Box sx={{ flexGrow: 0 }}>
           <Tooltip title='Open settings'>
             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-              <Avatar alt='Remy Sharp' src='/static/images/avatar/2.jpg' />
+              <Avatar> {loggedIn[0] ? localStorage.getItem('userEmail').slice(0, 1) : 'G' }</Avatar>
             </IconButton>
           </Tooltip>
           <Menu
-            sx={{ mt: '45px' }}
+            sx={{ mt: '45px', p: 4 }}
             id='menu-appbar'
             anchorEl={anchorElUser}
             anchorOrigin={{
@@ -190,6 +189,7 @@ const Navbar = () => {
             open={Boolean(anchorElUser)}
             onClose={handleCloseUserMenu}
           >
+            <Typography variant='h6' sx={{ m: 1 }}>Welcome { loggedIn[0] ? localStorage.getItem('userEmail').split('@')[0] : 'Guest' } </Typography>
             {settings.map((setting) => (
               <MenuItem key={setting} onClick={() => { handleNavigation(setting) } }>
                 <Typography textAlign='center'>{setting}</Typography>

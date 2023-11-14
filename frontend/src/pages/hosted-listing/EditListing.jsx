@@ -5,13 +5,16 @@ import { apiCall, listingObjectValidator } from '../../utils/utils';
 import { StoreContext } from '../../utils/states';
 
 const EditListing = () => {
-  const { openModal, modalHeader, modalMessage } = useContext(StoreContext);
+  const { openModal, modalHeader, modalMessage, openBackdrop } = useContext(StoreContext);
   const { id } = useParams();
   const [listingObj, setListingObj] = useState({});
   const getListingDetail = async () => {
     try {
       const listingDetail = await apiCall(`listings/${id}`, 'GET');
-      setListingObj(listingDetail.data.listing);
+      let listingData = listingDetail.data.listing;
+      // If there is no amenities, Populate the amenities array with an empty string to initialize the dynamic form in ListingForm
+      listingData = { ...listingData, metadata: { ...listingData.metadata, ...(listingData.metadata.amenities.length === 0 && { amenities: [''] }) } };
+      setListingObj(listingData);
     } catch (error) {
       modalHeader[1]('Error');
       const errorMessage = error.response ? error.response.data.error : error.message;
@@ -24,6 +27,7 @@ const EditListing = () => {
   }, [])
   const handleSubmit = async (formObject, bedroomArray, amenities) => {
     try {
+      openBackdrop[1](true);
       formObject = { ...formObject, price: Number(formObject.price), bathrooms: Number(formObject.bathrooms) };
       bedroomArray = bedroomArray.map((e) => { return { type: e.type, beds: Number(e.beds) } });
       listingObjectValidator(formObject, bedroomArray, amenities);
@@ -35,7 +39,7 @@ const EditListing = () => {
         thumbnail,
         metadata: {
           bedrooms: bedroomArray,
-          amenities,
+          amenities: amenities.filter((amenity) => amenity.trim().length > 0),
           live: false,
           ...metadata
         }
@@ -50,6 +54,8 @@ const EditListing = () => {
       const errorMessage = error.response ? error.response.data.error : error.message;
       modalMessage[1](errorMessage);
       openModal[1](true);
+    } finally {
+      openBackdrop[1](false);
     }
   }
 

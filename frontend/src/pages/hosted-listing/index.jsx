@@ -1,22 +1,20 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Box, Typography, Button, Tooltip } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
-import { apiCall } from '../../utils/utils';
+import { apiCall, addAverageRatingAndNumberOfBedroomsToListing } from '../../utils/utils';
 import AddIcon from '@mui/icons-material/Add';
 import { StoreContext } from '../../utils/states';
 import ListingPagination from '../../components/ListingPagination';
-import CircularProgress from '@mui/material/CircularProgress';
 
 const HostedListing = () => {
   const navigate = useNavigate()
-  const { openModal, modalHeader, modalMessage } = useContext(StoreContext);
+  const { openModal, modalHeader, modalMessage, openBackdrop } = useContext(StoreContext);
   const [listings, setListings] = useState([]);
-  const [showLoadingBar, setShowLoadingBar] = useState({ display: 'none', mx: 'auto', mt: 5 });
   const { email } = useParams();
   useEffect(() => {
     const getListings = async () => {
       try {
-        setShowLoadingBar({ ...showLoadingBar, display: 'flex' });
+        openBackdrop[1](true)
         const listingsApiCall = await apiCall('listings', 'GET');
         const listingsArray = listingsApiCall.data.listings.filter((listing) => listing.owner === email).sort((a, b) => {
           if (a.title.toLowerCase() < b.title.toLowerCase()) {
@@ -33,17 +31,7 @@ const HostedListing = () => {
           listingsBelongingToOwner.push({ ...listingDetails.data.listing, id: listing.id });
         }
         listingsBelongingToOwner = listingsBelongingToOwner.map((listing) => {
-          let numberOfBedrooms = 0;
-          let averageRating = 0;
-          listing.metadata.bedrooms.forEach((room) => {
-            numberOfBedrooms += room.beds
-          })
-
-          listing.reviews.forEach((review) => {
-            averageRating += review.rating
-          })
-          averageRating = listing.reviews.length > 0 ? (averageRating / listing.reviews.length).toFixed(2) : null
-          return { ...listing, numberOfBedrooms, averageRating }
+          return addAverageRatingAndNumberOfBedroomsToListing(listing);
         })
         setListings(listingsBelongingToOwner);
       } catch (error) {
@@ -52,7 +40,7 @@ const HostedListing = () => {
         modalMessage[1](errorMessage);
         openModal[1](true);
       } finally {
-        setShowLoadingBar({ ...showLoadingBar, display: 'none' });
+        openBackdrop[1](false)
       }
     }
 
@@ -69,7 +57,6 @@ const HostedListing = () => {
             Create Listing
           </Button>
         </Tooltip>
-        <CircularProgress sx={showLoadingBar} size="10rem"/>
         <ListingPagination listingsArray={listings} displayPage='hostedlisting' ></ListingPagination>
       </Box>
   )

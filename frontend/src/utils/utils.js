@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { BACKEND_PORT } from '../config.js';
+import { DateTime } from 'luxon';
 
 export const fileToDataUrl = (file) => {
   if (file === null) { // Checks if the passed file is null, if it is null then return nothing
@@ -21,6 +22,11 @@ export const fileToDataUrl = (file) => {
     reader.readAsDataURL(file);
     return dataUrlPromise;
   }
+}
+
+export const checkEmail = (email) => {
+  const regexp = /^(([^<>()\\[\]\\.,;:\s@']+(\.[^<>()\\[\]\\.,;:\s@']+)*)|('.+'))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return regexp.test(email.trim());
 }
 
 export const apiCall = (url, method, body = {}, queryString = null) => {
@@ -94,4 +100,34 @@ export const listingObjectValidator = (formObject, bedroomArray, amenities) => {
       throw new Error('Number of Beds cannot be below 0')
     }
   });
+}
+
+export const getLuxonDayDifference = (startDate, endDate) => {
+  return endDate.diff(startDate, ['days']).toObject().days;
+}
+
+export const isoDateToDDMMYYYY = (date) => {
+  const splittedDate = date.split('-');
+  return `${splittedDate[2]}/${splittedDate[1]}/${splittedDate[0]}`;
+}
+
+export const addDurationAndDateToBookingArray = (bookings) => {
+  return bookings.map((booking) => {
+    const duration = getLuxonDayDifference(DateTime.fromSQL(booking.dateRange.startDate), DateTime.fromSQL(booking.dateRange.endDate));
+    return { ...booking, duration: `${duration} days`, date: `${isoDateToDDMMYYYY(booking.dateRange.startDate)} -  ${isoDateToDDMMYYYY(booking.dateRange.endDate)}` }
+  });
+}
+
+export const addAverageRatingAndNumberOfBedroomsToListing = (listing) => {
+  let numberOfBedrooms = 0;
+  let averageRating = 0;
+  listing.metadata.bedrooms.forEach((room) => {
+    numberOfBedrooms += room.beds
+  })
+
+  listing.reviews.forEach((review) => {
+    averageRating += review.rating
+  })
+  averageRating = listing.reviews.length > 0 ? (averageRating / listing.reviews.length).toFixed(2) : null
+  return { ...listing, numberOfBedrooms, averageRating }
 }

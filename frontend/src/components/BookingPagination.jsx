@@ -71,26 +71,20 @@ TablePaginationActions.propTypes = {
   rowsPerPage: PropTypes.number.isRequired,
 };
 
-const BookingPagination = ({ bookingArray, setBookingArray }) => {
+/*
+Props Explanation
+bookingArray = Array containing all the bookings needed by the component
+setBookingArray = Function passed from the parent that allows this component to modify bookingArray in the parent component
+viewMode = A boolean that tells the component if its currently only being used to view bookings or is currently being used to manage (Approve/ decline) bookings as
+this component is used in both the ManageBooking and listing detail page.
+*/
+const BookingPagination = ({ bookingArray, setBookingArray, viewMode = false }) => {
   const [initialLoad, setInitialLoad] = useState(true);
   const [bookingsToDisplay, setBookingsToDisplay] = useState([]);
   const [openConfirmationModal, setOpenConfirmationModal] = useState(false);
   const [confirmationModalContent, setConfirmationModalContent] = useState('');
   const [statusFilter, setStatusFilter] = useState('any');
-  const [selectedBooking, setSelectedBooking] = useState({
-    id: '',
-    index: 0,
-    action: 'accept'
-  });
-  const [paginationObj, setPaginationObj] = useState({
-    bookings: [],
-    page: 0,
-    rowsPerPage: 5
-  })
-
-  const { openModal, modalHeader, modalMessage } = useContext(StoreContext);
-  const columns = [
-    { id: 'booker', label: 'Booker', minWidth: 100, align: 'left' },
+  const [columns, setColumns] = useState([
     {
       id: 'status',
       label: 'Booking Status',
@@ -109,19 +103,44 @@ const BookingPagination = ({ bookingArray, setBookingArray }) => {
       label: 'Booking Duration',
       minWidth: 100,
       align: 'left',
-    },
-    {
-      id: 'action',
-      label: 'Actions',
-      minWidth: 100,
-      align: 'left',
     }
-  ];
+  ])
+  const [selectedBooking, setSelectedBooking] = useState({
+    id: '',
+    index: 0,
+    action: 'accept'
+  });
+  const [paginationObj, setPaginationObj] = useState({
+    bookings: [],
+    page: 0,
+    rowsPerPage: 5
+  })
+
+  const { openModal, modalHeader, modalMessage } = useContext(StoreContext);
+
+  useEffect(() => {
+    if (!viewMode) {
+      setColumns([
+        {
+          id: 'booker',
+          label: 'Booker',
+          minWidth: 100,
+          align: 'left'
+        },
+        ...columns,
+        {
+          id: 'action',
+          label: 'Actions',
+          minWidth: 100,
+          align: 'left',
+        }])
+    }
+  }, [viewMode])
 
   useEffect(() => {
     if (initialLoad) {
       setPaginationObj({ ...paginationObj, bookings: bookingArray })
-      if (bookingArray.length > 0) {
+      if (bookingArray.length > 0 && !viewMode) {
         setInitialLoad(false);
       }
     }
@@ -184,7 +203,7 @@ const BookingPagination = ({ bookingArray, setBookingArray }) => {
       previousBookingArray[selectedBooking.index] = updatedBooking;
       if (statusFilter === 'pending') {
         previousBookingArray.splice(selectedBooking.index, 1);
-        const newNumberOfPage = Math.ceil(paginationObj.bookings.length / paginationObj.rowsPerPage) - 2;
+        const newNumberOfPage = Math.ceil(previousBookingArray.length / paginationObj.rowsPerPage) - 1;
         const pageToGoTo = paginationObj.page > newNumberOfPage ? newNumberOfPage : paginationObj.page;
         console.log(pageToGoTo);
         setPaginationObj({ ...paginationObj, page: pageToGoTo, bookings: previousBookingArray });
@@ -193,7 +212,7 @@ const BookingPagination = ({ bookingArray, setBookingArray }) => {
       }
       setOpenConfirmationModal(false);
       modalHeader[1]('Success');
-      modalMessage[1](`Succesfully ${selectedBooking.action} bookings`);
+      modalMessage[1](`Succesfully ${selectedBooking.action} booking`);
       openModal[1](true);
     } catch (error) {
       modalHeader[1]('Error');
@@ -211,7 +230,7 @@ const BookingPagination = ({ bookingArray, setBookingArray }) => {
         label="Filter Booking Status"
         value={statusFilter}
         onChange={handleStatusFilterChange}
-        sx={{ width: 1 }}
+        sx={{ width: 1, maxWidth: 'sm', mb: 2 }}
         >
         <MenuItem value={'any'}>Any</MenuItem>
         <MenuItem value={'pending'}>Pending</MenuItem>
@@ -237,13 +256,15 @@ const BookingPagination = ({ bookingArray, setBookingArray }) => {
           <TableBody>
             {bookingsToDisplay.length > 0 && bookingsToDisplay.map((booking, index) => (
               <TableRow key={index}>
-                <TableCell component='th' scope='row' style={{ zIndex: 1 }}>
-                  {booking.owner}
-                </TableCell>
+                {!viewMode && (
+                  <TableCell component='th' scope='row' style={{ zIndex: 1 }}>
+                    {booking.owner}
+                  </TableCell>
+                )}
                 <TableCell align='left' style={{ zIndex: 1 }}>
                 { capitalizeFirstLetter(booking.status) }
                 </TableCell>
-                <TableCell align='left' style={{ zIndex: 1 }}>
+                <TableCell align='left' style={{ zIndex: 1, textWrap: 'nowrap' }}>
                   {booking.date}
                 </TableCell>
                 <TableCell align='left' style={{ zIndex: 1 }}>
@@ -252,21 +273,23 @@ const BookingPagination = ({ bookingArray, setBookingArray }) => {
                 <TableCell align='left' style={{ zIndex: 1 }}>
                   {booking.duration}
                 </TableCell>
-                <TableCell align='left' style={{ position: 'sticky', right: 0, border: '1px solid', zIndex: 4, background: 'white' }}>
-                  <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                    <Button variant='outlined' size='small' sx={{ flex: 1 }} disabled={booking.status !== 'pending'} onClick={(e) => { openActionModal(booking, index, 'accept') }}>
-                      Approve
-                    </Button>
-                    <Button variant='outlined' color='error' size='small' sx={{ flex: 1 }} disabled={booking.status !== 'pending'} onClick={(e) => { openActionModal(booking, index, 'decline') }}>
-                      Decline
-                    </Button>
-                  </Box>
-                </TableCell>
+                { !viewMode && (
+                   <TableCell align='left' style={{ position: 'sticky', right: 0, border: '1px solid', zIndex: 4, background: 'white' }}>
+                    <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                      <Button variant='outlined' size='small' sx={{ flex: 1 }} disabled={booking.status !== 'pending'} onClick={(e) => { openActionModal(booking, index, 'accept') }}>
+                        Approve
+                      </Button>
+                      <Button variant='outlined' color='error' size='small' sx={{ flex: 1 }} disabled={booking.status !== 'pending'} onClick={(e) => { openActionModal(booking, index, 'decline') }}>
+                        Decline
+                      </Button>
+                    </Box>
+                  </TableCell>
+                )}
               </TableRow>
             ))}
             {paginationObj.bookings.length === 0 && (
                 <TableRow key={2}>
-                <TableCell component='th' scope='row' align='center' colSpan={3}>
+                <TableCell component='th' scope='row' align='center' colSpan={columns.length}>
                   No Bookings Found
                 </TableCell>
               </TableRow>)
@@ -281,7 +304,7 @@ const BookingPagination = ({ bookingArray, setBookingArray }) => {
             {paginationObj.bookings.length > 0 && <TableRow>
               <TablePagination
                 rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
-                colSpan={6}
+                colSpan={Object.keys(columns).length}
                 count={paginationObj.bookings.length}
                 rowsPerPage={paginationObj.rowsPerPage}
                 page={paginationObj.page}

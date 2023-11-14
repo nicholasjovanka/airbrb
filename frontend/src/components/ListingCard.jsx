@@ -3,22 +3,15 @@ import { Typography, Grid, Rating, Box, Link } from '@mui/material';
 import BedIcon from '@mui/icons-material/Bed';
 import BathtubIcon from '@mui/icons-material/Bathtub';
 import { useNavigate } from 'react-router-dom';
+import { visuallyHidden } from '@mui/utils';
 
 const ListingCard = ({ listing, displayPage, children }) => {
   const navigate = useNavigate()
   return (
     <Box sx={{ mx: 1 }}>
-      { displayPage === 'home' &&
       <Link component="button" variant="h5" onClick={() => navigate(`/listing/${listing.id}`)}>
         {listing.title}
-        </Link>
-      }
-      { displayPage === 'hostedlisting' &&
-        <Typography gutterBottom variant="h5" component="div">
-          {listing.title}
-        </Typography>
-      }
-
+      </Link>
       <Typography gutterBottom variant="h6" component="div">
         Type: {listing.metadata.type}
       </Typography>
@@ -33,14 +26,14 @@ const ListingCard = ({ listing, displayPage, children }) => {
                 )
               : (
                   <Typography gutterBottom variant="h6" component="div" sx={{ display: 'flex', alignItems: 'center' }}>
-                    { listing.metadata.bedrooms.length } <BedIcon sx={{ ml: 1 }}/>
+                    { listing.metadata.bedrooms.length } <BedIcon sx={{ ml: 1 }}/> <Box component="span" sx={visuallyHidden}>Number of Bedroom</Box>
                   </Typography>
                 )
           }
         </Grid>
         <Grid item xs={2}>
           <Typography gutterBottom variant="h6" component="div" sx={{ display: 'flex', alignItems: 'center' }}>
-            {listing.metadata.bathrooms} <BathtubIcon sx={{ ml: 1 }}/>
+            {listing.metadata.bathrooms} <BathtubIcon sx={{ ml: 1 }}/> <Box component="span" sx={visuallyHidden}>Number of Bathrooms</Box>
           </Typography>
         </Grid>
         <Grid item>

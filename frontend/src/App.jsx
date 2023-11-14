@@ -15,11 +15,12 @@ import Register from './pages/register';
 import Listing from './pages/listing';
 import BookingTest from './pages/bookingtest';
 import ManageBookings from './pages/hosted-listing/ManageBookings';
+import LoadingBackdrop from './components/LoadingBackdrop';
 
 const Offset = styled('div')(({ theme }) => theme.mixins.toolbar);
 
 function App () {
-  const { openModal, modalHeader, modalMessage } = useContext(StoreContext);
+  const { openModal, modalHeader, modalMessage, openBackdrop } = useContext(StoreContext);
   return (
     <React.Fragment>
       <CssBaseline/>
@@ -44,6 +45,7 @@ function App () {
               <Route path='/' element={<Navigate to='/home' replace={true} />}/>
               <Route path='*' element={<NotFound/>} />
           </Routes>
+          <LoadingBackdrop open={openBackdrop[0]}/>
           <MessageModal header={modalHeader[0]} content={modalMessage[0]} open={openModal[0]} setOpen={openModal[1]} ></MessageModal>
         </Box>
       </Box>

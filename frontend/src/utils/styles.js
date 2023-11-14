@@ -9,3 +9,14 @@ export const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     padding: theme.spacing(1),
   },
 }));
+
+export const basePaginationStyling = {
+  display: 'flex',
+  justifyContent: 'center',
+  position: 'relative',
+  backgroundColor: 'white',
+  border: 1,
+  borderColor: 'black',
+  width: '100%',
+  p: 1
+}

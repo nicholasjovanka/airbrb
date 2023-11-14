@@ -1,26 +1,22 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Box, Grid, Card, CardActions, CardContent, CardMedia, Button, Pagination, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { apiCall, getId, capitalizeFirstLetter } from '../utils/utils';
+import { apiCall, getId, capitalizeFirstLetter, getLuxonDayDifference } from '../utils/utils';
 import { StoreContext } from '../utils/states';
 import ListingCard from './ListingCard';
 import ConfirmationModal from './ConfirmationModal';
 import DatePickerModal from './DatePickerModal';
-export const paginationStyling = {
-  display: 'flex',
-  justifyContent: 'center',
+import { basePaginationStyling } from '../utils/styles';
+
+const paginationStyling = {
+  ...basePaginationStyling,
   position: 'sticky',
   bottom: 0,
-  backgroundColor: 'white',
-  border: 1,
-  borderColor: 'black',
-  width: '100%',
-  p: 1
 }
 
-const ListingPagination = ({ listingsArray, displayPage, loggedIn }) => {
+const ListingPagination = ({ listingsArray, displayPage, dateFilterOn = false, startDate, endDate }) => {
   const navigate = useNavigate()
-  const [listings, setListings] = useState([]);
+  const [slicedListings, setSlicedListings] = useState([]); //
   const [selectedListing, setSelectedListing] = useState({
     id: '',
     index: 0,
@@ -75,10 +71,18 @@ const ListingPagination = ({ listingsArray, displayPage, loggedIn }) => {
 
   const makeListingGoLive = async (datearray) => {
     try {
+      for (let y = 0; y < datearray.length; y++) {
+        const currentStartDate = datearray[y].startDate;
+        const currentEndDate = datearray[y].endDate;
+        const dayDifference = getLuxonDayDifference(currentStartDate, currentEndDate);
+        if (dayDifference <= 0) {
+          throw new Error('Booking Start Date must be less than Booking End date')
+        }
+      }
       for (let i = 0; i < datearray.length; i++) {
         for (let z = i + 1; z < datearray.length; z++) {
           console.log(datearray[i]);
-          const startDateDifference = datearray[i].startDate.diff(datearray[z].startDate, ['days']).toObject().days
+          const startDateDifference = getLuxonDayDifference(datearray[z].startDate, datearray[i].startDate);
           const firstDateStartDateString = datearray[i].startDate.setLocale('en-gb').toLocaleString();
           const firstDateEndDateString = datearray[i].endDate.setLocale('en-gb').toLocaleString();
           const secondDateStartDateString = datearray[z].startDate.setLocale('en-gb').toLocaleString();
@@ -86,11 +90,11 @@ const ListingPagination = ({ listingsArray, displayPage, loggedIn }) => {
           if (startDateDifference === 0) {
             throw new Error(`The date ${firstDateStartDateString} - ${firstDateEndDateString} has the same start date with  ${secondDateStartDateString} - ${secondDateEndDateString} `);
           } else if (startDateDifference < 0) {
-            if (datearray[i].endDate.diff(datearray[z].startDate, ['days']).toObject().days >= 0) {
+            if (getLuxonDayDifference(datearray[z].startDate, datearray[i].endDate) >= 0) {
               throw new Error(`The date ${firstDateStartDateString} - ${firstDateEndDateString} end date must be smaller than the start date of ${secondDateStartDateString} - ${secondDateEndDateString} `);
             }
           } else if (startDateDifference > 0) {
-            if (datearray[z].endDate.diff(datearray[i].startDate, ['days']).toObject().days >= 0) {
+            if (getLuxonDayDifference(datearray[i].startDate, datearray[z].endDate) >= 0) {
               throw new Error(`The date ${secondDateStartDateString} - ${secondDateEndDateString} end date must be smaller than the start date of ${firstDateStartDateString} - ${firstDateEndDateString} `);
             }
           }
@@ -163,7 +167,7 @@ const ListingPagination = ({ listingsArray, displayPage, loggedIn }) => {
     const sliceStartIndex = (page - 1) * 12;
     const sliceEndIndex = page === paginationObj.numberOfPage ? paginationObj.listingsArray.length : (page * 12)
     const dataToDisplay = paginationObj.listingsArray.slice(sliceStartIndex, sliceEndIndex);
-    setListings(dataToDisplay);
+    setSlicedListings(dataToDisplay);
   }
 
   const onChangeButton = (e, page) => {
@@ -173,7 +177,7 @@ const ListingPagination = ({ listingsArray, displayPage, loggedIn }) => {
     <React.Fragment>
       <Box sx={{ flexGrow: 2 }}>
         <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 1, sm: 8, md: 12, lg: 12, xl: 18 }} sx={{ px: 2 }}>
-          { listings.map((obj, index) => (
+          { slicedListings.map((obj, index) => (
             <Grid item xs={1} sm={4} md={4} lg={3} xl={3} key={index} sx={{ position: 'relative' }}>
               <Card sx={{ maxWidth: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
                 <CardMedia
@@ -211,7 +215,7 @@ const ListingPagination = ({ listingsArray, displayPage, loggedIn }) => {
                   { displayPage === 'home' && (
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, width: 1 }}>
                       <Box sx={{ display: 'flex', gap: 1, justifyContent: 'end' }}>
-                        <Button variant='outlined' size="small" onClick={() => navigate(`/listing/${obj.id}`)}>View Listing Details</Button>
+                        <Button variant='outlined' size="small" onClick={() => navigate(`/listing/${obj.id}${dateFilterOn ? `?startDate=${startDate.toISODate()}&endDate=${endDate.toISODate()}` : ''}`)}>View Listing Details</Button>
                       </Box>
                     </Box>
                   )}

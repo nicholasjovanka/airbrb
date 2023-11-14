@@ -4,38 +4,43 @@ import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, D
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterLuxon } from '@mui/x-date-pickers/AdapterLuxon';
 import { LocalizationProvider } from '@mui/x-date-pickers';
+import { getLuxonDayDifference, isoDateToDDMMYYYY } from '../utils/utils';
 
-const BookingModal = ({ open, setOpen, bookFunction, availableDates = [] }) => {
+const BookingModal = ({ open, setOpen, bookFunction, availableDates = [], price }) => {
   const [selectedDateRange, setSelectedDateRange] = useState('');
   const [bookDate, setBookDate] = useState({})
-  const [minDate, setMinDate] = useState('');
-  const [maxDate, setMaxDate] = useState('');
+  const [estimatedPrice, setEstimatedPrice] = useState(0);
 
   const handleDateSelectInput = (event) => {
     setSelectedDateRange(event.target.value);
-    console.log(event.target.value.split('/')[0].trim());
     const newMinDate = DateTime.fromSQL(event.target.value.split('/')[0].trim());
     const newMaxDate = DateTime.fromSQL(event.target.value.split('/')[1].trim());
-    setMinDate(newMinDate);
-    setMaxDate(newMaxDate);
     setBookDate({
       startDate: newMinDate,
-      endDate: newMaxDate
+      endDate: newMaxDate,
+      minDate: newMinDate,
+      maxDate: newMaxDate
     })
+    setEstimatedPrice(getLuxonDayDifference(newMinDate, newMaxDate) * price)
   }
 
   useEffect(() => {
     setSelectedDateRange(`${availableDates[0].startDate}/${availableDates[0].endDate}`)
-    setMinDate(DateTime.fromSQL(availableDates[0].startDate).startOf('day'));
-    setMaxDate(DateTime.fromSQL(availableDates[0].endDate).startOf('day'))
+    const startDate = DateTime.fromSQL(availableDates[0].startDate).startOf('day')
+    const endDate = DateTime.fromSQL(availableDates[0].endDate).startOf('day')
     setBookDate({
-      startDate: DateTime.fromSQL(availableDates[0].startDate).startOf('day'),
-      endDate: DateTime.fromSQL(availableDates[0].endDate).startOf('day')
+      startDate,
+      endDate,
+      minDate: startDate,
+      maxDate: endDate
     })
+    setEstimatedPrice(getLuxonDayDifference(startDate, endDate) * price)
   }, [availableDates])
 
   const handleDatesInput = (newValue, fieldname) => {
-    setBookDate({ ...bookDate, [fieldname]: newValue });
+    const newDateObj = { ...bookDate, [fieldname]: newValue }
+    setBookDate(newDateObj);
+    setEstimatedPrice(getLuxonDayDifference(newDateObj.startDate, newDateObj.endDate) * price)
   };
 
   const handleClose = () => {
@@ -47,15 +52,15 @@ const BookingModal = ({ open, setOpen, bookFunction, availableDates = [] }) => {
       <Dialog open={open} onClose={handleClose} aria-labelledby ='booking-dialog-title' maxWidth = 'sm' fullWidth scroll = 'paper' >
         <DialogTitle id='booking-dialog-title'> Make a Booking </DialogTitle>
         <DialogContent>
-          <DialogContentText sx={{ mb: 2 }} id='label-for-available-date-range'>
+          <DialogContentText sx={{ mb: 2, color: 'black' }} id='label-for-available-date-range'>
             1. Pick one of the available date range
           </DialogContentText>
           <Select labelId='label-for-available-date-range' name='availableDateRange' id='select-rating-sort-order' label="Age" value={selectedDateRange} onChange={handleDateSelectInput} sx={{ width: 1 }} >
             { availableDates.map((obj, index) => (
-              <MenuItem key={index} value={`${obj.startDate}/${obj.endDate}`}>{`${obj.startDate} - ${obj.endDate}`}</MenuItem>
+              <MenuItem key={index} value={`${obj.startDate}/${obj.endDate}`}>{`${isoDateToDDMMYYYY(obj.startDate)} - ${isoDateToDDMMYYYY(obj.endDate)}`}</MenuItem>
             )) }
           </Select>
-          <DialogContentText sx={{ my: 2 }}>
+          <DialogContentText sx={{ my: 2, color: 'black' }}>
             2. Pick your date
           </DialogContentText>
           <LocalizationProvider dateAdapter={AdapterLuxon} adapterLocale='en-gb'>
@@ -64,14 +69,17 @@ const BookingModal = ({ open, setOpen, bookFunction, availableDates = [] }) => {
                 <Typography id={'label-for-start-date'}>
                   Booking Start Date
                 </Typography>
-                <DatePicker aria-labelledby={'label-for-start-date'} minDate={minDate} maxDate={maxDate} value={bookDate.startDate} onChange={(newValue) => { handleDatesInput(newValue, 'startDate') }} disableHighlightToday/>
+                <DatePicker aria-labelledby={'label-for-start-date'} minDate={bookDate.minDate} maxDate={bookDate.maxDate} value={bookDate.startDate} onChange={(newValue) => { handleDatesInput(newValue, 'startDate') }} disableHighlightToday/>
                 <Typography id={'label-for-end-date'}>
                   Booking End Date
                 </Typography>
-                <DatePicker aria-labelledby={'label-for-end-date'} minDate={minDate} maxDate={maxDate} value={bookDate.endDate} onChange={(newValue) => { handleDatesInput(newValue, 'endDate') }} disableHighlightToday/>
+                <DatePicker aria-labelledby={'label-for-end-date'} minDate={bookDate.minDate} maxDate={bookDate.maxDate} value={bookDate.endDate} onChange={(newValue) => { handleDatesInput(newValue, 'endDate') }} disableHighlightToday/>
               </Box>
             </Box>
           </LocalizationProvider>
+          <DialogContentText sx={{ my: 2, color: 'black' }}>
+            Estimated Price ${estimatedPrice} AUD
+          </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>

@@ -28,7 +28,7 @@ const ImageCarousel = ({ images }) => {
         }}
         >
             {
-                images.map((image, i) => <ImageCard key={i} image={image} />)
+                images.map((image, i) => <ImageCard key={i} src={image} />)
             }
         </Carousel>
   )

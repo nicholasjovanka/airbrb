@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { apiCall } from '../../utils/utils';
+import { apiCall, getLuxonDayDifference, addDurationAndDateToBookingArray } from '../../utils/utils';
 import { Typography, Container, Box } from '@mui/material';
 import { DateTime } from 'luxon';
 import { useParams } from 'react-router-dom';
@@ -22,10 +22,7 @@ const ManageBookings = () => {
         }
         const bookingsApi = await apiCall('bookings', 'GET');
         let currentListingBookings = bookingsApi.data.bookings.filter((booking) => booking.listingId === id);
-        currentListingBookings = currentListingBookings.map((booking) => {
-          const duration = DateTime.fromSQL(booking.dateRange.endDate).diff(DateTime.fromSQL(booking.dateRange.startDate), ['days']).toObject().days
-          return { ...booking, duration: `${duration} days`, date: `${booking.dateRange.startDate} - ${booking.dateRange.endDate}` }
-        })
+        currentListingBookings = addDurationAndDateToBookingArray(currentListingBookings);
         console.log(currentListingBookings);
         setBookings(currentListingBookings.reverse());
         const [amountOfDayBooked, amountOfProfit] = getAmountOfDayBookedAndProfit(currentListingBookings);
@@ -60,7 +57,7 @@ const ManageBookings = () => {
       if (endDateYear !== currentYear) {
         endDate = startDate.endOf('year').startOf('day');
       }
-      const dayDifference = endDate.diff(startDate, ['days']).toObject().days;
+      const dayDifference = getLuxonDayDifference(startDate, endDate);
       amountOfDayBooked += dayDifference;
     }
     return [amountOfDayBooked, amountOfProfit]
@@ -68,28 +65,28 @@ const ManageBookings = () => {
 
   return (
     <Container maxWidth ='md'>
-    <Box sx = {{ boxShadow: 3, my: 1, px: 2, py: 1, display: 'flex', flexDirection: 'column', gap: 2 }}>
-      <Typography variant='h4' gutterBottom sx = {{ mt: 1 }}>
-        Booking Information for {listingDetail.title}
-      </Typography>
-      <Typography variant='h5' gutterBottom sx = {{ mt: 1 }}>
-        Listing Statistics
-      </Typography>
-      <Typography variant='h6' gutterBottom sx = {{ mt: 1 }}>
-        {listingDetail.onlineDuration != null ? `Listing Has Been Up For ${Math.floor(listingDetail.onlineDuration.years)} year, ${Math.floor(listingDetail.onlineDuration.months)} month,  ${Math.floor(listingDetail.onlineDuration.days)} days , ${Math.floor(listingDetail.onlineDuration.hours)} hour` : 'Listing is currently offline '}
-      </Typography>
-      <Typography variant='h6' gutterBottom sx = {{ mt: 1 }}>
-        {`Has been booked for ${listingDetail.daysBooked} days this year`}
-      </Typography>
-      <Typography variant='h6' gutterBottom sx = {{ mt: 1, mb: 5 }}>
-        {`Has made ${listingDetail.profit} AUD this year`}
-      </Typography>
-      <Typography variant='h5' gutterBottom sx = {{ mt: 1 }}>
-        Manage Bookings
-      </Typography>
-      <BookingPagination bookingArray={bookings} setBookingArray={setBookings} />
-    </Box>
-</Container>
+      <Box sx = {{ boxShadow: 3, my: 1, px: 2, py: 1, display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <Typography variant='h4' gutterBottom sx = {{ mt: 1 }}>
+          Booking Information for {listingDetail.title}
+        </Typography>
+        <Typography variant='h5' gutterBottom sx = {{ mt: 1 }}>
+          Listing Statistics
+        </Typography>
+        <Typography variant='h6' gutterBottom sx = {{ mt: 1 }}>
+          {listingDetail.onlineDuration != null ? `Listing Has Been Up For ${Math.floor(listingDetail.onlineDuration.years)} year, ${Math.floor(listingDetail.onlineDuration.months)} month,  ${Math.floor(listingDetail.onlineDuration.days)} days , ${Math.floor(listingDetail.onlineDuration.hours)} hour` : 'Listing is currently offline '}
+        </Typography>
+        <Typography variant='h6' gutterBottom sx = {{ mt: 1 }}>
+          {`Has been booked for ${listingDetail.daysBooked} days this year`}
+        </Typography>
+        <Typography variant='h6' gutterBottom sx = {{ mt: 1, mb: 5 }}>
+          {`Has made ${listingDetail.profit} AUD this year`}
+        </Typography>
+        <Typography variant='h5' gutterBottom sx = {{ mt: 1 }}>
+          Manage Bookings
+        </Typography>
+        <BookingPagination bookingArray={bookings} setBookingArray={setBookings} viewMode={false} />
+      </Box>
+  </Container>
   )
 }
 

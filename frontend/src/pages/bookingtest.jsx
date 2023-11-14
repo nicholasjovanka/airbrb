@@ -1,9 +1,10 @@
 import React, { useState, useContext } from 'react';
 import { Box, TextField, Button } from '@mui/material';
-import { apiCall } from '../utils/utils';
+import { apiCall, getLuxonDayDifference } from '../utils/utils';
 import BookingModal from '../components/BookingModal';
 import { DateTime } from 'luxon';
 import { StoreContext } from '../utils/states';
+import ReviewPagination from '../components/ReviewPagination';
 const BookingTest = () => {
   const [id, setId] = useState([]);
   const [openBookingModal, setOpenBookingModal] = useState(false);
@@ -23,7 +24,7 @@ const BookingTest = () => {
     try {
       const currentStartDate = bookingObj.startDate;
       const currentEndDate = bookingObj.endDate;
-      const dayDifference = currentEndDate.diff(currentStartDate, ['days']).toObject().days;
+      const dayDifference = getLuxonDayDifference(currentStartDate, currentEndDate);
       if (dayDifference <= 0) {
         throw new Error('Booking Start Date must be less than Booking End date')
       }
@@ -57,7 +58,8 @@ const BookingTest = () => {
               Search
             </Button>
       </Box>
-      <BookingModal open={openBookingModal} setOpen={setOpenBookingModal} availableDates={date} bookFunction={submitBookingFunction}/>
+      <BookingModal open={openBookingModal} setOpen={setOpenBookingModal} availableDates={date} bookFunction={submitBookingFunction} price={50}/>
+      <ReviewPagination reviewArray={Array(20).fill(1)}></ReviewPagination>
     </React.Fragment>
   )
 }

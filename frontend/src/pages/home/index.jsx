@@ -1,20 +1,19 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Box, Typography, TextField, Button, Checkbox, Grid, InputLabel, InputAdornment, Select, MenuItem } from '@mui/material';
-import { apiCall } from '../../utils/utils';
+import { apiCall, getLuxonDayDifference, addAverageRatingAndNumberOfBedroomsToListing } from '../../utils/utils';
 import { DateTime } from 'luxon';
 import { StoreContext } from '../../utils/states';
 import ListingPagination from '../../components/ListingPagination';
-import CircularProgress from '@mui/material/CircularProgress';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterLuxon } from '@mui/x-date-pickers/AdapterLuxon';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 
 const Home = () => {
-  const { openModal, modalHeader, modalMessage, loggedIn } = useContext(StoreContext);
   const [listings, setListings] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [originalListings, setOriginalListings] = useState([]);
-  const [showLoadingBar, setShowLoadingBar] = useState({ display: 'none', mx: 'auto', mt: 5 });
+
+  const { openModal, modalHeader, modalMessage, loggedIn, openBackdrop } = useContext(StoreContext);
   const handleSearchInput = (event) => {
     setSearchQuery(event.target.value);
   };
@@ -36,9 +35,8 @@ const Home = () => {
   useEffect(() => {
     const getListings = async () => {
       try {
-        setShowLoadingBar({ ...showLoadingBar, display: 'flex' });
+        openBackdrop[1](true);
         const listingsApiCall = await apiCall('listings', 'GET');
-        console.log(listingsApiCall.data.listings)
         const listingsArray = listingsApiCall.data.listings.sort((a, b) => {
           if (a.title.toLowerCase() < b.title.toLowerCase()) {
             return -1;
@@ -55,30 +53,31 @@ const Home = () => {
         }
         listingWithDetails = listingWithDetails.filter((listing) => listing.availability.length > 0)
         listingWithDetails = listingWithDetails.map((listing) => {
-          let numberOfBedrooms = 0;
-          let averageRating = 0;
-          listing.metadata.bedrooms.forEach((room) => {
-            numberOfBedrooms += room.beds
-          })
-
-          listing.reviews.forEach((review) => {
-            averageRating += review.rating
-          })
-          averageRating = listing.reviews.length > 0 ? (averageRating / listing.reviews.length).toFixed(2) : null
-          return { ...listing, numberOfBedrooms, averageRating }
+          return addAverageRatingAndNumberOfBedroomsToListing(listing);
         })
         if (loggedIn[0]) {
           const userEmail = localStorage.getItem('userEmail');
           const bookings = await apiCall('bookings', 'GET');
-          console.log(bookings);
-          const bookingTiedToUser = bookings.data.bookings.filter((booking) => booking.owner === userEmail && booking.status !== 'declined');
-          const listingsWithBooking = []
+          const bookingTiedToUser = bookings.data.bookings.filter((booking) => booking.owner === userEmail && booking.status !== 'declined').sort((a, b) => {
+            if ((a.status === 'accepted' && b.status !== 'accepted') || (a.status === 'declined' && b.status !== 'pending')) {
+              return -1;
+            } else if (a.status === b.status) {
+              return 0;
+            } else {
+              return 1;
+            }
+          });
+          const listingsWithBooking = [];
+          const listingWithMultipleBooking = [];
           for (let i = 0; i < bookingTiedToUser.length; i++) {
-            const listingWithBookingIndex = listingWithDetails.map(listing => listing.id).indexOf(bookingTiedToUser[i].id);
-            const splicedListing = listingWithDetails.splice(listingWithBookingIndex, 1);
-            console.log(listingWithDetails);
-            const listingWithStatus = { ...splicedListing[0], status: bookingTiedToUser[i].status };
-            listingsWithBooking.push(listingWithStatus)
+            const bookingListingId = Number(bookingTiedToUser[i].listingId);
+            if (!listingWithMultipleBooking.includes(bookingListingId)) {
+              const listingWithBookingIndex = listingWithDetails.map(listing => listing.id).indexOf(bookingListingId);
+              const splicedListing = listingWithDetails.splice(listingWithBookingIndex, 1);
+              const listingWithStatus = { ...splicedListing[0], status: bookingTiedToUser[i].status };
+              listingsWithBooking.push(listingWithStatus)
+              listingWithMultipleBooking.push(bookingListingId);
+            }
           }
           listingWithDetails = [...listingsWithBooking, ...listingWithDetails];
         }
@@ -90,11 +89,11 @@ const Home = () => {
         modalMessage[1](errorMessage);
         openModal[1](true);
       } finally {
-        setShowLoadingBar({ ...showLoadingBar, display: 'none' });
+        openBackdrop[1](false);
       }
     }
     getListings();
-  }, [])
+  }, [loggedIn[0]])
 
   const handlExtraFilterInput = (event) => {
     const regex = /FilterOn$/i;
@@ -126,7 +125,7 @@ const Home = () => {
       }
       if (extraFilterObj.dateFilterOn) {
         filteredListings = filteredListings.filter((listing) => listing.availability.filter((availabilityDates) => {
-          return (DateTime.fromSQL(availabilityDates.startDate).diff(extraFilterObj.startDate, ['days']).toObject().days >= 0 && DateTime.fromSQL(availabilityDates.endDate).diff(extraFilterObj.endDate, ['days']).toObject().days <= 0);
+          return (getLuxonDayDifference(extraFilterObj.startDate, DateTime.fromSQL(availabilityDates.startDate)) >= 0 && getLuxonDayDifference(extraFilterObj.endDate, DateTime.fromSQL(availabilityDates.endDate)) <= 0);
         }).length > 0
         );
       }
@@ -192,8 +191,8 @@ const Home = () => {
         </Box>
         <Grid container spacing={3} sx={{ justifyContent: 'center', px: 2 }}>
           <Grid item xs={12}>
-            <Typography sx={{ mx: 3, textAlign: 'center' }}>
-              Additional Filters Below , Turn on the checkbox for each filters to turn them on
+            <Typography variant='h6' sx={{ mx: 3, textAlign: 'center' }}>
+              Additional Filters Below , Turn on the checkbox for each filters to turn them on and click Search
             </Typography>
           </Grid>
           <Grid item xs={12} xl={2} lg={3} md={5} >
@@ -316,8 +315,7 @@ const Home = () => {
             </Box>
           </Grid>
         </Grid>
-        <CircularProgress sx={showLoadingBar} size="10rem"/>
-        <ListingPagination listingsArray={listings} displayPage='home'></ListingPagination>
+        <ListingPagination listingsArray={listings} displayPage='home' dateFilterOn={extraFilterObj.dateFilterOn} startDate={extraFilterObj.startDate} endDate={extraFilterObj.endDate}></ListingPagination>
       </Box>
   )
 }
