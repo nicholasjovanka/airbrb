@@ -6,7 +6,7 @@ import { AdapterLuxon } from '@mui/x-date-pickers/AdapterLuxon';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import RemoveIcon from '@mui/icons-material/Remove';
 import AddIcon from '@mui/icons-material/Add';
-
+import ModalCloseButton from './ModalCloseButton';
 const DatePickerModal = ({ open, setOpen, goLiveFunction }) => {
   const [dates, setDates] = useState([{ startDate: DateTime.now().startOf('day'), endDate: DateTime.now().startOf('day').plus({ days: 1 }) }]);
   const handleAddDates = () => {
@@ -46,6 +46,7 @@ const DatePickerModal = ({ open, setOpen, goLiveFunction }) => {
       scroll = 'paper'
       >
         <DialogTitle id='datepicker-dialog-title'> Pick your dates</DialogTitle>
+        <ModalCloseButton handleClose={handleClose}/>
         <DialogContent>
           <DialogContentText sx={{ mb: 2 }}>
             Please enter the dates that your listing will be available for rent

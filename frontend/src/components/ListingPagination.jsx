@@ -7,7 +7,7 @@ import ListingCard from './ListingCard';
 import ConfirmationModal from './ConfirmationModal';
 import DatePickerModal from './DatePickerModal';
 import { basePaginationStyling } from '../utils/styles';
-
+import RatingModal from './RatingModal';
 const paginationStyling = {
   ...basePaginationStyling,
   position: 'sticky',
@@ -26,6 +26,8 @@ const ListingPagination = ({ listingsArray, displayPage, dateFilterOn = false, s
   const [openUnpublishConfirmationModal, setOpenUnpublishConfirmationModal] = useState(false);
   const [confirmationModalContent, setConfirmationModalContent] = useState('');
   const [openDatePickerModal, setOpenDatePickerModal] = useState(false);
+  const [openRatingModal, setOpenRatingModal] = useState(false);
+  const [ratingsModalObj, setRatingsModalObj] = useState({});
   const [paginationObj, setPaginationObj] = useState({
     numberOfPage: 1,
     listingsArray: [],
@@ -67,6 +69,18 @@ const ListingPagination = ({ listingsArray, displayPage, dateFilterOn = false, s
     });
     setConfirmationModalContent('Are you sure you want to unpublish this listing');
     setOpenUnpublishConfirmationModal(true);
+  }
+
+  const openRatingModalFunction = (listingRatingArray, listingName, ratingFilter) => {
+    const ratingsToDisplay = listingRatingArray.filter((rating) => rating.rating === ratingFilter);
+    console.log(listingRatingArray);
+    console.log(ratingsToDisplay);
+    setRatingsModalObj({
+      ratings: ratingsToDisplay,
+      ratingFilter,
+      listingName
+    })
+    setOpenRatingModal(true);
   }
 
   const makeListingGoLive = async (datearray) => {
@@ -196,7 +210,7 @@ const ListingPagination = ({ listingsArray, displayPage, dateFilterOn = false, s
                     </Typography>
                     </Box>
                 )}
-                  <ListingCard listing={obj} displayPage={displayPage}/>
+                  <ListingCard listing={obj} displayPage={displayPage} openRatingModalFunction={openRatingModalFunction}/>
                 </CardContent>
                 <CardActions sx={{ mt: 'auto' }}>
                   { displayPage === 'hostedlisting' && (
@@ -239,6 +253,7 @@ const ListingPagination = ({ listingsArray, displayPage, dateFilterOn = false, s
         setOpen={setOpenUnpublishConfirmationModal}
         confirmFunction={unpublishListing}
         />
+        <RatingModal open={openRatingModal} setOpen={setOpenRatingModal} propRatingObj={ratingsModalObj}/>
       <DatePickerModal open={openDatePickerModal} setOpen={setOpenDatePickerModal} goLiveFunction={makeListingGoLive}/>
   </React.Fragment>
   )

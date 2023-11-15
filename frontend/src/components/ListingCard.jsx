@@ -1,11 +1,12 @@
 import React from 'react';
-import { Typography, Grid, Rating, Box, Link } from '@mui/material';
+import { Typography, Grid, Rating, Box, Link, Tooltip } from '@mui/material';
 import BedIcon from '@mui/icons-material/Bed';
 import BathtubIcon from '@mui/icons-material/Bathtub';
 import { useNavigate } from 'react-router-dom';
 import { visuallyHidden } from '@mui/utils';
+import RatingTooltip from './RatingTooltip';
 
-const ListingCard = ({ listing, displayPage, children }) => {
+const ListingCard = ({ listing, displayPage, openRatingModalFunction, children }) => {
   const navigate = useNavigate()
   return (
     <Box sx={{ mx: 1 }}>
@@ -25,16 +26,20 @@ const ListingCard = ({ listing, displayPage, children }) => {
                   </Typography>
                 )
               : (
-                  <Typography gutterBottom variant="h6" component="div" sx={{ display: 'flex', alignItems: 'center' }}>
+                  <Tooltip title='Number of Bedrooms'>
+                    <Typography gutterBottom variant="h6" component="div" sx={{ display: 'flex', alignItems: 'center' }}>
                     { listing.metadata.bedrooms.length } <BedIcon sx={{ ml: 1 }}/> <Box component="span" sx={visuallyHidden}>Number of Bedroom</Box>
-                  </Typography>
+                    </Typography>
+                  </Tooltip>
                 )
           }
         </Grid>
         <Grid item xs={2}>
-          <Typography gutterBottom variant="h6" component="div" sx={{ display: 'flex', alignItems: 'center' }}>
-            {listing.metadata.bathrooms} <BathtubIcon sx={{ ml: 1 }}/> <Box component="span" sx={visuallyHidden}>Number of Bathrooms</Box>
-          </Typography>
+          <Tooltip title='Number of Bathrooms'>
+            <Typography gutterBottom variant="h6" component="div" sx={{ display: 'flex', alignItems: 'center' }}>
+              {listing.metadata.bathrooms} <BathtubIcon sx={{ ml: 1 }}/> <Box component="span" sx={visuallyHidden}>Number of Bathrooms</Box>
+            </Typography>
+          </Tooltip>
         </Grid>
         <Grid item>
           <Typography gutterBottom variant="h6" component="div" align='right'>
@@ -43,12 +48,16 @@ const ListingCard = ({ listing, displayPage, children }) => {
         </Grid>
       </Grid>
       <Typography gutterBottom variant="h6" component="div">
-        Address: {listing.address}
+        {`${listing.address.street}, ${listing.address.city}, ${listing.address.state}  ${listing.address.postcode}, ${listing.address.country}`}
       </Typography>
       <Box sx={{ mb: 2, display: 'flex', flexDirection: 'row', gap: 1, justifyContent: 'space-between' }}>
         <Box>
-            <Typography component="legend">Average Rating</Typography>
-            <Rating name="simple-controlled" value={listing.averageRating !== null ? Number(listing.averageRating) : null } readOnly/>
+            <RatingTooltip passedListing={listing} openRatingModalFunction={openRatingModalFunction}>
+              <Box>
+                <Typography component="legend">Average Rating</Typography>
+                <Rating name="simple-controlled" value={listing.averageRating !== null ? Number(listing.averageRating) : null } readOnly/>
+              </Box>
+            </RatingTooltip>
         </Box>
         <Typography gutterBottom variant="h6" component="div" align='left'>
           {listing.reviews.length > 0 ? listing.reviews.length : 'No' } Reviews

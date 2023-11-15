@@ -55,7 +55,7 @@ const Home = () => {
         listingWithDetails = listingWithDetails.map((listing) => {
           return addAverageRatingAndNumberOfBedroomsToListing(listing);
         })
-        if (loggedIn[0]) {
+        if (loggedIn[0] === true) {
           const userEmail = localStorage.getItem('userEmail');
           const bookings = await apiCall('bookings', 'GET');
           const bookingTiedToUser = bookings.data.bookings.filter((booking) => booking.owner === userEmail && booking.status !== 'declined').sort((a, b) => {
@@ -111,7 +111,7 @@ const Home = () => {
   const searchFilter = () => {
     try {
       const regex = new RegExp(`${searchQuery}`, 'i');
-      let filteredListings = originalListings.filter((listing) => regex.test(listing.title) || regex.test(listing.address));
+      let filteredListings = originalListings.filter((listing) => regex.test(listing.title) || regex.test(listing.address.street) || regex.test(listing.address.city) || regex.test(listing.address.state) || regex.test(listing.address.postcode) || regex.test(listing.address.country));
       if (extraFilterObj.bedroomFilterOn) {
         const minNumberOfBedroom = Number(extraFilterObj.minBedroom);
         const maxNumberOfBedroom = Number(extraFilterObj.maxBedroom);

@@ -31,10 +31,16 @@ const EditListing = () => {
       formObject = { ...formObject, price: Number(formObject.price), bathrooms: Number(formObject.bathrooms) };
       bedroomArray = bedroomArray.map((e) => { return { type: e.type, beds: Number(e.beds) } });
       listingObjectValidator(formObject, bedroomArray, amenities);
-      const { title, address, price, thumbnail, ...metadata } = formObject
+      const { title, street, city, state, postcode, country, price, thumbnail, ...metadata } = formObject
       const requestObject = {
         title,
-        address,
+        address: {
+          street,
+          city,
+          state,
+          postcode,
+          country
+        },
         price,
         thumbnail,
         metadata: {

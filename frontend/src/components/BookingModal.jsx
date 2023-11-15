@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { DateTime } from 'luxon';
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Typography, Select, MenuItem } from '@mui/material';
+import { Box, Button, DialogActions, DialogContent, DialogContentText, DialogTitle, Typography, Select, MenuItem } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterLuxon } from '@mui/x-date-pickers/AdapterLuxon';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { getLuxonDayDifference, isoDateToDDMMYYYY } from '../utils/utils';
+import { BootstrapDialog } from '../utils/styles';
+import ModalCloseButton from './ModalCloseButton';
 
 const BookingModal = ({ open, setOpen, bookFunction, availableDates = [], price }) => {
   const [selectedDateRange, setSelectedDateRange] = useState('');
@@ -49,8 +51,9 @@ const BookingModal = ({ open, setOpen, bookFunction, availableDates = [], price 
 
   return (
     <React.Fragment>
-      <Dialog open={open} onClose={handleClose} aria-labelledby ='booking-dialog-title' maxWidth = 'sm' fullWidth scroll = 'paper' >
+      <BootstrapDialog open={open} onClose={handleClose} aria-labelledby ='booking-dialog-title' maxWidth = 'sm' fullWidth scroll = 'paper' >
         <DialogTitle id='booking-dialog-title'> Make a Booking </DialogTitle>
+        <ModalCloseButton handleClose={handleClose}/>
         <DialogContent>
           <DialogContentText sx={{ mb: 2, color: 'black' }} id='label-for-available-date-range'>
             1. Pick one of the available date range
@@ -85,7 +88,7 @@ const BookingModal = ({ open, setOpen, bookFunction, availableDates = [], price 
           <Button onClick={handleClose}>Cancel</Button>
           <Button onClick={() => bookFunction(bookDate) }>Book Now</Button>
         </DialogActions>
-      </Dialog>
+      </BootstrapDialog>
     </React.Fragment>
   );
 }

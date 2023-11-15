@@ -64,12 +64,16 @@ export const capitalizeFirstLetter = (string) => { // https://stackoverflow.com/
 }
 
 export const listingObjectValidator = (formObject, bedroomArray, amenities) => {
-  const nonEmptyTextFields = ['title', 'type', 'price', 'address', 'thumbnail']
+  const nonEmptyTextFields = ['title', 'type', 'price', 'street', 'city', 'state', 'postcode', 'country', 'thumbnail']
   console.log(formObject);
   for (const textFields of nonEmptyTextFields) {
     if (formObject[textFields] === '' || formObject[textFields] === null) {
       throw new Error(`${textFields} cannot be empty`)
     }
+  }
+  const postCodeRegex = /^\d{4}$/
+  if (!postCodeRegex.test(formObject.postcode)) {
+    throw new Error('Invalid Postcode Format');
   }
   if (formObject.files.length < 1) {
     throw new Error('You must atleast upload 1 property image')

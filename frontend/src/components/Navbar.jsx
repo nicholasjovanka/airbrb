@@ -37,10 +37,6 @@ const Navbar = () => {
     setAnchorElUser(null);
   };
 
-  useEffect(() => {
-    loggedIn[1](true);
-  }, [])
-
   const handleNavigation = (pageName) => {
     const userEmail = localStorage.getItem('userEmail');
     let navigationRoute = '';

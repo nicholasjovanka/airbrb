@@ -30,7 +30,11 @@ const ListingForm = ({ mode, buttonSubmitFunction, existingListingObject }) => {
       title: '',
       type: 'Home',
       price: 0,
-      address: '',
+      street: '',
+      city: '',
+      state: '',
+      postcode: '',
+      country: '',
       bathrooms: 0,
       thumbnail: '',
       url: '',
@@ -52,7 +56,11 @@ const ListingForm = ({ mode, buttonSubmitFunction, existingListingObject }) => {
         title: existingListingObject.title,
         type: existingListingObject.metadata.type,
         price: existingListingObject.price,
-        address: existingListingObject.address,
+        street: existingListingObject.address.street,
+        city: existingListingObject.address.city,
+        state: existingListingObject.address.state,
+        postcode: existingListingObject.address.postcode,
+        country: existingListingObject.address.country,
         bathrooms: Number(existingListingObject.metadata.bathrooms),
         thumbnail: existingListingObject.thumbnail,
         url: existingListingObject.metadata.url,
@@ -160,7 +168,7 @@ const ListingForm = ({ mode, buttonSubmitFunction, existingListingObject }) => {
           {mode} Listing
         </Typography>
         <Grid container spacing={3}>
-          <Grid item xs={12}>
+          <Grid item xs={12} sm={6}>
             <TextField
               required
               id='title'
@@ -249,15 +257,63 @@ const ListingForm = ({ mode, buttonSubmitFunction, existingListingObject }) => {
               }
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} sm={6}>
             <TextField
-              id='address'
-              name='address'
+              id='street'
+              name='street'
               required
-              label='Property Address'
+              label='Street'
               fullWidth
               variant='standard'
-              value={formFields.address}
+              value={formFields.street}
+              onChange={handleBasicInput}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              id='city'
+              name='city'
+              required
+              label='City'
+              fullWidth
+              variant='standard'
+              value={formFields.city}
+              onChange={handleBasicInput}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              id='state'
+              name='state'
+              required
+              label='State'
+              fullWidth
+              variant='standard'
+              value={formFields.state}
+              onChange={handleBasicInput}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              id='postcode'
+              name='postcode'
+              required
+              label='Postcode'
+              fullWidth
+              variant='standard'
+              value={formFields.postcode}
+              onChange={handleBasicInput}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              id='country'
+              name='country'
+              required
+              label='Country'
+              fullWidth
+              variant='standard'
+              value={formFields.country}
               onChange={handleBasicInput}
             />
           </Grid>

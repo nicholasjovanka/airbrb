@@ -12,7 +12,7 @@ import BedIcon from '@mui/icons-material/Bed';
 import BookingPagination from '../../components/BookingPagination';
 import BookingModal from '../../components/BookingModal';
 import ImageCarousel from '../../components/ImageCarousel';
-import ReviewPagination from '../../components/ReviewPagination';
+import RatingPagination from '../../components/RatingPagination';
 
 const Listing = () => {
   const { id } = useParams();
@@ -189,7 +189,11 @@ const Listing = () => {
             )}
           </Grid>
           <Grid item xs={12} md={6} sx={{ display: 'flex', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
-            <Typography variant='h6'>Address: {listing.address}</Typography>
+            <Typography variant='h6'>Street: {listing.address.street}</Typography>
+            <Typography variant='h6'>City: {listing.address.city}</Typography>
+            <Typography variant='h6'>State: {listing.address.state}</Typography>
+            <Typography variant='h6'>Postcode: {listing.address.postcode}</Typography>
+            <Typography variant='h6'>Country: {listing.address.country}</Typography>
             <Typography variant='h6'>{duration !== null ? `Only $${duration * listing.price} AUD per stay ` : `Only $${listing.price} AUD per night`}</Typography>
             <Box>
               <Typography variant='h6'>Average Rating:</Typography>
@@ -277,7 +281,7 @@ const Listing = () => {
               <MenuItem value={2}>2 Star</MenuItem>
               <MenuItem value={1}>1 Star</MenuItem>
             </Select>
-            <ReviewPagination reviewArray={reviews}></ReviewPagination>
+            <RatingPagination ratingArray={reviews}></RatingPagination>
           </Grid>
         </Grid>
       </Container>

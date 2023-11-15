@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { Button, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
-import IconButton from '@mui/material/IconButton';
-import CloseIcon from '@mui/icons-material/Close';
 import { BootstrapDialog } from '../utils/styles';
+import ModalCloseButton from './ModalCloseButton';
 
 const ConfirmationModal = ({ content, confirmFunction, open, setOpen, width = 'sm', fullWidth = true }) => {
   const handleClose = () => {
@@ -23,18 +22,7 @@ const ConfirmationModal = ({ content, confirmFunction, open, setOpen, width = 's
         <DialogTitle sx={{ m: 0, p: 2 }} id='customized-dialog-title'>
           Confirmation
         </DialogTitle>
-        <IconButton
-          aria-label='close'
-          onClick={handleClose}
-          sx={{
-            position: 'absolute',
-            right: 8,
-            top: 8,
-            color: (theme) => theme.palette.grey[500],
-          }}
-        >
-          <CloseIcon />
-        </IconButton>
+        <ModalCloseButton handleClose={handleClose}/>
         <DialogContent>
           <DialogContentText id='confirmation-dialog-description'>
             {content}
@@ -44,7 +32,7 @@ const ConfirmationModal = ({ content, confirmFunction, open, setOpen, width = 's
           <Button autoFocus onClick={handleClose}>
             Close
           </Button>
-          <Button onClick={confirmFunction}>
+          <Button color='warning' onClick={confirmFunction}>
             Confirm
           </Button>
         </DialogActions>
