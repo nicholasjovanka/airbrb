@@ -2,7 +2,6 @@ import React, { useContext } from 'react';
 import { Route, Routes, Navigate } from 'react-router-dom'
 import CssBaseline from '@mui/material/CssBaseline';
 import HostedListing from './pages/hosted-listing';
-import CreateListing from './pages/hosted-listing/CreateListing';
 import Home from './pages/home';
 import EditListing from './pages/hosted-listing/EditListing';
 import NotFound from './pages/not-found';
@@ -38,7 +37,6 @@ function App () {
               </Route>
               <Route path='/hostedlisting'>
                 <Route path=':email' element={<HostedListing/>} />
-                <Route path='createlisting' element={<CreateListing/>} />
                 <Route path='editlisting/:id' element={<EditListing/>} />
                 <Route path='managebookings/:id' element={<ManageBookings/>} />
               </Route>

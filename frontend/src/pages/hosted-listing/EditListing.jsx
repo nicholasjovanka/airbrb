@@ -1,10 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import ListingForm from '../../components/ListingForm';
 import { apiCall, listingObjectValidator } from '../../utils/utils';
 import { StoreContext } from '../../utils/states';
 
 const EditListing = () => {
+  const navigate = useNavigate()
   const { openModal, modalHeader, modalMessage, openBackdrop } = useContext(StoreContext);
   const { id } = useParams();
   const [listingObj, setListingObj] = useState({});
@@ -55,6 +56,11 @@ const EditListing = () => {
       modalHeader[1]('Success');
       modalMessage[1]('Sucessfully Edited Listing');
       openModal[1](true);
+      setTimeout(() => {
+        openModal[1](false);
+        const userEmail = localStorage.getItem('userEmail');
+        navigate(`/hostedlisting/${userEmail}`)
+      }, 1000)
     } catch (error) {
       modalHeader[1]('Error');
       const errorMessage = error.response ? error.response.data.error : error.message;

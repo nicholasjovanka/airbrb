@@ -21,7 +21,7 @@ const ListingPagination = ({ listingsArray, displayPage, dateFilterOn = false, s
     id: '',
     index: 0,
   });
-  const { openModal, modalHeader, modalMessage } = useContext(StoreContext);
+  const { openModal, modalHeader, modalMessage, openBackdrop } = useContext(StoreContext);
   const [openDeleteConfirmationModal, setOpenDeleteConfirmationModal] = useState(false);
   const [openUnpublishConfirmationModal, setOpenUnpublishConfirmationModal] = useState(false);
   const [confirmationModalContent, setConfirmationModalContent] = useState('');
@@ -35,9 +35,9 @@ const ListingPagination = ({ listingsArray, displayPage, dateFilterOn = false, s
   })
   useEffect(() => {
     setPaginationObj({
+      ...paginationObj,
       numberOfPage: Math.ceil(listingsArray.length / 12),
-      listingsArray,
-      currentPage: 1
+      listingsArray
     })
   }, [listingsArray])
 
@@ -184,6 +184,10 @@ const ListingPagination = ({ listingsArray, displayPage, dateFilterOn = false, s
     setSlicedListings(dataToDisplay);
   }
 
+  const navigateToListing = (id) => {
+    navigate(`/listing/${id}${dateFilterOn ? `?startDate=${startDate.toISODate()}&endDate=${endDate.toISODate()}` : ''}`)
+  }
+
   const onChangeButton = (e, page) => {
     setPaginationObj({ ...paginationObj, currentPage: page })
   }
@@ -191,7 +195,11 @@ const ListingPagination = ({ listingsArray, displayPage, dateFilterOn = false, s
     <React.Fragment>
       <Box sx={{ flexGrow: 2 }}>
         <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 1, sm: 8, md: 12, lg: 12, xl: 18 }} sx={{ px: 2 }}>
-          { slicedListings.map((obj, index) => (
+          { (slicedListings.length === 0 && !openBackdrop[0]) && (
+          <Typography sx={{ mx: 'auto', my: 3 }} textAlign='center' variant='h1'>
+            No Listings Found
+          </Typography>)}
+          { slicedListings.length > 0 && slicedListings.map((obj, index) => (
             <Grid item xs={1} sm={4} md={4} lg={3} xl={3} key={index} sx={{ position: 'relative' }}>
               <Card sx={{ maxWidth: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
                 <CardMedia
@@ -210,7 +218,7 @@ const ListingPagination = ({ listingsArray, displayPage, dateFilterOn = false, s
                     </Typography>
                     </Box>
                 )}
-                  <ListingCard listing={obj} displayPage={displayPage} openRatingModalFunction={openRatingModalFunction}/>
+                  <ListingCard listing={obj} displayPage={displayPage} openRatingModalFunction={openRatingModalFunction} navigateToListing={() => { navigateToListing(obj.id) }}/>
                 </CardContent>
                 <CardActions sx={{ mt: 'auto' }}>
                   { displayPage === 'hostedlisting' && (
@@ -229,7 +237,7 @@ const ListingPagination = ({ listingsArray, displayPage, dateFilterOn = false, s
                   { displayPage === 'home' && (
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, width: 1 }}>
                       <Box sx={{ display: 'flex', gap: 1, justifyContent: 'end' }}>
-                        <Button variant='outlined' size="small" onClick={() => navigate(`/listing/${obj.id}${dateFilterOn ? `?startDate=${startDate.toISODate()}&endDate=${endDate.toISODate()}` : ''}`)}>View Listing Details</Button>
+                        <Button variant='outlined' size="small" onClick={() => navigateToListing(obj.id)}>View Listing Details</Button>
                       </Box>
                     </Box>
                   )}

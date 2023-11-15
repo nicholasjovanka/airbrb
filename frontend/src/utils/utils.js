@@ -68,7 +68,7 @@ export const listingObjectValidator = (formObject, bedroomArray, amenities) => {
   console.log(formObject);
   for (const textFields of nonEmptyTextFields) {
     if (formObject[textFields] === '' || formObject[textFields] === null) {
-      throw new Error(`${textFields} cannot be empty`)
+      throw new Error(`${capitalizeFirstLetter(textFields)} cannot be empty`)
     }
   }
   const postCodeRegex = /^\d{4}$/

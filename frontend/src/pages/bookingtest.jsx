@@ -4,7 +4,7 @@ import { apiCall, getLuxonDayDifference } from '../utils/utils';
 import BookingModal from '../components/BookingModal';
 import { DateTime } from 'luxon';
 import { StoreContext } from '../utils/states';
-import RatingPagination from '../components/RatingPagination';
+import ProfitBar from '../components/ProfitBar';
 const BookingTest = () => {
   const [id, setId] = useState([]);
   const [openBookingModal, setOpenBookingModal] = useState(false);
@@ -59,7 +59,7 @@ const BookingTest = () => {
             </Button>
       </Box>
       <BookingModal open={openBookingModal} setOpen={setOpenBookingModal} availableDates={date} bookFunction={submitBookingFunction} price={50}/>
-      <RatingPagination ratingArray={Array(20).fill(1)}></RatingPagination>
+      <ProfitBar></ProfitBar>
     </React.Fragment>
   )
 }

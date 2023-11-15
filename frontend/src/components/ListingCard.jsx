@@ -2,15 +2,13 @@ import React from 'react';
 import { Typography, Grid, Rating, Box, Link, Tooltip } from '@mui/material';
 import BedIcon from '@mui/icons-material/Bed';
 import BathtubIcon from '@mui/icons-material/Bathtub';
-import { useNavigate } from 'react-router-dom';
 import { visuallyHidden } from '@mui/utils';
 import RatingTooltip from './RatingTooltip';
 
-const ListingCard = ({ listing, displayPage, openRatingModalFunction, children }) => {
-  const navigate = useNavigate()
+const ListingCard = ({ listing, displayPage, openRatingModalFunction, navigateToListing, children }) => {
   return (
     <Box sx={{ mx: 1 }}>
-      <Link component="button" variant="h5" onClick={() => navigate(`/listing/${listing.id}`)}>
+      <Link component="button" variant="h5" onClick={() => navigateToListing()}>
         {listing.title}
       </Link>
       <Typography gutterBottom variant="h6" component="div">

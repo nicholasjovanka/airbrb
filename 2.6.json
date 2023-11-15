@@ -1,0 +1,26 @@
+{
+  "title": "Dust2",
+  "address": {
+    "street": "20 Berry Mountain Street Drive",
+    "city": "Sydney",
+    "state": "NSW",
+    "postcode": "2033",
+    "country": "Australia"
+  },
+  "price": 200,
+  "bedrooms": [
+    {
+      "type": "Private",
+      "beds": 1
+    },
+    {
+      "type": "Private",
+      "beds": 1
+    }
+  ],
+  "amenities": [
+    "Gym"
+  ],
+  "type": "Private",
+  "bathrooms": 20
+}

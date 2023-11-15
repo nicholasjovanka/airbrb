@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect, useContext } from 'react';
-import { styled } from '@mui/material/styles';
 import { Grid, Typography, TextField, Container, Box, IconButton, Button } from '@mui/material';
 import RemoveIcon from '@mui/icons-material/Remove';
 import AddIcon from '@mui/icons-material/Add';
@@ -12,17 +11,7 @@ import { StoreContext } from '../utils/states';
 import { fileToDataUrl } from '../utils/utils';
 import ImageCarousel from './ImageCarousel';
 import ImageCard from './ImageCard';
-const VisuallyHiddenInput = styled('input')({
-  clip: 'rect(0 0 0 0)',
-  clipPath: 'inset(50%)',
-  height: 1,
-  overflow: 'hidden',
-  position: 'absolute',
-  bottom: 0,
-  left: 0,
-  whiteSpace: 'nowrap',
-  width: 1,
-});
+import { VisuallyHiddenInput } from '../utils/styles';
 
 const ListingForm = ({ mode, buttonSubmitFunction, existingListingObject }) => {
   const [formFields, setFormFields] = useState(
@@ -76,9 +65,7 @@ const ListingForm = ({ mode, buttonSubmitFunction, existingListingObject }) => {
   }
 
   useEffect(() => {
-    if (mode === 'Edit') {
-      resetForm();
-    }
+    resetForm();
   }, [existingListingObject])
 
   const handleAddAmenities = () => {

@@ -124,6 +124,9 @@ const Home = () => {
         filteredListings = filteredListings.filter((listing) => listing.metadata.bedrooms.length <= maxNumberOfBedroom && listing.metadata.bedrooms.length >= minNumberOfBedroom);
       }
       if (extraFilterObj.dateFilterOn) {
+        if (getLuxonDayDifference(extraFilterObj.startDate, extraFilterObj.endDate) <= 0) {
+          throw new Error('Filter Start Date must be smaller than End Date');
+        }
         filteredListings = filteredListings.filter((listing) => listing.availability.filter((availabilityDates) => {
           return (getLuxonDayDifference(extraFilterObj.startDate, DateTime.fromSQL(availabilityDates.startDate)) >= 0 && getLuxonDayDifference(extraFilterObj.endDate, DateTime.fromSQL(availabilityDates.endDate)) <= 0);
         }).length > 0

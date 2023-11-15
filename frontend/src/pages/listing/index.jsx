@@ -189,11 +189,10 @@ const Listing = () => {
             )}
           </Grid>
           <Grid item xs={12} md={6} sx={{ display: 'flex', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
-            <Typography variant='h6'>Street: {listing.address.street}</Typography>
-            <Typography variant='h6'>City: {listing.address.city}</Typography>
-            <Typography variant='h6'>State: {listing.address.state}</Typography>
-            <Typography variant='h6'>Postcode: {listing.address.postcode}</Typography>
-            <Typography variant='h6'>Country: {listing.address.country}</Typography>
+            <Box>
+              <Typography variant='h6'>Address: </Typography>
+              <Typography variant='h6'>{`${listing.address.street}, ${listing.address.city}, ${listing.address.state}  ${listing.address.postcode}, ${listing.address.country}`}</Typography>
+            </Box>
             <Typography variant='h6'>{duration !== null ? `Only $${duration * listing.price} AUD per stay ` : `Only $${listing.price} AUD per night`}</Typography>
             <Box>
               <Typography variant='h6'>Average Rating:</Typography>
