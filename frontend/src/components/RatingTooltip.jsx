@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Rating, Box, Tooltip, tooltipClasses, styled, Typography, LinearProgress, linearProgressClasses, Link } from '@mui/material';
+// Custom Styling for Material UI Tooltip component
 const CustomWidthTooltip = styled(({ className, ...props }) => (
   <Tooltip {...props} classes={{ popper: className }} />))({
   [`& .${tooltipClasses.tooltip}`]: {
@@ -10,6 +11,7 @@ const CustomWidthTooltip = styled(({ className, ...props }) => (
   },
 });
 
+// Custom Styling for Material UI BorderLinearProgress Component
 const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
   [`&.${linearProgressClasses.colorPrimary}`]: {
     backgroundColor: '#FFF6E0',
@@ -20,15 +22,28 @@ const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
   },
 }));
 
+/*
+Component that shows a Tooltip which contains the Overall Rating and the amount of rating for each rating category of a specific listing
+
+Props Explanation;
+- passedListing: The listing object that contains the reviews that want to be shown by the component
+- openRatingModalFunction: Function that is used to open the RatingModal component which is embedded inside this component. Will be received from the LisitngPagination component
+*/
 const RatingTooltip = ({ passedListing, openRatingModalFunction, children }) => {
   const [listing, setListing] = useState(null);
   const [ratingsSummary, setRatingsSummary] = useState([]);
 
+  /*
+  useEffect to detect changes to the passedListing prop which in turn will re-render the rating information displayed by the component,
+  */
   useEffect(() => {
     setRatingsSummary([]);
     setListing(passedListing);
   }, [passedListing])
 
+  /*
+  useEffect that gets the rating summary for each rating category when the listing state object is updated and the listing object actually contain reviews.
+  */
   useEffect(() => {
     if (listing !== null && listing.reviews.length > 0) {
       let ratingArray = [

@@ -18,6 +18,14 @@ import LoadingBackdrop from './components/LoadingBackdrop';
 const Offset = styled('div')(({ theme }) => theme.mixins.toolbar);
 
 function App () {
+  /*
+  Call the objects containing state variables inside the StoreContext and assign them where:
+  1. The openModal, modalHeader, and modalMessage object is tied to the MessageModal component so that other components can open and change the content of the message modal using
+  the state objects provided by the context
+  2. The openBackdrop object is tied to the LoadingBackdrop component so that other components can show a loading bar by changing the state using context
+
+  For more details see the comment in the states.js in the utils folder
+  */
   const { openModal, modalHeader, modalMessage, openBackdrop } = useContext(StoreContext);
   return (
     <React.Fragment>

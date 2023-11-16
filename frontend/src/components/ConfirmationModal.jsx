@@ -10,7 +10,7 @@ after the user click the confirmation button is dictated by the confirmFunction 
 Props Explanation
 - content = The message that should be displayed by the confirmation modal
 - confirmFunction = function that is passed a prop which will dictate the logic that happens after the confirm button in the modal is clicked
-- open: boolean state variable passed from the parent that dictates when to open the booking dialog
+- open: boolean state variable passed from the parent that dictates when to open the confirmation modal
 - setOpen: The state set function for the 'open' boolean state that allows the modal to close when the close button is clicked
 - width: width of the modal
 - fullWidth: boolean that dictates if the modal should be displayed in fullwidth

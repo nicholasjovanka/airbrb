@@ -8,12 +8,23 @@ import ConfirmationModal from './ConfirmationModal';
 import DatePickerModal from './DatePickerModal';
 import { basePaginationStyling } from '../utils/styles';
 import RatingModal from './RatingModal';
-const paginationStyling = {
+const paginationStyling = { // Modify the pagination styling to make the pagination pane sticky to the bottom of the screen for better User Experience
   ...basePaginationStyling,
   position: 'sticky',
   bottom: 0,
 }
 
+/*
+Component that is used in the hosted listing page and home page that allows the user to paginate the listings passed in the listingsArray
+
+Props Explanation
+- listingsArray: Array containing listings object which will be rendered and paginated by the component
+- displayPage: Text that tells where the page that the component is currently being displayed which will be passed on the the ListingCardContent component for conditional rendering
+in the ListingCard component
+- dateFilterOn : Boolean use specifically for the home page that tells the component if the user is currently using a date filter
+- startDate: The start date that is selected in the date filter of the parent component or in this case the home page
+- endDate: The end date that is selected in the date filter of the parent component or in this case the home page
+*/
 const ListingPagination = ({ listingsArray, displayPage, dateFilterOn = false, startDate, endDate }) => {
   const navigate = useNavigate()
   const [slicedListings, setSlicedListings] = useState([]); //
@@ -33,6 +44,11 @@ const ListingPagination = ({ listingsArray, displayPage, dateFilterOn = false, s
     listingsArray: [],
     currentPage: 1
   })
+
+  /*
+  Use Effect so that if the listingArray that is passed by the parent component updates, then update the pagination object to triggered a rerender so
+  that the listing shown in the page is changed.
+  */
   useEffect(() => {
     setPaginationObj({
       ...paginationObj,
@@ -41,10 +57,17 @@ const ListingPagination = ({ listingsArray, displayPage, dateFilterOn = false, s
     })
   }, [listingsArray])
 
+  /*
+  Use Effect so that the listing that is displayed change when the paginationObject change. In this case this useEffect
+  will trigger when the user change page.
+  */
   useEffect(() => {
     getPages(paginationObj.currentPage);
   }, [paginationObj])
 
+  /*
+  Function to open the Delete Modal which is used to delete a listing in the hosted listing page.
+  */
   const openDeleteModal = (id, index) => {
     setSelectedListing({
       id,
@@ -54,6 +77,9 @@ const ListingPagination = ({ listingsArray, displayPage, dateFilterOn = false, s
     setOpenDeleteConfirmationModal(true);
   }
 
+  /*
+  Function to open the Publish Modal to allow the user in the hosted listing page to Publish their listing (make the listing go live)
+  */
   const openPublishModal = (id, index) => {
     setSelectedListing({
       id,
@@ -62,6 +88,9 @@ const ListingPagination = ({ listingsArray, displayPage, dateFilterOn = false, s
     setOpenDatePickerModal(true)
   }
 
+  /*
+  Function to open the Unpublish Modal to allow the user in the hosted listing page to Unpublish their listing
+  */
   const openUnpublishModal = (id, index) => {
     setSelectedListing({
       id,
@@ -71,6 +100,10 @@ const ListingPagination = ({ listingsArray, displayPage, dateFilterOn = false, s
     setOpenUnpublishConfirmationModal(true);
   }
 
+  /*
+  Function to that open the Rating Modal that shows pagination for all rating which is passed through the ratings value inside the ratingModalObj state variable.
+  Additionaly, the ratingFilter here dictates the filter that was used for the rating (The filter here is the amount of star the rating have so either 1, 2, 3 ,4 ,5)
+  */
   const openRatingModalFunction = (listingRatingArray, listingName, ratingFilter) => {
     const ratingsToDisplay = listingRatingArray.filter((rating) => rating.rating === ratingFilter);
     setRatingsModalObj({
@@ -81,9 +114,17 @@ const ListingPagination = ({ listingsArray, displayPage, dateFilterOn = false, s
     setOpenRatingModal(true);
   }
 
+  /*
+  Function that make a listing that is selected in the selectedListing state variable to go live.
+  This function will be passed onto the DatePicker modal
+  */
   const makeListingGoLive = async (datearray) => {
     try {
       for (let y = 0; y < datearray.length; y++) {
+        /*
+        Check if the start date and end date in the availability dates received from the DatePicker modal
+        is illegal (as in the start date is bigger than the start date)
+        */
         const currentStartDate = datearray[y].startDate;
         const currentEndDate = datearray[y].endDate;
         const dayDifference = getLuxonDayDifference(currentStartDate, currentEndDate);
@@ -91,6 +132,11 @@ const ListingPagination = ({ listingsArray, displayPage, dateFilterOn = false, s
           throw new Error('Booking Start Date must be less than Booking End date')
         }
       }
+      /*
+      Check if the dates in the availability dates clashes which each other,
+      for example, one availability date starts at 1-11-2020 till 10-11-2020 while another date is 1-11-2020 to 5-11-2020 Then its
+      an illegal date
+      */
       for (let i = 0; i < datearray.length; i++) {
         for (let z = i + 1; z < datearray.length; z++) {
           const startDateDifference = getLuxonDayDifference(datearray[z].startDate, datearray[i].startDate);
@@ -132,6 +178,10 @@ const ListingPagination = ({ listingsArray, displayPage, dateFilterOn = false, s
     }
   }
 
+  /*
+  Function that make a listing that is selected in the selectedListing state variable to be unpublished
+  Function will be passed as a prop to the second confirmation modal inside the component
+  */
   const unpublishListing = async () => {
     try {
       setOpenUnpublishConfirmationModal(false);
@@ -150,6 +200,10 @@ const ListingPagination = ({ listingsArray, displayPage, dateFilterOn = false, s
     }
   }
 
+  /*
+  Function that is used to delete the listing that is selected in the selectedListing state variable
+  Function will be passed as a prop to the second confirmation modal inside the component
+  */
   const deleteListing = async () => {
     try {
       await apiCall(`listings/${selectedListing.id}`, 'DELETE');
@@ -174,6 +228,10 @@ const ListingPagination = ({ listingsArray, displayPage, dateFilterOn = false, s
     }
   }
 
+  /*
+  Function used for pagination that will slice the listingsArray inside the pagination object. Will be triggered
+  when the user move pages or the array passed in the prop changes
+  */
   const getPages = (page) => {
     const sliceStartIndex = (page - 1) * 12;
     const sliceEndIndex = page === paginationObj.numberOfPage ? paginationObj.listingsArray.length : (page * 12)
@@ -181,10 +239,17 @@ const ListingPagination = ({ listingsArray, displayPage, dateFilterOn = false, s
     setSlicedListings(dataToDisplay);
   }
 
+  /*
+  Function used to navigate the user to a specific listing page. The dateFilterOn state object is used to know if the parent component or in this case the date filter in the home page
+  component is on, if it is then add the startDate and endDate used as a filter to the query string of the url so that the listing page know to display price per stay instead of price per night
+  */
   const navigateToListing = (id) => {
     navigate(`/listing/${id}${dateFilterOn ? `?startDate=${startDate.toISODate()}&endDate=${endDate.toISODate()}` : ''}`)
   }
 
+  /*
+  Function used to update the paginationObject currentPage value to the new page that the user has visited
+  */
   const onChangeButton = (e, page) => {
     setPaginationObj({ ...paginationObj, currentPage: page })
   }

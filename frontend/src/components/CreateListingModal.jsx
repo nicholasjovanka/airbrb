@@ -11,7 +11,7 @@ import { capitalizeFirstLetter } from '../utils/utils';
 Modal used for Creating a listing which is shown in the hostedlisting page that allows a user to create a new listing.
 
 Props Explanation
-- open: boolean state variable passed from the parent that dictates when to open the booking dialog
+- open: boolean state variable passed from the parent that dictates when to open the Create Listing modal
 - setOpen: The state set function for the 'open' boolean state that allows the modal to close when the close button is clicked
 - createListingFunction: Function passed as prop that will dictate the Create Listing Logic which will be further passed to the ListingForm component
 */

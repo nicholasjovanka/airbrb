@@ -2,6 +2,9 @@ import axios from 'axios'
 import { BACKEND_PORT } from '../config.js';
 import { DateTime } from 'luxon';
 
+/*
+Function to convert an image to its base64 string representation+
+*/
 export const fileToDataUrl = (file) => {
   if (file === null) { // Checks if the passed file is null, if it is null then return nothing
     return new Promise((resolve, reject) => {
@@ -24,11 +27,17 @@ export const fileToDataUrl = (file) => {
   }
 }
 
+/*
+Function to check if a string is a valid email
+*/
 export const checkEmail = (email) => {
   const regexp = /^(([^<>()\\[\]\\.,;:\s@']+(\.[^<>()\\[\]\\.,;:\s@']+)*)|('.+'))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   return regexp.test(email.trim());
 }
 
+/*
+Function to make an apicall to the backend server using axios
+*/
 export const apiCall = (url, method, body = {}, queryString = null) => {
   const path = `http://localhost:${BACKEND_PORT}/${url}${queryString !== null ? `?${queryString}` : ''}`; // Build the URL String or in this case the api route
   const token = localStorage.getItem('token'); // Get the user authorization token from the local storage
@@ -50,6 +59,9 @@ export const apiCall = (url, method, body = {}, queryString = null) => {
   }
 }
 
+/*
+Function to get the youtube video id from a youtube video url
+*/
 export const getId = (url) => { // Function to get the youtube video id from  https://stackoverflow.com/questions/21607808/convert-a-youtube-video-url-to-embed-code
   const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
   const match = url.match(regExp);
@@ -59,10 +71,16 @@ export const getId = (url) => { // Function to get the youtube video id from  ht
     : null;
 }
 
+/*
+Function to capitalize the first letter of a string
+*/
 export const capitalizeFirstLetter = (string) => { // https://stackoverflow.com/questions/1026069/how-do-i-make-the-first-letter-of-a-string-uppercase-in-javascript
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
+/*
+Function used by the CreateListingModal and EditListing component to validate the listing object from the ListingForm component
+*/
 export const listingObjectValidator = (formObject, bedroomArray, amenities) => {
   const nonEmptyTextFields = ['title', 'type', 'price', 'street', 'city', 'state', 'postcode', 'country', 'thumbnail']
   for (const textFields of nonEmptyTextFields) {
@@ -105,15 +123,24 @@ export const listingObjectValidator = (formObject, bedroomArray, amenities) => {
   });
 }
 
+/*
+Function used to get the difference in days between two luxon DateTime object
+*/
 export const getLuxonDayDifference = (startDate, endDate) => {
   return endDate.diff(startDate, ['days']).toObject().days;
 }
 
+/*
+Function to convert a YYYY-MM-dd date string to dd-MM-YYYY string
+*/
 export const isoDateToDDMMYYYY = (date) => {
   const splittedDate = date.split('-');
   return `${splittedDate[2]}/${splittedDate[1]}/${splittedDate[0]}`;
 }
 
+/*
+Function that adds the duration and date string representation the booking date to a booking object
+*/
 export const addDurationAndDateToBookingArray = (bookings) => {
   return bookings.map((booking) => {
     const duration = getLuxonDayDifference(DateTime.fromSQL(booking.dateRange.startDate), DateTime.fromSQL(booking.dateRange.endDate));
@@ -121,6 +148,9 @@ export const addDurationAndDateToBookingArray = (bookings) => {
   });
 }
 
+/*
+Function that adds the average rating field and the number of beds field to a listing object
+*/
 export const addAverageRatingAndNumberOfBedsToListing = (listing) => {
   let numberOfBeds = 0;
   let averageRating = 0;

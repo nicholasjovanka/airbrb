@@ -8,16 +8,19 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterLuxon } from '@mui/x-date-pickers/AdapterLuxon';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 
+/*
+Home Page Component that represents the home page of the website
+*/
 const Home = () => {
   const [listings, setListings] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [originalListings, setOriginalListings] = useState([]);
 
   const { openModal, modalHeader, modalMessage, loggedIn, openBackdrop } = useContext(StoreContext);
-  const handleSearchInput = (event) => {
-    setSearchQuery(event.target.value);
-  };
-
+  /*
+  The dateFilterOn, startDate, and endDate value inside the extraFilterObj will be passed to the Listing Pagination component where if the dateFilterOn is true then it will tell the
+  Listing Card Component inside the Listing Pagination Component to navigate to the listing detail page with startDate and endDate as the query string
+  */
   const [extraFilterObj, setExtraFilterObj] = useState({
     bedroomFilterOn: false,
     minBedroom: 0,
@@ -32,12 +35,16 @@ const Home = () => {
     sortBy: 'highest-rating'
   });
 
+  /*
+  useEffect that will fetch all the listings from the backend server and then get the details of each listing and then
+  pass the listings to the ListingPagination component.
+  */
   useEffect(() => {
     const getListings = async () => {
       try {
         openBackdrop[1](true);
-        const listingsApiCall = await apiCall('listings', 'GET');
-        const listingsArray = listingsApiCall.data.listings.sort((a, b) => {
+        const listingsApiCall = await apiCall('listings', 'GET'); // Get the listings from the backend server
+        const listingsArray = listingsApiCall.data.listings.sort((a, b) => { // Sort the listings alphabetically
           if (a.title.toLowerCase() < b.title.toLowerCase()) {
             return -1;
           } else if (a.title.toLowerCase() === b.title.toLowerCase()) {
@@ -47,17 +54,21 @@ const Home = () => {
           }
         });
         let listingWithDetails = []
-        for (const listing of listingsArray) {
+        for (const listing of listingsArray) { // Get the details of each listing
           const listingDetails = await apiCall(`listings/${listing.id}`, 'GET');
           listingWithDetails.push({ ...listingDetails.data.listing, id: listing.id });
         }
-        listingWithDetails = listingWithDetails.filter((listing) => listing.availability.length > 0)
-        listingWithDetails = listingWithDetails.map((listing) => {
+        listingWithDetails = listingWithDetails.filter((listing) => listing.availability.length > 0) // Filter so that only listings that has availability (live listings) is shown
+        listingWithDetails = listingWithDetails.map((listing) => { // Add the average rating field and number of beds field to each listing
           return addAverageRatingAndNumberOfBedsToListing(listing);
         })
-        if (loggedIn[0] === true) {
+        if (loggedIn[0] === true) { // If logged in check for bookings tied to each listing made by the user
           const userEmail = localStorage.getItem('userEmail');
-          const bookings = await apiCall('bookings', 'GET');
+          const bookings = await apiCall('bookings', 'GET'); // Get all bookings
+          /*
+          Filter the bookings so that is tied to the current logged in user whose status is either accepted or pending
+          Then sort the bookings so that booking with the status accepted is always shown first
+          */
           const bookingTiedToUser = bookings.data.bookings.filter((booking) => booking.owner === userEmail && booking.status !== 'declined').sort((a, b) => {
             if ((a.status === 'accepted' && b.status !== 'accepted') || (a.status === 'declined' && b.status !== 'pending')) {
               return -1;
@@ -67,19 +78,19 @@ const Home = () => {
               return 1;
             }
           });
-          const listingsWithBooking = [];
-          const listingWithMultipleBooking = [];
+          const listingsWithBooking = []; // Array to store listing with bookings
+          const listingWithMultipleBooking = []; // Array to keep track of listing with multiple bookings to prevent the same listing from being displayed more than once
           for (let i = 0; i < bookingTiedToUser.length; i++) {
             const bookingListingId = Number(bookingTiedToUser[i].listingId);
-            if (!listingWithMultipleBooking.includes(bookingListingId)) {
+            if (!listingWithMultipleBooking.includes(bookingListingId)) { // If the listing hasnt appeared before in the listingWithMultipleBooking array then add them to the listingWithBookings array
               const listingWithBookingIndex = listingWithDetails.map(listing => listing.id).indexOf(bookingListingId);
-              const splicedListing = listingWithDetails.splice(listingWithBookingIndex, 1);
+              const splicedListing = listingWithDetails.splice(listingWithBookingIndex, 1); // Remove the listing with booking from the listingWithDetails array to prevent the same listing displayed more than once
               const listingWithStatus = { ...splicedListing[0], status: bookingTiedToUser[i].status };
               listingsWithBooking.push(listingWithStatus)
               listingWithMultipleBooking.push(bookingListingId);
             }
           }
-          listingWithDetails = [...listingsWithBooking, ...listingWithDetails];
+          listingWithDetails = [...listingsWithBooking, ...listingWithDetails]; // Put listing with bookings infront of other listings.
         }
         setOriginalListings(listingWithDetails);
         setListings(listingWithDetails);
@@ -95,6 +106,16 @@ const Home = () => {
     getListings();
   }, [loggedIn[0]])
 
+  /*
+  Function that update the searchQuery state object based on the the changes in  value of the the search bar text input
+  */
+  const handleSearchInput = (event) => {
+    setSearchQuery(event.target.value);
+  };
+
+  /*
+  Function that update the extraFilterObj state object based on the the changes to the Date, bedroom number, price, and rating sort filter
+  */
   const handlExtraFilterInput = (event) => {
     const regex = /FilterOn$/i;
     if (regex.test(event.target.name)) {
@@ -104,21 +125,33 @@ const Home = () => {
     }
   };
 
+  /*
+  Function that allows the user to trigger a search by pressing enter key in the search bar instead of pressing the search button
+  */
   const handleSearchBarEnter = (event) => {
     if (event.keyCode === 13) {
       searchFilter()
     }
   }
 
+  /*
+  Function that handles the date changes input for the date filter
+  */
   const handleDatesInput = (newValue, fieldname) => {
     setExtraFilterObj({ ...extraFilterObj, [fieldname]: newValue })
   };
 
+  /*
+  Function that filters the listings from the intial load of the page (stored in the originalListings state variable) to match the
+  Listing name, location filter based on the text in the search bar along with any additional filters if the other filters is enabled
+  (Other filters include Number of bedroosm, date range, price, and rating sort)
+  */
   const searchFilter = () => {
     try {
       const regex = new RegExp(`${searchQuery}`, 'i');
+      // Filter the listings based on the term in the search bar using regex
       let filteredListings = originalListings.filter((listing) => regex.test(listing.title) || regex.test(listing.address.street) || regex.test(listing.address.city) || regex.test(listing.address.state) || regex.test(listing.address.postcode) || regex.test(listing.address.country));
-      if (extraFilterObj.bedroomFilterOn) {
+      if (extraFilterObj.bedroomFilterOn) { // If the number of bedroom filter is on then filter the listing based on it
         const minNumberOfBedroom = Number(extraFilterObj.minBedroom);
         const maxNumberOfBedroom = Number(extraFilterObj.maxBedroom);
         if (minNumberOfBedroom < 0 || maxNumberOfBedroom < 0) {
@@ -129,7 +162,7 @@ const Home = () => {
         }
         filteredListings = filteredListings.filter((listing) => listing.metadata.bedrooms.length <= maxNumberOfBedroom && listing.metadata.bedrooms.length >= minNumberOfBedroom);
       }
-      if (extraFilterObj.dateFilterOn) {
+      if (extraFilterObj.dateFilterOn) { // If the date range bedroom filter is on then filter the listing based on it
         if (getLuxonDayDifference(extraFilterObj.startDate, extraFilterObj.endDate) <= 0) {
           throw new Error('Filter Start Date must be smaller than End Date');
         }
@@ -138,7 +171,7 @@ const Home = () => {
         }).length > 0
         );
       }
-      if (extraFilterObj.priceFilterOn) {
+      if (extraFilterObj.priceFilterOn) { // If the price filter is on then filter the listing based on it
         const minPrice = Number(extraFilterObj.minPrice);
         const maxPrice = Number(extraFilterObj.maxPrice);
         if (minPrice < 0 || maxPrice < 0) {
@@ -149,7 +182,7 @@ const Home = () => {
         }
         filteredListings = filteredListings.filter((listing) => listing.price <= maxPrice && listing.price >= minPrice);
       }
-      if (extraFilterObj.ratingFilterOn) {
+      if (extraFilterObj.ratingFilterOn) { // If the rating sort filter is on then sort the listing based on the rating filter that is selected
         if (extraFilterObj.sortBy === 'highest-rating') {
           filteredListings = filteredListings.sort((a, b) => {
             const aRating = a.averageRating === null ? -1 : a.averageRating

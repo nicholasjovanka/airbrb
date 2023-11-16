@@ -14,6 +14,10 @@ import BookingModal from '../../components/BookingModal';
 import ImageCarousel from '../../components/ImageCarousel';
 import RatingPagination from '../../components/RatingPagination';
 
+/*
+Listing Component that represents the Listing Details page which shows the Information, and Ratings of a listing.
+Additionaly a logged in user can also make a booking for a listing and view the history of all bookings that the current logged in user has made for the listing.
+*/
 const Listing = () => {
   const { id } = useParams();
   const { loggedIn, openModal, modalHeader, modalMessage, openBackdrop } = useContext(StoreContext);
@@ -30,6 +34,11 @@ const Listing = () => {
   const [reviews, setReviews] = useState([]);
   const [originalReviews, setOriginalReviews] = useState([]);
   const [openBookingModal, setOpenBookingModal] = useState(false);
+
+  /*
+  useEffect that fetches information about the listing specified by the id query parameters.
+  Additionaly if the current user is logged in, it will fetch all the bookings that the current user has made to the listing
+  */
   useEffect(() => {
     const fetchListingData = async () => {
       try {
@@ -42,7 +51,7 @@ const Listing = () => {
           setDuration(getLuxonDayDifference(DateTime.fromSQL(queryStringStartDate), DateTime.fromSQL(queryStringEndDate)));
         }
         await getUserListingBookings();
-        setOriginalReviews(listingsApi.data.listing.reviews);
+        setOriginalReviews(listingsApi.data.listing.reviews.reverse());
       } catch (error) {
         modalHeader[1]('Error');
         const errorMessage = error.response ? error.response.data.error : error.message;
@@ -55,6 +64,25 @@ const Listing = () => {
     fetchListingData();
   }, [loggedIn[0]]);
 
+  /*
+  useEffect that will update the reviews displayed by the RatingPagination component incase there is changes to the originalReviews array which
+  might happen if the current logged in user post a new review
+  */
+  useEffect(() => {
+    filterReviews();
+  }, [originalReviews])
+
+  /*
+  useEffect that will update the reviews displayed by the RatingPagination component based on changes to the ratingFilter which is triggered when
+  the user decides to change the rating category filter.
+  */
+  useEffect(() => {
+    filterReviews();
+  }, [ratingFilter])
+
+  /*
+  Function that gets all the bookings tied to the current logged in user which will be passed to the BookingPagination component
+  */
   const getUserListingBookings = async () => {
     if (loggedIn[0]) {
       const userEmail = localStorage.getItem('userEmail');
@@ -66,6 +94,10 @@ const Listing = () => {
     }
   }
 
+  /*
+  Function that filters the rating displayn on the screen based on the Filter selected by the user where the user can filter based
+  on the rating category
+  */
   const filterReviews = () => {
     if (ratingFilter === -1) {
       setReviews(originalReviews);
@@ -75,21 +107,25 @@ const Listing = () => {
     }
   }
 
-  useEffect(() => {
-    filterReviews();
-  }, [originalReviews])
-
-  useEffect(() => {
-    filterReviews();
-  }, [ratingFilter])
+  /*
+  Function that open the BookingModal component which allow the user to make a booking to this listing
+  */
   const openBooking = () => {
     setOpenBookingModal(true);
   }
 
+  /*
+  Function that handle changes in the Rating Filter Select Element in the page
+  */
   const handleRatingFilterChange = (event) => {
     setRatingFilter(event.target.value);
   };
 
+  /*
+  Function that allows the user to post a new review to the current listing,
+  Upon succesfully submitting the new review, the function will update the originalReview state array to
+  update the reviews displayed by the ReviewPagination component
+  */
   const postReview = async () => {
     try {
       openBackdrop[1](true);
@@ -102,9 +138,10 @@ const Listing = () => {
         rating: userReview.rating,
         postedOn: DateTime.now().startOf('day').toISODate()
       }
+      // Get the booking id required to make the post review api call using the first booking made by the user for this listing where the status is accepted
       const bookingId = bookings.filter((booking) => booking.status === 'accepted')[0].id;
       await apiCall(`listings/${id}/review/${bookingId}`, 'PUT', { review: newReview });
-      const reviewArrayCopy = [newReview, ...originalReviews];
+      const reviewArrayCopy = [newReview, ...originalReviews]; // Put the new review before all the currently existing review
       setOriginalReviews(reviewArrayCopy);
       setUserReview({
         comment: '',
@@ -123,6 +160,10 @@ const Listing = () => {
     }
   };
 
+  /*
+  Function that allows the user to submit a new booking to the listing which will be passed down as a prop to the
+  BookingModal componnet
+  */
   const submitBookingFunction = async (bookingObj) => {
     try {
       openBackdrop[1](true);
@@ -131,6 +172,7 @@ const Listing = () => {
       const minDate = bookingObj.minDate;
       const maxDate = bookingObj.maxDate;
       const dayDifference = getLuxonDayDifference(startDate, endDate);
+      // Validate the date submitted by the user as they may bypass the MUI date picker using keyboard
       if (dayDifference <= 0) {
         throw new Error('Booking Start Date must be less than Booking End date')
       }

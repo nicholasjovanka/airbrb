@@ -5,6 +5,9 @@ import { AppBar, Box, Toolbar, IconButton, Typography, Menu, Container, Avatar, 
 import MenuIcon from '@mui/icons-material/Menu';
 import OtherHousesIcon from '@mui/icons-material/OtherHouses';
 
+/*
+Navbar component that appears at the top of the page
+*/
 const Navbar = () => {
   const navigate = useNavigate();
   const [anchorElNav, setAnchorElNav] = useState(null);
@@ -12,6 +15,12 @@ const Navbar = () => {
   const [pages, setPages] = useState(['Home', 'Hosted Listings']);
   const [settings, setSettings] = useState(['Profile', 'Logout'])
   const { loggedIn } = useContext(StoreContext);
+  /*
+  useEffect that checks if the user is logged in. If the user is logged in then show the hosted listing link/button/menu in the Navigation Menu in the navbar that allows
+  the user to navigate to the hosted listing page, additionaly also show a logout button in the settings menu at the right side of the navbar (The one that
+  shows the user initial)
+  If the user is not logged in then only show the home button in the Navigation Menu and the Login and Register Button in the settings menu
+  */
   useEffect(() => {
     if (!loggedIn[0]) {
       setPages(['Home']);
@@ -22,21 +31,38 @@ const Navbar = () => {
     }
   }, [loggedIn[0]])
 
+  /*
+  Function that opens the navigation menu for mobile view
+  */
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
   };
+
+  /*
+  Function that opens the user menu (settings)
+  */
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
   };
 
+  /*
+  Function that closes the navigation menu for mobile view
+  */
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
   };
 
+  /*
+  Function that closes the user menu (settings)
+  */
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
 
+  /*
+  Function that navigate the user to a specific page based on the navmenu
+  or button in the settings that they click
+  */
   const handleNavigation = (pageName) => {
     const userEmail = localStorage.getItem('userEmail');
     let navigationRoute = '';

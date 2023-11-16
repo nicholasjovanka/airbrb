@@ -6,6 +6,10 @@ import { Avatar, Button, CssBaseline, TextField, Link, Grid, Box, Typography, Co
 import OtherHousesIcon from '@mui/icons-material/OtherHouses';
 import Copyright from '../../components/Copyright';
 
+/*
+Login Page Component that represents the Login page of the website
+Login page made using Sign page template from https://mui.com/material-ui/getting-started/templates/ with some modifications
+*/
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -13,6 +17,11 @@ const Login = () => {
 
   const { loggedIn, openModal, modalHeader, modalMessage, openBackdrop } = useContext(StoreContext);
 
+  /*
+  Function that allows the user to login where upon a succesfull login, the loggedIn state inside the
+  StoreContext will be set to true, the user email and token will be stored inside the local storage and then
+  the user will be navigated back to the home page
+  */
   const handleLogin = async () => {
     try {
       openBackdrop[1](true)
@@ -21,16 +30,15 @@ const Login = () => {
         password
       });
 
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('userEmail', email);
+      localStorage.setItem('token', response.data.token); // Store the authentication token received from the login api
+      localStorage.setItem('userEmail', email); // Store the logged in user email
 
-      loggedIn[1](true);
+      loggedIn[1](true); // Set the loggedIn state inside the loggedIn object from the StoreContext to signify that the user is logged in
       // Redirect the user to the home page
       navigate('/home');
     } catch (error) {
       openBackdrop[1](false);
       console.error('Login Error:', error.response?.data?.error || 'Unknown error');
-      // setError(error.response?.data?.error || 'An unexpected error occurred.');
       modalHeader[1]('Error');
       const errorMessage = error.response ? error.response.data.error : error.message;
       modalMessage[1](errorMessage);

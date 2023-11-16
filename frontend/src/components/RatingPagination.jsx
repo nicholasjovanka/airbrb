@@ -1,15 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Card, CardContent, Pagination, Typography, Rating } from '@mui/material';
-// import { apiCall, getId, capitalizeFirstLetter } from '../utils/utils';
 import { basePaginationStyling } from '../utils/styles';
 
-const ReviewPagination = ({ ratingArray, setRatingArray }) => {
+/*
+Component that allows the user to Paginate the ratings that is available from the ratingArray prop.
+This component is used for both the RatingModal component and the listing detail page.
+
+Props Explanation;
+- ratingArray: Array containing the rating object which will be displayed and paginated by the component
+*/
+const ReviewPagination = ({ ratingArray }) => {
   const [slicedRatings, setSlicedRatings] = useState([]);
   const [paginationObj, setPaginationObj] = useState({
     numberOfPage: 1,
     ratingArray: [],
     currentPage: 1
   })
+
+  /*
+  useEffect to detect changes to the rating array which in turn will re-render the rating displayed by the component,
+  Additionaly, it will also reset the pagination back to page 0
+  */
   useEffect(() => {
     setPaginationObj({
       numberOfPage: Math.ceil(ratingArray.length / 6),
@@ -18,10 +29,19 @@ const ReviewPagination = ({ ratingArray, setRatingArray }) => {
     })
   }, [ratingArray])
 
+  /*
+  useEffect to detect changes to the paginationObj so that the component
+  will rerender the listings displayed when either the ratingArray inside the paginationObj is updated or when
+  currentPage inside the obj change due to the user changing pagination page
+  */
   useEffect(() => {
     getPages(paginationObj.currentPage);
   }, [paginationObj])
 
+  /*
+  Function used for pagination that will slice the ratingArray inside the pagination object. Will be triggered
+  when the user move pages or the array passed in the prop changes
+  */
   const getPages = (page) => {
     const sliceStartIndex = (page - 1) * 6;
     const sliceEndIndex = page === paginationObj.numberOfPage ? paginationObj.ratingArray.length : (page * 6)
@@ -29,6 +49,10 @@ const ReviewPagination = ({ ratingArray, setRatingArray }) => {
     setSlicedRatings(dataToDisplay);
   }
 
+  /*
+  Function that changes the currentPage value inside the paginationObj when the user move pages in order to trigger
+  a rerender through the useEffect above.
+  */
   const onChangeButton = (e, page) => {
     setPaginationObj({ ...paginationObj, currentPage: page })
   }

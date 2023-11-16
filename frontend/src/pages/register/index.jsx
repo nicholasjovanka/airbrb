@@ -6,6 +6,10 @@ import Copyright from '../../components/Copyright';
 import { Avatar, Button, TextField, Link, Grid, Box, Typography, Container } from '@mui/material';
 import OtherHousesIcon from '@mui/icons-material/OtherHouses';
 
+/*
+Register Page Component that represents the Register page of the website where the user can create a new account
+Register page made using Sign up template from https://mui.com/material-ui/getting-started/templates/ with some modifications
+*/
 const Register = () => {
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
@@ -14,18 +18,30 @@ const Register = () => {
   const navigate = useNavigate();
   const { loggedIn, openModal, modalHeader, modalMessage, openBackdrop } = useContext(StoreContext);
 
+  /*
+  Function that allows the user to register to the website where upon a succesfull register, the loggedIn state inside the
+  StoreContext will be set to true, the user email and token will be stored inside the local storage and then
+  the user will be navigated back to the home page
+  */
   const handleRegister = async () => {
     try {
       openBackdrop[1](true)
+      // Validation to ensure the user name is not empty
       if (name.trim().length === 0) {
         throw new Error('Name Cannot Be Empty');
       }
+
+      // Validation to ensure the email is a valid email string
       if (!checkEmail(email)) {
         throw new Error('Invalid Email');
       }
+
+      // Validation to ensure that the pasword is not empty
       if (password.trim().length === 0 || confirmPassword.trim().length === 0) {
         throw new Error('Password Cannot Be Empty');
       }
+
+      // Validation to ensure that the pasword and the confirm password field value is the same
       if (password !== confirmPassword) {
         throw new Error('Password in Password and Confirm Password Field do not match');
       }
@@ -37,7 +53,7 @@ const Register = () => {
 
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('userEmail', email);
-      loggedIn[1](true);
+      loggedIn[1](true); // Set the loggedIn state inside the loggedIn object from the StoreContext to signify that the user is logged in
       navigate('/home');
     } catch (error) {
       openBackdrop[1](false)

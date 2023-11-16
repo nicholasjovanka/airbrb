@@ -11,7 +11,7 @@ import ModalCloseButton from './ModalCloseButton';
 /*
 Modal used to by the Listing Detail Screen so that a User/Customer can make a booking based on the available dates of that listing
 Props explanation:
-- open: boolean state variable passed from the parent that dictates when to open the booking dialog
+- open: boolean state variable passed from the parent that dictates when to open the booking modal
 - setOpen: The state set function for the 'open' boolean state that allows the modal to close when the close button is clicked
 - bookFunction: booking function passed from the parent that is passed as a prop which dictates what happens when the user click the book button in the modal
 - availableDates: Array of object that describes the available date range of the booking. Each of the object contain a start date and end date which is a string of date in YYYY-mm-dd format
