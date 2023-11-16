@@ -7,6 +7,14 @@ import { VisuallyHiddenInput } from '../utils/styles';
 import { StoreContext } from '../utils/states';
 import { capitalizeFirstLetter } from '../utils/utils';
 
+/*
+Modal used for Creating a listing which is shown in the hostedlisting page that allows a user to create a new listing.
+
+Props Explanation
+- open: boolean state variable passed from the parent that dictates when to open the booking dialog
+- setOpen: The state set function for the 'open' boolean state that allows the modal to close when the close button is clicked
+- createListingFunction: Function passed as prop that will dictate the Create Listing Logic which will be further passed to the ListingForm component
+*/
 const CreateListingModal = ({ open, setOpen, createListingFunction }) => {
   const [listings, setListings] = useState({});
   const { openModal, modalHeader, modalMessage } = useContext(StoreContext);
@@ -14,16 +22,25 @@ const CreateListingModal = ({ open, setOpen, createListingFunction }) => {
     setOpen(false);
   };
 
+  /*
+  Use Effect that will clear the listing object passed to the ListingForm component so that everytime the user opens the modal again the form will be resetted
+  */
   useEffect(() => {
     if (open) {
       setListings({});
     }
   }, [open])
 
+  /*
+  Function that handles the logic for the Listing Upload using a json file.
+  This function will first validate if the file is a valid json.
+  Then it will check the fields/key and value for each key inside the json file to ensure that each field meets the requirement set (Such as no empty string,
+  number type checking and more)
+  */
   const handleFileInput = async (e) => {
     const file = e.target.files[0];
     try {
-      if (file.type !== 'application/json') {
+      if (file.type !== 'application/json') { // Ensure file is Json
         throw new Error('File Must be JSON')
       }
       const fileReader = new FileReader();
@@ -36,7 +53,7 @@ const CreateListingModal = ({ open, setOpen, createListingFunction }) => {
       });
       const jsonContent = await jsonContentPromise
       const listingFormObject = JSON.parse(jsonContent);
-      const nonEmptyTextFields = ['title', 'owner', 'type']
+      const nonEmptyTextFields = ['title', 'owner', 'type'] // List of string fields that must be checked so that it is not be empty if included
       for (let i = 0; i < nonEmptyTextFields.length; i++) {
         const fieldValue = listingFormObject[nonEmptyTextFields[i]];
         if (fieldValue) {
@@ -45,7 +62,7 @@ const CreateListingModal = ({ open, setOpen, createListingFunction }) => {
           }
         }
       }
-      const numericFields = ['price', 'bathrooms']
+      const numericFields = ['price', 'bathrooms'] // List of number type fields that must be checked so that it is a number if included
       for (let x = 0; x < numericFields; x++) {
         const fieldValue = listingFormObject[numericFields[x]];
         if (fieldValue) {
@@ -54,7 +71,7 @@ const CreateListingModal = ({ open, setOpen, createListingFunction }) => {
           }
         }
       }
-      const requiredAddressFields = ['street', 'city', 'state', 'postcode', 'country']
+      const requiredAddressFields = ['street', 'city', 'state', 'postcode', 'country'] // List of fields required by the address object if included in thejson
       if (listingFormObject.address) {
         for (let i = 0; i < requiredAddressFields.length; i++) {
           const fieldValue = listingFormObject.address[requiredAddressFields[i]];
@@ -67,7 +84,7 @@ const CreateListingModal = ({ open, setOpen, createListingFunction }) => {
           }
         }
       }
-      if (listingFormObject.bedrooms) {
+      if (listingFormObject.bedrooms) { // Check the bedroom object in the json file to ensure that it is an array and each of the object inside the array has a type and beds attribute
         if (!Array.isArray(listingFormObject.bedrooms)) {
           throw new Error('Bedroom field must be an array')
         }
@@ -85,7 +102,7 @@ const CreateListingModal = ({ open, setOpen, createListingFunction }) => {
         }
       }
 
-      if (listingFormObject.amenities) {
+      if (listingFormObject.amenities) { // Check the amenities object in the json file to ensure that it is an array and each of the object is a string
         if (!Array.isArray(listingFormObject.amenities)) {
           throw new Error('Amenities field must be an array')
         }

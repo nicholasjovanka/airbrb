@@ -3,7 +3,7 @@ import { Box, Grid, Card, CardActions, CardContent, CardMedia, Button, Paginatio
 import { useNavigate } from 'react-router-dom';
 import { apiCall, getId, capitalizeFirstLetter, getLuxonDayDifference } from '../utils/utils';
 import { StoreContext } from '../utils/states';
-import ListingCard from './ListingCard';
+import ListingCardContent from './ListingCardContent';
 import ConfirmationModal from './ConfirmationModal';
 import DatePickerModal from './DatePickerModal';
 import { basePaginationStyling } from '../utils/styles';
@@ -215,7 +215,7 @@ const ListingPagination = ({ listingsArray, displayPage, dateFilterOn = false, s
                     </Typography>
                     </Box>
                 )}
-                  <ListingCard listing={obj} displayPage={displayPage} openRatingModalFunction={openRatingModalFunction} navigateToListing={() => { navigateToListing(obj.id) }}/>
+                  <ListingCardContent listing={obj} displayPage={displayPage} openRatingModalFunction={openRatingModalFunction} navigateToListing={() => { navigateToListing(obj.id) }}/>
                 </CardContent>
                 <CardActions sx={{ mt: 'auto' }}>
                   { displayPage === 'hostedlisting' && (

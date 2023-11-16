@@ -7,24 +7,50 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import RemoveIcon from '@mui/icons-material/Remove';
 import AddIcon from '@mui/icons-material/Add';
 import ModalCloseButton from './ModalCloseButton';
+
+/*
+DatePicker Modal used by the hosted listing page that allows a user to make their listing go live
+This datepicker modal provides a dynamic form like datepickers to allow them to input as much as date range as they want
+
+Props Explanation
+- setOpen: The state set function for the 'open' boolean state that allows the modal to close when the close button is clicked
+- width: width of the modal
+- goLiveFunction: Function passed from the parent which will dictate the logic needed to make a publish/ make a listing go life. Passed function can be found
+in the hostedlisting/index.js file
+*/
 const DatePickerModal = ({ open, setOpen, goLiveFunction }) => {
   const [dates, setDates] = useState([{ startDate: DateTime.now().startOf('day'), endDate: DateTime.now().startOf('day').plus({ days: 1 }) }]);
+
+  /*
+  Function that allow the user to add more date range to the form where the new 2 datepickers (one for that date range start date and other for the end date) by default w
+  will have their start date set to today and end date to tommorow
+  */
   const handleAddDates = () => {
     setDates([...dates, { startDate: DateTime.now().startOf('day'), endDate: DateTime.now().startOf('day').plus({ days: 1 }) }]);
   };
 
+  /*
+  UseEffect to reset the DatePicker Modal form so that if the user has previously used it to make another listing go live, it will not have the previous date values of the
+  previous listing
+  */
   useEffect(() => {
     if (open === true) {
       setDates([{ startDate: DateTime.now().startOf('day'), endDate: DateTime.now().startOf('day').plus({ days: 1 }) }]);
     }
   }, [open])
 
+  /*
+  Function that handle the onChange event for the datepicker to update the dates state object that stores the dates
+  */
   const handleDatesInput = (index, newValue, fieldname) => {
     const values = [...dates];
     values[index] = { ...values[index], [fieldname]: newValue };
     setDates(values);
   };
 
+  /*
+  Function that will remove an availability date range that the user has previously added
+  */
   const handleRemoveDate = (index) => {
     const values = [...dates];
     values.splice(index, 1);

@@ -75,14 +75,17 @@ TablePaginationActions.propTypes = {
 
 /*
 Component that allows the user to paginate the bookings passed in the bookingArray in the form of a table.
+This component is used both by the ManageBookings page and the listing page to allow a user to see their bookings
+
 Props Explanation
-bookingArray = Array containing all the bookings needed by the component
-setBookingArray = Function passed from the parent that allows this component to modify bookingArray in the parent component
-viewMode = A boolean that tells the component if its currently only being used to view bookings or is currently being used to manage (Approve/ decline) bookings as
+- bookingArray: Array containing all the bookings that will be spliced into pages for pagination displayed in the component
+- setBookingArray: Function passed from the parent that allows this component to modify bookingArray in the parent component, Needed for Approve and rejecting the bookings in
+the manage booking page to ensure that original array is updated
+- viewMode: A boolean that tells the component if its currently only being used to view bookings or is currently being used to manage (Approve/ decline) bookings as
 this component is used in both the ManageBooking and listing detail page.
 */
 const BookingPagination = ({ bookingArray, setBookingArray, viewMode = false }) => {
-  const [initialLoad, setInitialLoad] = useState(true);
+  const [initialLoad, setInitialLoad] = useState(true); // State variable to check if its currently the initial load of data. its use will be explained in the useEffect below later
   const [bookingsToDisplay, setBookingsToDisplay] = useState([]);
   const [openConfirmationModal, setOpenConfirmationModal] = useState(false);
   const [confirmationModalContent, setConfirmationModalContent] = useState('');
@@ -121,6 +124,11 @@ const BookingPagination = ({ bookingArray, setBookingArray, viewMode = false }) 
 
   const { openModal, modalHeader, modalMessage } = useContext(StoreContext);
 
+  /*
+  Use Effect to update the columns that is displayed in the column table where if the viewMode is false (means that its in the manage booking page),
+  also show the booker column which shows the user who made the booking, and also render the actions column which contains the button that is needed for a
+  listing owner to approve and reject a listing
+  */
   useEffect(() => {
     if (!viewMode) {
       setColumns([
@@ -140,6 +148,14 @@ const BookingPagination = ({ bookingArray, setBookingArray, viewMode = false }) 
     }
   }, [viewMode])
 
+  /*
+  Use Effect to initially populate the bookings attribute inside the paginationObj state.
+  Here we use the initialLoad state variable to ensure that this useEffect only runs when the Pagination component receives a non empty array.
+  This is done to prevent the BookingPagination page from changing when the bookingArray in the parent is modified as the approveRejectBooking function
+  inside the component modifies the bookingArray in the parent when the listing owner approves or reject a listing. This way after the initial load, all the page
+  changes will only be effected by the useEffect bellow, this way the functionality where the page updates when the user approve or reject a booking while using the pending
+  filter can function
+  */
   useEffect(() => {
     if (initialLoad) {
       setPaginationObj({ ...paginationObj, bookings: bookingArray })
@@ -149,10 +165,17 @@ const BookingPagination = ({ bookingArray, setBookingArray, viewMode = false }) 
     }
   }, [bookingArray])
 
+  /*
+  Use Effect to rerender the bookings table based on the object inside the paginationObj.
+  This will occur when the user either approve or reject a booking, change the page, or change the amount of row per page
+  */
   useEffect(() => {
     getPages(paginationObj.page);
   }, [paginationObj])
 
+  /*
+  Use Effect to filter the bookings that is displayed in the bookings table based on the filter that the user select
+  */
   useEffect(() => {
     if (statusFilter === 'any') {
       setPaginationObj({ ...paginationObj, page: 0, bookings: bookingArray });
@@ -166,23 +189,41 @@ const BookingPagination = ({ bookingArray, setBookingArray, viewMode = false }) 
   const emptyRows =
     paginationObj.page > 0 ? Math.max(0, (1 + paginationObj.page) * paginationObj.rowsPerPage - paginationObj.bookings.length) : 0;
 
+  /*
+  Function that handles the page change when the user clicks the next or prev button on the booking table pagination
+  */
   const handleChangePage = (event, newPage) => {
     setPaginationObj({ ...paginationObj, page: newPage });
   };
 
+  /*
+  Function that will slice the bookingArray based on the rows per page and the current selected table page and set them to the bookingToDisplay state to
+  update the bookings displayedon the table
+  */
   const getPages = (newPage) => {
     const slicedBookingsArray = paginationObj.rowsPerPage > 0 ? paginationObj.bookings.slice(newPage * paginationObj.rowsPerPage, newPage * paginationObj.rowsPerPage + paginationObj.rowsPerPage) : paginationObj.bookings;
     setBookingsToDisplay(slicedBookingsArray)
   }
 
+  /*
+  Function that handles the row per page option change in the booking table pagination which will trigger the useEffect to rerender the
+  bookings back to page 0 where the amount of bookings displayed is equal to the new rowsPerPage option selected by the user
+  */
   const handleChangeRowsPerPage = (event) => {
     setPaginationObj({ ...paginationObj, page: 0, rowsPerPage: parseInt(event.target.value, 10) });
   };
 
+  /*
+  Function that handles the status selection change by the user which will trigger a useEffect which in turn will now show bookings in the
+  booking table based on the filter that the user chooses
+  */
   const handleStatusFilterChange = (event) => {
     setStatusFilter(event.target.value);
   };
 
+  /*
+  Function that will open the Confirmation modal when the user clicks either the approve or reject button in the action column of the table.
+  */
   const openActionModal = (bookingObj, index, action) => {
     setSelectedBooking({
       id: bookingObj.id,
@@ -193,6 +234,13 @@ const BookingPagination = ({ bookingArray, setBookingArray, viewMode = false }) 
     setOpenConfirmationModal(true)
   }
 
+  /*
+  Function that will either approve the booking or reject booking based on the action that was set in the selectedBooking state. The booking shown on the
+  table will update in real time after the function executes. If the user is currently viewing the booking table using the pending filter, booking
+  that have been approved and rejected will dissapear from the booking view with pending filter in real time after the function executes. If the booking that is currently
+  approved/rejected is the last booking in the current view page when user use the pending filter, then it will move the user back by one page with the pending filter (if the current page
+  is not the first page)
+  */
   const approveRejectBooking = async () => {
     try {
       await apiCall(`bookings/${selectedBooking.action}/${selectedBooking.id}`, 'PUT');

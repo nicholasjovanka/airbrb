@@ -6,7 +6,17 @@ import { visuallyHidden } from '@mui/utils';
 import RatingTooltip from './RatingTooltip';
 import BedroomParentIcon from '@mui/icons-material/BedroomParent';
 
-const ListingCard = ({ listing, displayPage, openRatingModalFunction, navigateToListing, children }) => {
+/*
+Component that contains the content that will be displayed inside the Listing Cards in the ListingPagination component
+
+Props Explanation
+- listing: The listing object that should be displayed using the component
+- displayPage: Text that tells where the page that the component is currently being displayed on as some component need to be rendered differently depending on the page
+(For example in hosted listing it should display number of beds instead of bedroom)
+- openRatingModalFunction : Function passed from the parent that will display the RatingModal
+- navigateToListing: Function passed that dictates the logic required to navigate tp the listing detail page of the current listing that is being displayed in the component
+*/
+const ListingCardContent = ({ listing, displayPage, openRatingModalFunction, navigateToListing, children }) => {
   return (
     <Box sx={{ mx: 1 }}>
       <Link component="button" variant="h5" onClick={() => navigateToListing()}>
@@ -22,7 +32,7 @@ const ListingCard = ({ listing, displayPage, openRatingModalFunction, navigateTo
               ? (
                 <Tooltip title='Number of Beds'>
                   <Typography gutterBottom variant="h6" component="div" sx={{ display: 'flex', alignItems: 'center' }}>
-                  {listing.numberOfBeds} <BedIcon sx={{ ml: 1 }}/> <Box component="span" sx={visuallyHidden}>Number of Beds</Box>
+                    {listing.numberOfBeds} <BedIcon sx={{ ml: 1 }}/> <Box component="span" sx={visuallyHidden}>Number of Beds</Box>
                   </Typography>
                 </Tooltip>
                 )
@@ -68,4 +78,4 @@ const ListingCard = ({ listing, displayPage, openRatingModalFunction, navigateTo
   )
 }
 
-export default ListingCard
+export default ListingCardContent
