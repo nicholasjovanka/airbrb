@@ -5,7 +5,8 @@ const CustomWidthTooltip = styled(({ className, ...props }) => (
   [`& .${tooltipClasses.tooltip}`]: {
     backgroundColor: '#f5f5f9',
     color: 'rgba(0, 0, 0, 0.87)',
-    maxWidth: 400,
+    width: 360,
+    maxWidth: 400
   },
 });
 
@@ -76,19 +77,22 @@ const RatingTooltip = ({ passedListing, openRatingModalFunction, children }) => 
     <CustomWidthTooltip placement='bottom-end' title=
     { ratingsSummary.length > 0
       ? (
-      <Box sx={{ p: 2, display: 'flex', flexDirection: 'column', gap: 1 }}>
+      <Box sx={{ p: 1, display: 'flex', flexDirection: 'column', gap: 1, alignItems: 'center' }}>
         <Box sx={{ display: 'flex', flexDirection: 'row', gap: 3 }}>
           <Rating name="simple-controlled" value={listing.averageRating} readOnly/>
           <Typography variant='body1' noWrap > {listing.averageRating} out of 5 </Typography>
         </Box>
         <Typography variant='subtitle1'>{listing.reviews.length} Ratings </Typography>
         {ratingsSummary.map((rating, index) =>
-          <Box key={index} sx={{ display: 'flex', flexDirection: 'row', gap: 2, width: '100%' }}>
+          <Box key={index} sx={{ display: 'flex', flexDirection: 'row', gap: 1, width: '100%', justifyContent: 'center' }}>
               <Link component="button" variant="subtitle1" onClick={() => openRatingModalFunction(listing.reviews, listing.title, rating.rating)}>
                 {rating.rating} Star
               </Link>
-              <BorderLinearProgress variant='determinate' sx={{ width: '50%', height: '1rem', my: 'auto' }} value={rating.percentage} />
-              <Typography variant='subtitle1' noWrap>{rating.percentage}% </Typography>
+              <BorderLinearProgress variant='determinate' sx={{ width: '40%', height: '1rem', my: 'auto' }} value={rating.percentage} />
+              <Box>
+                <Typography variant='subtitle1' >{rating.percentage}%</Typography>
+                <Typography variant='subtitle1' >({rating.amountOfRating} reviews) </Typography>
+              </Box>
           </Box>
         )}
       </Box>
