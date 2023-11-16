@@ -1,4 +1,6 @@
-// Shared Javascript based between components for material ui
+/*
+Custom Styling and Custom Styled Material UI Components used by multiple components in the application
+*/
 import { styled } from '@mui/material/styles';
 import { Dialog } from '@mui/material';
 export const BootstrapDialog = styled(Dialog)(({ theme }) => ({
