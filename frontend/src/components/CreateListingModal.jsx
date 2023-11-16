@@ -138,15 +138,17 @@ const CreateListingModal = ({ open, setOpen, createListingFunction }) => {
     <Dialog open={open} onClose={handleClose} aria-labelledby ='create-listing-dialog-title' maxWidth = 'sm' fullWidth scroll = 'paper' >
       <DialogTitle id='create-listing-dialog-title'>Create New Listing</DialogTitle>
       <ModalCloseButton handleClose={handleClose}/>
-      <DialogContent>
-        <Box sx={{ display: 'flex', gap: 1 }}>
+      <DialogContent sx={{ px: 0 }}>
+        <Box sx={{ display: 'flex', gap: 1, mx: 2 }}>
           <Typography variant='subtitle1'>Upload data about a listing using JSON </Typography>
           <Button component='label' variant='contained' startIcon={<CloudUploadIcon />}>
             Upload Json File
             <VisuallyHiddenInput type='file' onChange={handleFileInput} />
           </Button>
         </Box>
-        <ListingForm mode='Create' buttonSubmitFunction={createListingFunction} existingListingObject={listings}/>
+        <Box sx={{ width: '100%' }}>
+          <ListingForm mode='Create' buttonSubmitFunction={createListingFunction} existingListingObject={listings}/>
+        </Box>
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose}>Close</Button>

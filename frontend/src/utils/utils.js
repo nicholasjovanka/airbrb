@@ -65,7 +65,6 @@ export const capitalizeFirstLetter = (string) => { // https://stackoverflow.com/
 
 export const listingObjectValidator = (formObject, bedroomArray, amenities) => {
   const nonEmptyTextFields = ['title', 'type', 'price', 'street', 'city', 'state', 'postcode', 'country', 'thumbnail']
-  console.log(formObject);
   for (const textFields of nonEmptyTextFields) {
     if (formObject[textFields] === '' || formObject[textFields] === null) {
       throw new Error(`${capitalizeFirstLetter(textFields)} cannot be empty`)
@@ -122,16 +121,16 @@ export const addDurationAndDateToBookingArray = (bookings) => {
   });
 }
 
-export const addAverageRatingAndNumberOfBedroomsToListing = (listing) => {
-  let numberOfBedrooms = 0;
+export const addAverageRatingAndNumberOfBedsToListing = (listing) => {
+  let numberOfBeds = 0;
   let averageRating = 0;
   listing.metadata.bedrooms.forEach((room) => {
-    numberOfBedrooms += room.beds
+    numberOfBeds += room.beds
   })
 
   listing.reviews.forEach((review) => {
     averageRating += review.rating
   })
   averageRating = listing.reviews.length > 0 ? (averageRating / listing.reviews.length).toFixed(2) : null
-  return { ...listing, numberOfBedrooms, averageRating }
+  return { ...listing, numberOfBeds, averageRating }
 }

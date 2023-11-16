@@ -128,7 +128,6 @@ const ListingForm = ({ mode, buttonSubmitFunction, existingListingObject }) => {
       }
     } catch (error) {
       e.target.value = '';
-      console.log(openModal);
       setFormFields({ ...formFields, files: previousFiles, thumbnail: previousThumbnail });
       modalHeader[1]('Error');
       modalMessage[1](error.message);

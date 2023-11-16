@@ -18,7 +18,7 @@ const Navbar = () => {
       setSettings(['Login', 'Register']);
     } else {
       setPages(['Home', 'Hosted Listings'])
-      setSettings(['Profile', 'Logout']);
+      setSettings(['Logout']);
     }
   }, [loggedIn[0]])
 

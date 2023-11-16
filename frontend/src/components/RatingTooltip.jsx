@@ -5,7 +5,7 @@ const CustomWidthTooltip = styled(({ className, ...props }) => (
   [`& .${tooltipClasses.tooltip}`]: {
     backgroundColor: '#f5f5f9',
     color: 'rgba(0, 0, 0, 0.87)',
-    width: 360,
+    width: 300,
     maxWidth: 400
   },
 });
@@ -61,14 +61,12 @@ const RatingTooltip = ({ passedListing, openRatingModalFunction, children }) => 
         ratingArray[listing.reviews[i].rating - 1].amountOfRating += 1;
       }
       ratingArray = ratingArray.map((rating) => {
-        console.log(Math.round((rating.amountOfRating / listing.reviews.length) * 100));
         return {
           ...rating,
           percentage: Math.round((rating.amountOfRating / listing.reviews.length) * 100)
         }
       }
       )
-      console.log(ratingArray);
       setRatingsSummary(ratingArray.reverse());
     }
   }, [listing])

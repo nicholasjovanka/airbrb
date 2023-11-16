@@ -73,8 +73,6 @@ const ListingPagination = ({ listingsArray, displayPage, dateFilterOn = false, s
 
   const openRatingModalFunction = (listingRatingArray, listingName, ratingFilter) => {
     const ratingsToDisplay = listingRatingArray.filter((rating) => rating.rating === ratingFilter);
-    console.log(listingRatingArray);
-    console.log(ratingsToDisplay);
     setRatingsModalObj({
       ratings: ratingsToDisplay,
       ratingFilter,
@@ -95,7 +93,6 @@ const ListingPagination = ({ listingsArray, displayPage, dateFilterOn = false, s
       }
       for (let i = 0; i < datearray.length; i++) {
         for (let z = i + 1; z < datearray.length; z++) {
-          console.log(datearray[i]);
           const startDateDifference = getLuxonDayDifference(datearray[z].startDate, datearray[i].startDate);
           const firstDateStartDateString = datearray[i].startDate.setLocale('en-gb').toLocaleString();
           const firstDateEndDateString = datearray[i].endDate.setLocale('en-gb').toLocaleString();

@@ -10,7 +10,6 @@ const ProfitBar = ({ listingIds }) => {
     const getBookings = async () => {
       const bookings = await apiCall('bookings', 'GET');
       const bookingsWithProfit = bookings.data.bookings.filter((booking) => (listingIds.includes(Number(booking.listingId)) && booking.status === 'accepted'));
-      console.log(bookingsWithProfit);
       const currentDate = DateTime.now().startOf('day');
       const profitsArray = Array(31).fill(0);
       for (let i = 0; i < daysArray.length; i++) {
@@ -18,14 +17,12 @@ const ProfitBar = ({ listingIds }) => {
         for (let x = 0; x < bookingsWithProfit.length; x++) {
           const bookingStartDate = DateTime.fromSQL(bookingsWithProfit[x].dateRange.startDate);
           const bookingEndDate = DateTime.fromSQL(bookingsWithProfit[x].dateRange.endDate);
-          if (getLuxonDayDifference(bookingStartDate, dateToCheck) >= 0 && getLuxonDayDifference(dateToCheck, bookingEndDate) <= 0) {
+          if (getLuxonDayDifference(bookingStartDate, dateToCheck) >= 0 && getLuxonDayDifference(dateToCheck, bookingEndDate) >= 0) {
             const pricePerDay = bookingsWithProfit[x].totalPrice / getLuxonDayDifference(bookingStartDate, bookingEndDate);
-            console.log(pricePerDay);
             profitsArray[daysArray[i]] += pricePerDay
           }
         }
       }
-      console.log(profitsArray);
       setProfits(profitsArray)
     }
     getBookings();

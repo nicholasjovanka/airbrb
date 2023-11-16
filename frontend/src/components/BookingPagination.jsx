@@ -1,16 +1,18 @@
 import React, { useState, useEffect, useContext } from 'react';
 import PropTypes from 'prop-types';
-import { useTheme } from '@mui/material/styles';
 import { apiCall, capitalizeFirstLetter } from '../utils/utils';
 import { StoreContext } from '../utils/states';
 
-import { Table, TableHead, TableBody, TableCell, TableContainer, TableFooter, TablePagination, TableRow, Button, Box, Paper, IconButton, Select, MenuItem, InputLabel } from '@mui/material';
+import { Table, TableHead, TableBody, TableCell, TableContainer, TableFooter, TablePagination, TableRow, Button, Box, Paper, IconButton, Select, MenuItem, InputLabel, useTheme } from '@mui/material';
 import FirstPageIcon from '@mui/icons-material/FirstPage';
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import LastPageIcon from '@mui/icons-material/LastPage';
 import ConfirmationModal from './ConfirmationModal';
 
+/*
+Table Pagination Customization provided by Material UI which adds a go to last page button for pagination
+*/
 const TablePaginationActions = (props) => {
   const theme = useTheme();
   const { count, page, rowsPerPage, onPageChange } = props;
@@ -72,6 +74,7 @@ TablePaginationActions.propTypes = {
 };
 
 /*
+Component that allows the user to paginate the bookings passed in the bookingArray in the form of a table.
 Props Explanation
 bookingArray = Array containing all the bookings needed by the component
 setBookingArray = Function passed from the parent that allows this component to modify bookingArray in the parent component
@@ -187,7 +190,6 @@ const BookingPagination = ({ bookingArray, setBookingArray, viewMode = false }) 
       action
     })
     setConfirmationModalContent(`Are you sure you want to ${action} Booking from ${bookingObj.owner} at ${bookingObj.date} `)
-    console.log(selectedBooking);
     setOpenConfirmationModal(true)
   }
 
@@ -205,7 +207,6 @@ const BookingPagination = ({ bookingArray, setBookingArray, viewMode = false }) 
         previousBookingArray.splice(selectedBooking.index, 1);
         const newNumberOfPage = Math.ceil(previousBookingArray.length / paginationObj.rowsPerPage) - 1;
         const pageToGoTo = paginationObj.page > newNumberOfPage ? newNumberOfPage : paginationObj.page;
-        console.log(pageToGoTo);
         setPaginationObj({ ...paginationObj, page: pageToGoTo, bookings: previousBookingArray });
       } else {
         setPaginationObj({ ...paginationObj, bookings: previousBookingArray });

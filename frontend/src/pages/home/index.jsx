@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Box, Typography, TextField, Button, Checkbox, Grid, InputLabel, InputAdornment, Select, MenuItem } from '@mui/material';
-import { apiCall, getLuxonDayDifference, addAverageRatingAndNumberOfBedroomsToListing } from '../../utils/utils';
+import { apiCall, getLuxonDayDifference, addAverageRatingAndNumberOfBedsToListing } from '../../utils/utils';
 import { DateTime } from 'luxon';
 import { StoreContext } from '../../utils/states';
 import ListingPagination from '../../components/ListingPagination';
@@ -53,7 +53,7 @@ const Home = () => {
         }
         listingWithDetails = listingWithDetails.filter((listing) => listing.availability.length > 0)
         listingWithDetails = listingWithDetails.map((listing) => {
-          return addAverageRatingAndNumberOfBedroomsToListing(listing);
+          return addAverageRatingAndNumberOfBedsToListing(listing);
         })
         if (loggedIn[0] === true) {
           const userEmail = localStorage.getItem('userEmail');
@@ -103,6 +103,12 @@ const Home = () => {
       setExtraFilterObj({ ...extraFilterObj, [event.target.name]: event.target.value });
     }
   };
+
+  const handleSearchBarEnter = (event) => {
+    if (event.keyCode === 13) {
+      searchFilter()
+    }
+  }
 
   const handleDatesInput = (newValue, fieldname) => {
     setExtraFilterObj({ ...extraFilterObj, [fieldname]: newValue })
@@ -186,7 +192,7 @@ const Home = () => {
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mx: 3, alignItems: 'center' }}>
           <InputLabel htmlFor='search-bar-property-name-and-city'>Search By Property Name and City</InputLabel>
           <Box sx={{ display: 'flex', flexDirection: 'row', gap: 1, justifyContent: 'center', width: 1 }}>
-            <TextField id='search-bar-property-name-and-city' name='searchbar' fullWidth type= 'text' variant='standard' value={searchQuery} onChange={handleSearchInput} sx={{ maxWidth: 'sm' }}/>
+            <TextField id='search-bar-property-name-and-city' name='searchbar' fullWidth type= 'text' variant='standard' value={searchQuery} onChange={handleSearchInput} sx={{ maxWidth: 'sm' }} onKeyDown={handleSearchBarEnter}/>
             <Button sx={{ float: 'right' }} variant='contained' onClick={searchFilter}>
               Search
             </Button>

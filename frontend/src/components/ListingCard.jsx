@@ -4,6 +4,7 @@ import BedIcon from '@mui/icons-material/Bed';
 import BathtubIcon from '@mui/icons-material/Bathtub';
 import { visuallyHidden } from '@mui/utils';
 import RatingTooltip from './RatingTooltip';
+import BedroomParentIcon from '@mui/icons-material/BedroomParent';
 
 const ListingCard = ({ listing, displayPage, openRatingModalFunction, navigateToListing, children }) => {
   return (
@@ -15,18 +16,20 @@ const ListingCard = ({ listing, displayPage, openRatingModalFunction, navigateTo
         Type: {listing.metadata.type}
       </Typography>
       <Grid container spacing={{ xs: 1 }} justifyContent="space-between">
-        <Grid item xs={ displayPage === 'hostedlisting' ? 12 : 2}>
+        <Grid item xs={2}>
           {
             displayPage === 'hostedlisting'
               ? (
-                  <Typography gutterBottom variant="h6" component="div" noWrap >
-                    {listing.numberOfBedrooms} Beds
+                <Tooltip title='Number of Beds'>
+                  <Typography gutterBottom variant="h6" component="div" sx={{ display: 'flex', alignItems: 'center' }}>
+                  {listing.numberOfBeds} <BedIcon sx={{ ml: 1 }}/> <Box component="span" sx={visuallyHidden}>Number of Beds</Box>
                   </Typography>
+                </Tooltip>
                 )
               : (
                   <Tooltip title='Number of Bedrooms'>
                     <Typography gutterBottom variant="h6" component="div" sx={{ display: 'flex', alignItems: 'center' }}>
-                    { listing.metadata.bedrooms.length } <BedIcon sx={{ ml: 1 }}/> <Box component="span" sx={visuallyHidden}>Number of Bedroom</Box>
+                      {listing.metadata.bedrooms.length} <BedroomParentIcon sx={{ ml: 1 }}/> <Box component="span" sx={visuallyHidden}>Number of Bedrooms</Box>
                     </Typography>
                   </Tooltip>
                 )

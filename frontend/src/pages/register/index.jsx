@@ -12,10 +12,11 @@ const Register = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const navigate = useNavigate();
-  const { loggedIn, openModal, modalHeader, modalMessage } = useContext(StoreContext);
+  const { loggedIn, openModal, modalHeader, modalMessage, openBackdrop } = useContext(StoreContext);
 
   const handleRegister = async () => {
     try {
+      openBackdrop[1](true)
       if (name.trim().length === 0) {
         throw new Error('Name Cannot Be Empty');
       }
@@ -39,6 +40,7 @@ const Register = () => {
       loggedIn[1](true);
       navigate('/home');
     } catch (error) {
+      openBackdrop[1](false)
       modalHeader[1]('Error');
       const errorMessage = error.response ? error.response.data.error : error.message;
       modalMessage[1](errorMessage);

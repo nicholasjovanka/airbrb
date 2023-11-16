@@ -25,18 +25,16 @@ const Login = () => {
       localStorage.setItem('userEmail', email);
 
       loggedIn[1](true);
-
       // Redirect the user to the home page
       navigate('/home');
     } catch (error) {
+      openBackdrop[1](false);
       console.error('Login Error:', error.response?.data?.error || 'Unknown error');
       // setError(error.response?.data?.error || 'An unexpected error occurred.');
       modalHeader[1]('Error');
       const errorMessage = error.response ? error.response.data.error : error.message;
       modalMessage[1](errorMessage);
       openModal[1](true);
-    } finally {
-      openBackdrop[1](false);
     }
   };
 

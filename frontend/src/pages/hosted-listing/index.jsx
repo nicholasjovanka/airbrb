@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Box, Typography, Button, Tooltip } from '@mui/material';
 import { useParams } from 'react-router-dom';
-import { apiCall, addAverageRatingAndNumberOfBedroomsToListing, listingObjectValidator } from '../../utils/utils';
+import { apiCall, addAverageRatingAndNumberOfBedsToListing, listingObjectValidator } from '../../utils/utils';
 import AddIcon from '@mui/icons-material/Add';
 import { StoreContext } from '../../utils/states';
 import ListingPagination from '../../components/ListingPagination';
@@ -34,7 +34,7 @@ const HostedListing = () => {
           listingsBelongingToOwner.push({ ...listingDetails.data.listing, id: listing.id });
         }
         listingsBelongingToOwner = listingsBelongingToOwner.map((listing) => {
-          return addAverageRatingAndNumberOfBedroomsToListing(listing);
+          return addAverageRatingAndNumberOfBedsToListing(listing);
         })
         const listingBelongingToOwnerIds = listingsBelongingToOwner.map((listing) => listing.id);
         setListingIds(listingBelongingToOwnerIds);
@@ -85,7 +85,7 @@ const HostedListing = () => {
         postedOn: null,
         ...requestObject
       }
-      newListingObject = addAverageRatingAndNumberOfBedroomsToListing(newListingObject)
+      newListingObject = addAverageRatingAndNumberOfBedsToListing(newListingObject)
       const listingShallowCopy = [...listings, newListingObject]
       setListings(listingShallowCopy)
       setOpenCreateListingModal(false);

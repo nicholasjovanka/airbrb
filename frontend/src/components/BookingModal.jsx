@@ -8,11 +8,24 @@ import { getLuxonDayDifference, isoDateToDDMMYYYY } from '../utils/utils';
 import { BootstrapDialog } from '../utils/styles';
 import ModalCloseButton from './ModalCloseButton';
 
+/*
+Modal used to by the Listing Detail Screen so that a User/Customer can make a booking based on the available dates of that listing
+Props explanation:
+- open: boolean state variable passed from the parent that dictates when to open the booking dialog
+- setOpen: The state set function for the 'open' boolean state that allows the modal to close when the close button is clicked
+- bookFunction: booking function passed from the parent that is passed as a prop which dictates what happens when the user click the book button in the modal
+- availableDates: Array of object that describes the available date range of the booking. Each of the object contain a start date and end date which is a string of date in YYYY-mm-dd format
+- price: The price for booking the specified listing per day. Used to show the user price estimations
+*/
 const BookingModal = ({ open, setOpen, bookFunction, availableDates = [], price }) => {
   const [selectedDateRange, setSelectedDateRange] = useState('');
   const [bookDate, setBookDate] = useState({})
   const [estimatedPrice, setEstimatedPrice] = useState(0);
 
+  /*
+  Function that changes the date in the date picker when the user selects a new availability date range
+  For Example, Lets say the booking has 2 available date range for booking, if user change from option 1 to 2 then it updates the date picker
+  */
   const handleDateSelectInput = (event) => {
     setSelectedDateRange(event.target.value);
     const newMinDate = DateTime.fromSQL(event.target.value.split('/')[0].trim());
@@ -26,6 +39,9 @@ const BookingModal = ({ open, setOpen, bookFunction, availableDates = [], price 
     setEstimatedPrice(getLuxonDayDifference(newMinDate, newMaxDate) * price)
   }
 
+  /*
+  Use Effect Used to Update the Date Picker when the availabilityDates passed from the parent change.
+  */
   useEffect(() => {
     setSelectedDateRange(`${availableDates[0].startDate}/${availableDates[0].endDate}`)
     const startDate = DateTime.fromSQL(availableDates[0].startDate).startOf('day')
@@ -39,12 +55,18 @@ const BookingModal = ({ open, setOpen, bookFunction, availableDates = [], price 
     setEstimatedPrice(getLuxonDayDifference(startDate, endDate) * price)
   }, [availableDates])
 
+  /*
+  Function that changes the bookDate state which tracks the start date and end date that the user pick to book when the DatePicker input change in value
+  */
   const handleDatesInput = (newValue, fieldname) => {
     const newDateObj = { ...bookDate, [fieldname]: newValue }
     setBookDate(newDateObj);
     setEstimatedPrice(getLuxonDayDifference(newDateObj.startDate, newDateObj.endDate) * price)
   };
 
+  /*
+  Function that allows the close button of the modal to close the modal
+  */
   const handleClose = () => {
     setOpen(false);
   };

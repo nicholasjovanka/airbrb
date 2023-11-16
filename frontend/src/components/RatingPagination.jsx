@@ -16,7 +16,6 @@ const ReviewPagination = ({ ratingArray, setRatingArray }) => {
       ratingArray,
       currentPage: 1
     })
-    console.log(ratingArray)
   }, [ratingArray])
 
   useEffect(() => {

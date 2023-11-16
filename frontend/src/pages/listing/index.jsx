@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { Box, Typography, Grid, Container, Tooltip, Button, Rating, Select, MenuItem, InputLabel, TextField } from '@mui/material';
 import { visuallyHidden } from '@mui/utils';
-import { apiCall, getLuxonDayDifference, addDurationAndDateToBookingArray, addAverageRatingAndNumberOfBedroomsToListing } from '../../utils/utils';
+import { apiCall, getLuxonDayDifference, addDurationAndDateToBookingArray, addAverageRatingAndNumberOfBedsToListing } from '../../utils/utils';
 import { DateTime } from 'luxon';
 import { StoreContext } from '../../utils/states';
 import ImageCard from '../../components/ImageCard';
@@ -35,13 +35,10 @@ const Listing = () => {
       try {
         openBackdrop[1](true);
         const listingsApi = await apiCall(`listings/${id}`, 'GET');
-        setListing(addAverageRatingAndNumberOfBedroomsToListing(listingsApi.data.listing)); // Make sure to access the 'listing' property here
+        setListing(addAverageRatingAndNumberOfBedsToListing(listingsApi.data.listing)); // Make sure to access the 'listing' property here
         const queryStringStartDate = searchParams.get('startDate');
         const queryStringEndDate = searchParams.get('endDate');
         if (queryStringStartDate && queryStringEndDate) {
-          console.log(queryStringStartDate);
-          console.log(queryStringEndDate)
-          console.log(DateTime.fromSQL(queryStringEndDate).diff(DateTime.fromSQL(queryStringStartDate), ['days']).toObject().days);
           setDuration(getLuxonDayDifference(DateTime.fromSQL(queryStringStartDate), DateTime.fromSQL(queryStringEndDate)));
         }
         await getUserListingBookings();
@@ -212,15 +209,17 @@ const Listing = () => {
               </Tooltip>
               <Tooltip title='Number of Beds'>
                 <Typography gutterBottom variant="h6" component="div" sx={{ display: 'flex', alignItems: 'center' }}>
-                {listing.numberOfBedrooms} <BedIcon sx={{ ml: 1 }}/> <Box component="span" sx={visuallyHidden}>Number of Beds</Box>
+                {listing.numberOfBeds} <BedIcon sx={{ ml: 1 }}/> <Box component="span" sx={visuallyHidden}>Number of Beds</Box>
                 </Typography>
               </Tooltip>
             </Box>
-            <Typography variant='h6'> { listing.metadata.amenities.length === 0 ? 'No Amenities' : 'Amenities :'} </Typography>
-            {/* Amenities */}
-            {listing.metadata.amenities.length > 0 && listing.metadata.amenities.map((amenity, index) => (
-              <Typography key={index} variant='body1'>- {amenity}</Typography>))
-            }
+            <Box>
+              <Typography variant='h6'> { listing.metadata.amenities.length === 0 ? 'No Amenities' : 'Amenities :'} </Typography>
+              {/* Amenities */}
+              {listing.metadata.amenities.length > 0 && listing.metadata.amenities.map((amenity, index) => (
+                <Typography key={index} variant='body1'>- {amenity}</Typography>))
+              }
+            </Box>
           </Grid>
           <Grid item xs={12} sx={{ my: 3 }}>
             <Typography variant='h6'> Listing Images </Typography>

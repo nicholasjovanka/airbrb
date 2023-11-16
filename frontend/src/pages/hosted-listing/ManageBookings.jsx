@@ -8,6 +8,7 @@ import { StoreContext } from '../../utils/states';
 const ManageBookings = () => {
   const [listingDetail, setListingDetail] = useState({});
   const [bookings, setBookings] = useState([]);
+  const [alreadyInitialLoad, setAlreadyInitialLoad] = useState(false);
   const { id } = useParams();
   const { openModal, modalHeader, modalMessage } = useContext(StoreContext);
   useEffect(() => {
@@ -23,12 +24,11 @@ const ManageBookings = () => {
         const bookingsApi = await apiCall('bookings', 'GET');
         let currentListingBookings = bookingsApi.data.bookings.filter((booking) => booking.listingId === id);
         currentListingBookings = addDurationAndDateToBookingArray(currentListingBookings);
-        console.log(currentListingBookings);
         setBookings(currentListingBookings.reverse());
         const [amountOfDayBooked, amountOfProfit] = getAmountOfDayBookedAndProfit(currentListingBookings);
         listingObject = { ...listingObject, profit: amountOfProfit, daysBooked: amountOfDayBooked }
-        console.log(bookings);
         setListingDetail(listingObject);
+        setAlreadyInitialLoad(true);
       } catch (error) {
         modalHeader[1]('Error');
         modalMessage[1](error.message);
@@ -39,9 +39,11 @@ const ManageBookings = () => {
   }, [])
 
   useEffect(() => {
-    const [amountOfDayBooked, amountOfProfit] = getAmountOfDayBookedAndProfit(bookings);
-    const updatedlistingObject = { ...listingDetail, profit: amountOfProfit, daysBooked: amountOfDayBooked }
-    setListingDetail(updatedlistingObject);
+    if (alreadyInitialLoad) {
+      const [amountOfDayBooked, amountOfProfit] = getAmountOfDayBookedAndProfit(bookings);
+      const updatedlistingObject = { ...listingDetail, profit: amountOfProfit, daysBooked: amountOfDayBooked }
+      setListingDetail(updatedlistingObject);
+    }
   }, [bookings])
 
   const getAmountOfDayBookedAndProfit = (bookingArray) => {

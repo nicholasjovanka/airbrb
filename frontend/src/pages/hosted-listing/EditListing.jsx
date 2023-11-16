@@ -51,8 +51,7 @@ const EditListing = () => {
           ...metadata
         }
       }
-      const request = await apiCall(`listings/${id}`, 'PUT', requestObject);
-      console.log(request);
+      await apiCall(`listings/${id}`, 'PUT', requestObject);
       modalHeader[1]('Success');
       modalMessage[1]('Sucessfully Edited Listing');
       openModal[1](true);
