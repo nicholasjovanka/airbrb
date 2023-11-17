@@ -26,12 +26,12 @@ function App () {
 
   For more details see the comment in the states.js in the utils folder
   */
-  const { openModal, modalHeader, modalMessage, openBackdrop } = useContext(StoreContext);
+  const { openModal, modalHeader, modalMessage, openBackdrop, loggedIn } = useContext(StoreContext);
   return (
     <React.Fragment>
       <CssBaseline/>
       <Box sx={{ height: '100vh', maxWidth: '100%', display: 'flex', flexDirection: 'column' }}>
-        <Navbar/>
+        <Navbar loggedIn={loggedIn[0]} setLoggedIn={loggedIn[1]}/>
         <Offset />
         <Box sx={{ flexGrow: 1, width: '100%', display: 'flex', flexDirection: 'column' }}>
           <Routes>

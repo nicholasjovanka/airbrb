@@ -11,7 +11,7 @@ Props explanation:
 - header: Message displayed as the title of the Message modal
 - content: Message displayed in the body of the Message
 */
-const MessageModal = ({ header, content, open, setOpen, width = 'sm', fullWidth = true }) => {
+const MessageModal = ({ header, content, open, setOpen }) => {
   /*
   Function that allows the close button of the modal to close the modal
   */
@@ -26,8 +26,8 @@ const MessageModal = ({ header, content, open, setOpen, width = 'sm', fullWidth 
         aria-labelledby ='message-dialog-title'
         aria-describedby = 'message-dialog-description'
         open = {open}
-        maxWidth = {width}
-        fullWidth={fullWidth}
+        maxWidth = 'sm'
+        fullWidth
         scroll = 'paper'
       >
         <DialogTitle sx={{ m: 0, p: 2 }} id='message-dialog-title'>
@@ -40,7 +40,7 @@ const MessageModal = ({ header, content, open, setOpen, width = 'sm', fullWidth 
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button autoFocus onClick={handleClose}>
+          <Button autoFocus onClick={handleClose} aria-label='close-modal-button'>
             Close
           </Button>
         </DialogActions>

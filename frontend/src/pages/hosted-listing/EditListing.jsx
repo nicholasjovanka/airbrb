@@ -64,7 +64,6 @@ const EditListing = () => {
         metadata: {
           bedrooms: bedroomArray,
           amenities: amenities.filter((amenity) => amenity.trim().length > 0),
-          live: false,
           ...metadata
         }
       }

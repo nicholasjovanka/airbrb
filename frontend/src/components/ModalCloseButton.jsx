@@ -11,7 +11,7 @@ Props Explanation;
 const ModalCloseButton = ({ handleClose }) => {
   return (
     <IconButton
-      aria-label='close'
+      aria-label='close-modal-icon-button'
       onClick={handleClose}
       sx={{
         position: 'absolute',

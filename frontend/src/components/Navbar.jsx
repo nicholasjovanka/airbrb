@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { StoreContext } from '../utils/states'
 import { AppBar, Box, Toolbar, IconButton, Typography, Menu, Container, Avatar, Button, Tooltip, MenuItem } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import OtherHousesIcon from '@mui/icons-material/OtherHouses';
@@ -8,13 +7,12 @@ import OtherHousesIcon from '@mui/icons-material/OtherHouses';
 /*
 Navbar component that appears at the top of the page
 */
-const Navbar = () => {
+const Navbar = ({ loggedIn, setLoggedIn }) => {
   const navigate = useNavigate();
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
   const [pages, setPages] = useState(['Home', 'Hosted Listings']);
   const [settings, setSettings] = useState(['Profile', 'Logout'])
-  const { loggedIn } = useContext(StoreContext);
   /*
   useEffect that checks if the user is logged in. If the user is logged in then show the hosted listing link/button/menu in the Navigation Menu in the navbar that allows
   the user to navigate to the hosted listing page, additionaly also show a logout button in the settings menu at the right side of the navbar (The one that
@@ -22,14 +20,14 @@ const Navbar = () => {
   If the user is not logged in then only show the home button in the Navigation Menu and the Login and Register Button in the settings menu
   */
   useEffect(() => {
-    if (!loggedIn[0]) {
+    if (!loggedIn) {
       setPages(['Home']);
       setSettings(['Login', 'Register']);
     } else {
       setPages(['Home', 'Hosted Listings'])
       setSettings(['Logout']);
     }
-  }, [loggedIn[0]])
+  }, [loggedIn])
 
   /*
   Function that opens the navigation menu for mobile view
@@ -90,7 +88,7 @@ const Navbar = () => {
       case 'Logout': {
         localStorage.removeItem('token');
         localStorage.removeItem('userEmail');
-        loggedIn[1](false);
+        setLoggedIn(false);
         navigationRoute = '/home';
         break;
       }
@@ -192,7 +190,7 @@ const Navbar = () => {
         <Box sx={{ flexGrow: 0 }}>
           <Tooltip title='Open settings'>
             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-              <Avatar> {loggedIn[0] ? localStorage.getItem('userEmail').slice(0, 1) : 'G' }</Avatar>
+              <Avatar> {loggedIn ? localStorage.getItem('userEmail').slice(0, 1) : 'G' }</Avatar>
             </IconButton>
           </Tooltip>
           <Menu
@@ -211,7 +209,7 @@ const Navbar = () => {
             open={Boolean(anchorElUser)}
             onClose={handleCloseUserMenu}
           >
-            <Typography variant='h6' sx={{ m: 1 }}>Welcome { loggedIn[0] ? localStorage.getItem('userEmail').split('@')[0] : 'Guest' } </Typography>
+            <Typography variant='h6' sx={{ m: 1 }}>Welcome { loggedIn ? localStorage.getItem('userEmail').split('@')[0] : 'Guest' } </Typography>
             {settings.map((setting) => (
               <MenuItem key={setting} onClick={() => { handleNavigation(setting) } }>
                 <Typography textAlign='center'>{setting}</Typography>
