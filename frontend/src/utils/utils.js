@@ -9,7 +9,7 @@ export const fileToDataUrl = (file) => {
   if (file === null) { // Checks if the passed file is null, if it is null then return nothing
     return new Promise((resolve, reject) => {
       resolve(null);
-    })
+    });
   } else { // If the file is not null then process it and return the file reader as a promise
     const validFileTypes = ['image/jpeg', 'image/png', 'image/jpg']
     const valid = validFileTypes.find(type => type === file.type);
@@ -49,13 +49,13 @@ export const apiCall = (url, method, body = {}, queryString = null) => {
       path,
       body,
       config
-    )
+    );
   } else if (method === 'GET') {
-    return axios.get(path, config)
+    return axios.get(path, config);
   } else if (method === 'DELETE') {
-    return axios.delete(path, config)
+    return axios.delete(path, config);
   } else if (method === 'PUT') {
-    return axios.put(path, body, config)
+    return axios.put(path, body, config);
   }
 }
 
@@ -85,7 +85,7 @@ export const listingObjectValidator = (formObject, bedroomArray, amenities) => {
   const nonEmptyTextFields = ['title', 'type', 'price', 'street', 'city', 'state', 'postcode', 'country', 'thumbnail']
   for (const textFields of nonEmptyTextFields) {
     if (formObject[textFields] === '' || formObject[textFields] === null) {
-      throw new Error(`${capitalizeFirstLetter(textFields)} cannot be empty`)
+      throw new Error(`${capitalizeFirstLetter(textFields)} cannot be empty`);
     }
   }
   const postCodeRegex = /^\d{4}$/
@@ -93,24 +93,24 @@ export const listingObjectValidator = (formObject, bedroomArray, amenities) => {
     throw new Error('Invalid Postcode Format');
   }
   if (formObject.files.length < 1) {
-    throw new Error('You must atleast upload 1 property image')
+    throw new Error('You must atleast upload 1 property image');
   }
   if (isNaN(formObject.price)) {
     throw new Error('Price must be a number');
   }
   if (formObject.price <= 0) {
-    throw new Error('Price must be above 0')
+    throw new Error('Price must be above 0');
   }
   if (isNaN(formObject.bathrooms)) {
     throw new Error('Number of bathroom must be a number');
   }
   if (formObject.bathrooms < 0) {
-    throw new Error('Number of Bathroom cannot be below 0')
+    throw new Error('Number of Bathroom cannot be below 0');
   }
   if (formObject.url !== '') {
     const regex = /^(https?:\/\/)?((www.)?youtube.com|youtu.be)\/.+$/i;
     if (!regex.test(formObject.url)) {
-      throw new Error('Invalid Youtube URL')
+      throw new Error('Invalid Youtube URL');
     }
   }
   bedroomArray.forEach(element => {
@@ -118,7 +118,7 @@ export const listingObjectValidator = (formObject, bedroomArray, amenities) => {
       throw new Error('Number of beds in each bedroom must be a number');
     }
     if (element.beds < 0) {
-      throw new Error('Number of Beds cannot be below 0')
+      throw new Error('Number of Beds cannot be below 0');
     }
   });
 }
@@ -156,11 +156,11 @@ export const addAverageRatingAndNumberOfBedsToListing = (listing) => {
   let averageRating = 0;
   listing.metadata.bedrooms.forEach((room) => {
     numberOfBeds += room.beds
-  })
+  });
 
   listing.reviews.forEach((review) => {
     averageRating += review.rating
-  })
+  });
   averageRating = listing.reviews.length > 0 ? (averageRating / listing.reviews.length).toFixed(2) : null
   return { ...listing, numberOfBeds, averageRating }
 }

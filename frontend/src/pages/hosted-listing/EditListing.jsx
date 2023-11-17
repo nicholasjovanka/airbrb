@@ -8,7 +8,7 @@ import { StoreContext } from '../../utils/states';
 Edit Page Component for the Edit Listing page where the user will edit the detail of a specific listing that they hosted
 */
 const EditListing = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const { openModal, modalHeader, modalMessage, openBackdrop } = useContext(StoreContext);
   const { id } = useParams();
   const [listingObj, setListingObj] = useState({});
@@ -37,7 +37,7 @@ const EditListing = () => {
   */
   useEffect(() => {
     getListingDetail();
-  }, [])
+  }, []);
 
   /*
   Function that submit the changes made to the listing to the backend server, After a succesfull update, the function will navigate the user back to the hosted listing page
@@ -74,8 +74,8 @@ const EditListing = () => {
       setTimeout(() => {
         openModal[1](false);
         const userEmail = localStorage.getItem('userEmail');
-        navigate(`/hostedlisting/${userEmail}`)
-      }, 1000)
+        navigate(`/hostedlisting/${userEmail}`);
+      }, 1000);
     } catch (error) {
       modalHeader[1]('Error');
       const errorMessage = error.response ? error.response.data.error : error.message;

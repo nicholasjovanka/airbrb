@@ -25,7 +25,7 @@ const HostedListing = () => {
   useEffect(() => {
     const getListings = async () => {
       try {
-        openBackdrop[1](true)
+        openBackdrop[1](true);
         const listingsApiCall = await apiCall('listings', 'GET');
         // Filter the listings list so that only listing whose owner is the same as the email included in the url param is shown in the page
         const listingsArray = listingsApiCall.data.listings.filter((listing) => listing.owner === email).sort((a, b) => {
@@ -44,7 +44,7 @@ const HostedListing = () => {
         }
         listingsBelongingToOwner = listingsBelongingToOwner.map((listing) => { // Add the average rating and number of beds field to each listing
           return addAverageRatingAndNumberOfBedsToListing(listing);
-        })
+        });
         /* Get all the ids of the listing which tied to the current user and pass them to the ProfitBar component so that the ProfitBar component can display
         the current user profit in the past 30 days
         */
@@ -57,12 +57,12 @@ const HostedListing = () => {
         modalMessage[1](errorMessage);
         openModal[1](true);
       } finally {
-        openBackdrop[1](false)
+        openBackdrop[1](false);
       }
     }
 
     getListings();
-  }, [])
+  }, []);
 
   /*
   Function that lets the user to create a new listing, upon succesfully creating a new listing, the function will update the listings state variable which
@@ -70,7 +70,7 @@ const HostedListing = () => {
   */
   const createNewListing = async (formObject, bedroomArray, amenities) => {
     try {
-      openBackdrop[1](true)
+      openBackdrop[1](true);
       formObject = { ...formObject, price: Number(formObject.price), bathrooms: Number(formObject.bathrooms) };
       bedroomArray = bedroomArray.map((e) => { return { type: e.type, beds: Number(e.beds) } });
       listingObjectValidator(formObject, bedroomArray, amenities);
@@ -101,9 +101,9 @@ const HostedListing = () => {
         postedOn: null,
         ...requestObject
       }
-      newListingObject = addAverageRatingAndNumberOfBedsToListing(newListingObject)
+      newListingObject = addAverageRatingAndNumberOfBedsToListing(newListingObject);
       const listingShallowCopy = [...listings, newListingObject]
-      setListings(listingShallowCopy)
+      setListings(listingShallowCopy);
       setOpenCreateListingModal(false);
       modalHeader[1]('Success');
       modalMessage[1]('Sucessfully Created Listing');
@@ -114,7 +114,7 @@ const HostedListing = () => {
       modalMessage[1](errorMessage);
       openModal[1](true);
     } finally {
-      openBackdrop[1](false)
+      openBackdrop[1](false);
     }
   }
 

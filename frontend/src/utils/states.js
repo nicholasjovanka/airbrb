@@ -17,9 +17,9 @@ on the other hand setting it to false will hide the LoadingBackdrop component
 This Context code is implemented using the design pattern provided by the guide from https://dev.to/nazmifeeroz/using-usecontext-and-usestate-hooks-as-a-store-mnm
 which is provided by the COMP6080 lecture slide
 */
-export const StoreContext = React.createContext(null)
+export const StoreContext = React.createContext(null);
 const states = ({ children }) => {
-  const [loggedIn, setLoggedIn] = React.useState(false)
+  const [loggedIn, setLoggedIn] = React.useState(false);
   const [openModal, setOpenModal] = React.useState(false);
   const [openBackdrop, setOpenBackdrop] = React.useState(false);
   const [modalHeader, setModalHeader] = React.useState('');

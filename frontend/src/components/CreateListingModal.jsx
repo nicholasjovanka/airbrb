@@ -29,7 +29,7 @@ const CreateListingModal = ({ open, setOpen, createListingFunction }) => {
     if (open) {
       setListings({});
     }
-  }, [open])
+  }, [open]);
 
   /*
   Function that handles the logic for the Listing Upload using a json file.
@@ -41,7 +41,7 @@ const CreateListingModal = ({ open, setOpen, createListingFunction }) => {
     const file = e.target.files[0];
     try {
       if (file.type !== 'application/json') { // Ensure file is Json
-        throw new Error('File Must be JSON')
+        throw new Error('File Must be JSON');
       }
       const fileReader = new FileReader();
       fileReader.readAsText(e.target.files[0], 'UTF-8');
@@ -58,7 +58,7 @@ const CreateListingModal = ({ open, setOpen, createListingFunction }) => {
         const fieldValue = listingFormObject[nonEmptyTextFields[i]];
         if (fieldValue) {
           if (fieldValue.trim().length === 0) {
-            throw new Error(`Field ${capitalizeFirstLetter(nonEmptyTextFields[i])} shouldnt be empty if included inside the json`)
+            throw new Error(`Field ${capitalizeFirstLetter(nonEmptyTextFields[i])} shouldnt be empty if included inside the json`);
           }
         }
       }
@@ -67,7 +67,7 @@ const CreateListingModal = ({ open, setOpen, createListingFunction }) => {
         const fieldValue = listingFormObject[numericFields[x]];
         if (fieldValue) {
           if (isNaN(Number(fieldValue))) {
-            throw new Error(`Field ${capitalizeFirstLetter(numericFields[x])} shouldnt be a number if included inside the json`)
+            throw new Error(`Field ${capitalizeFirstLetter(numericFields[x])} shouldnt be a number if included inside the json`);
           }
         }
       }
@@ -77,39 +77,39 @@ const CreateListingModal = ({ open, setOpen, createListingFunction }) => {
           const fieldValue = listingFormObject.address[requiredAddressFields[i]];
           if (fieldValue) {
             if (fieldValue.trim().length === 0) {
-              throw new Error(`Field ${capitalizeFirstLetter(requiredAddressFields[i])} in address cannot be empty`)
+              throw new Error(`Field ${capitalizeFirstLetter(requiredAddressFields[i])} in address cannot be empty`);
             }
           } else {
-            throw new Error(`Field ${capitalizeFirstLetter(requiredAddressFields[i])} is required in address`)
+            throw new Error(`Field ${capitalizeFirstLetter(requiredAddressFields[i])} is required in address`);
           }
         }
       }
       if (listingFormObject.bedrooms) { // Check the bedroom object in the json file to ensure that it is an array and each of the object inside the array has a type and beds attribute
         if (!Array.isArray(listingFormObject.bedrooms)) {
-          throw new Error('Bedroom field must be an array')
+          throw new Error('Bedroom field must be an array');
         }
         for (let i = 0; i < listingFormObject.bedrooms.length; i++) {
           const bedroomObject = listingFormObject.bedrooms[i];
           if (!bedroomObject.type) {
-            throw new Error('You must include type inside the bedroom object')
+            throw new Error('You must include type inside the bedroom object');
           }
           if (!bedroomObject.beds) {
-            throw new Error('You must include beds inside the bedroom object')
+            throw new Error('You must include beds inside the bedroom object');
           }
           if (isNaN(Number(bedroomObject.beds))) {
-            throw new Error('beds inside the bedroom object must be a number')
+            throw new Error('beds inside the bedroom object must be a number');
           }
         }
       }
 
       if (listingFormObject.amenities) { // Check the amenities object in the json file to ensure that it is an array and each of the object is a string
         if (!Array.isArray(listingFormObject.amenities)) {
-          throw new Error('Amenities field must be an array')
+          throw new Error('Amenities field must be an array');
         }
         for (let i = 0; i < listingFormObject.amenities.length; i++) {
           const amenity = listingFormObject.amenities[i];
           if (amenity.trim().length === 0) {
-            throw new Error('Amenity inside the amenities array cannot be empty if included')
+            throw new Error('Amenity inside the amenities array cannot be empty if included');
           }
         }
       }

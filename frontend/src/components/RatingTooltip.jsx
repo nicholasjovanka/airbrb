@@ -39,7 +39,7 @@ const RatingTooltip = ({ passedListing, openRatingModalFunction, children }) => 
   useEffect(() => {
     setRatingsSummary([]);
     setListing(passedListing);
-  }, [passedListing])
+  }, [passedListing]);
 
   /*
   useEffect that gets the rating summary for each rating category when the listing state object is updated and the listing object actually contain reviews.
@@ -82,10 +82,10 @@ const RatingTooltip = ({ passedListing, openRatingModalFunction, children }) => 
           percentage: Math.round((rating.amountOfRating / listing.reviews.length) * 100)
         }
       }
-      )
+      );
       setRatingsSummary(ratingArray.reverse());
     }
-  }, [listing])
+  }, [listing]);
 
   return (
     <CustomWidthTooltip placement='bottom-end' title=

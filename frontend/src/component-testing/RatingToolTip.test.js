@@ -99,7 +99,7 @@ describe('RatingToolTip', () => {
     /*
     See if the Mui Rating component (The Rating Star image) is currenty
     displaying itself as 5 stars (this is this way since MUI will round the ratings inputted to its component
-    so in this case since the average rating that is passed is 4.8 its gonna round it into 5 and have an aria-label attribute of 5 stars on its span)
+    so in this case since the average rating that is passed is 4.8 its gonna round it into 5 and have an aria-label attribute of 5 stars on its span);
     */
     const MUIRatingComponent = screen.getByRole('img', { name: /5 Stars/i });
     expect(MUIRatingComponent).toBeInTheDocument();
@@ -116,5 +116,5 @@ describe('RatingToolTip', () => {
     const fourStarRatingsAbsoluteTermText = screen.getByText(/2 reviews/i);
     expect(fourStarRatingsPercentageText).toBeInTheDocument();
     expect(fourStarRatingsAbsoluteTermText).toBeInTheDocument();
-  })
+  });
 })

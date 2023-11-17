@@ -11,7 +11,7 @@ Props Explanation;
 - setOpen: The state set function for the 'open' boolean state that allows the modal to close when the close button is clicked
 */
 const RatingModal = ({ open, setOpen, propRatingObj }) => {
-  const [ratingObj, setRatingObj] = useState({})
+  const [ratingObj, setRatingObj] = useState({});
   /*
   Function that allows the close button of the modal to close the modal
   */
@@ -23,8 +23,8 @@ const RatingModal = ({ open, setOpen, propRatingObj }) => {
   useEffect to detect changes to the passed prop which in turn will update the Modal title along with the ratings array passed to the rating pagination component
   */
   useEffect(() => {
-    setRatingObj(propRatingObj)
-  }, [propRatingObj])
+    setRatingObj(propRatingObj);
+  }, [propRatingObj]);
 
   return (
     <React.Fragment>

@@ -19,7 +19,7 @@ Props explanation:
 */
 const BookingModal = ({ open, setOpen, bookFunction, availableDates = [], price }) => {
   const [selectedDateRange, setSelectedDateRange] = useState('');
-  const [bookDate, setBookDate] = useState({})
+  const [bookDate, setBookDate] = useState({});
   const [estimatedPrice, setEstimatedPrice] = useState(0);
 
   /*
@@ -35,25 +35,25 @@ const BookingModal = ({ open, setOpen, bookFunction, availableDates = [], price 
       endDate: newMaxDate,
       minDate: newMinDate,
       maxDate: newMaxDate
-    })
-    setEstimatedPrice(getLuxonDayDifference(newMinDate, newMaxDate) * price)
+    });
+    setEstimatedPrice(getLuxonDayDifference(newMinDate, newMaxDate) * price);
   }
 
   /*
   Use Effect Used to Update the Date Picker when the availabilityDates passed from the parent change.
   */
   useEffect(() => {
-    setSelectedDateRange(`${availableDates[0].startDate}/${availableDates[0].endDate}`)
-    const startDate = DateTime.fromSQL(availableDates[0].startDate).startOf('day')
-    const endDate = DateTime.fromSQL(availableDates[0].endDate).startOf('day')
+    setSelectedDateRange(`${availableDates[0].startDate}/${availableDates[0].endDate}`);
+    const startDate = DateTime.fromSQL(availableDates[0].startDate).startOf('day');
+    const endDate = DateTime.fromSQL(availableDates[0].endDate).startOf('day');
     setBookDate({
       startDate,
       endDate,
       minDate: startDate,
       maxDate: endDate
-    })
-    setEstimatedPrice(getLuxonDayDifference(startDate, endDate) * price)
-  }, [availableDates])
+    });
+    setEstimatedPrice(getLuxonDayDifference(startDate, endDate) * price);
+  }, [availableDates]);
 
   /*
   Function that changes the bookDate state which tracks the start date and end date that the user pick to book when the DatePicker input change in value
@@ -61,7 +61,7 @@ const BookingModal = ({ open, setOpen, bookFunction, availableDates = [], price 
   const handleDatesInput = (newValue, fieldname) => {
     const newDateObj = { ...bookDate, [fieldname]: newValue }
     setBookDate(newDateObj);
-    setEstimatedPrice(getLuxonDayDifference(newDateObj.startDate, newDateObj.endDate) * price)
+    setEstimatedPrice(getLuxonDayDifference(newDateObj.startDate, newDateObj.endDate) * price);
   };
 
   /*

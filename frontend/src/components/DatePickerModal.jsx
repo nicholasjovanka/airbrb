@@ -37,7 +37,7 @@ const DatePickerModal = ({ open, setOpen, goLiveFunction }) => {
     if (open === true) {
       setDates([{ startDate: DateTime.now().startOf('day'), endDate: DateTime.now().startOf('day').plus({ days: 1 }) }]);
     }
-  }, [open])
+  }, [open]);
 
   /*
   Function that handle the onChange event for the datepicker to update the dates state object that stores the dates

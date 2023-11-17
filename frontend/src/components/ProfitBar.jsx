@@ -36,10 +36,10 @@ const ProfitBar = ({ listingIds }) => {
           }
         }
       }
-      setProfits(profitsArray)
+      setProfits(profitsArray);
     }
     getBookings();
-  }, [listingIds])
+  }, [listingIds]);
 
   return (
     <BarChart

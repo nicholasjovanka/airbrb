@@ -26,7 +26,7 @@ in the ListingCard component
 - endDate: The end date that is selected in the date filter of the parent component or in this case the home page
 */
 const ListingPagination = ({ listingsArray, displayPage, dateFilterOn = false, startDate, endDate }) => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [slicedListings, setSlicedListings] = useState([]); //
   const [selectedListing, setSelectedListing] = useState({
     id: '',
@@ -43,7 +43,7 @@ const ListingPagination = ({ listingsArray, displayPage, dateFilterOn = false, s
     numberOfPage: 1,
     listingsArray: [],
     currentPage: 1
-  })
+  });
 
   /*
   Use Effect so that if the listingArray that is passed by the parent component updates, then update the pagination object to triggered a rerender so
@@ -54,8 +54,8 @@ const ListingPagination = ({ listingsArray, displayPage, dateFilterOn = false, s
       ...paginationObj,
       numberOfPage: Math.ceil(listingsArray.length / 12),
       listingsArray
-    })
-  }, [listingsArray])
+    });
+  }, [listingsArray]);
 
   /*
   Use Effect so that the listing that is displayed change when the paginationObject change. In this case this useEffect
@@ -63,7 +63,7 @@ const ListingPagination = ({ listingsArray, displayPage, dateFilterOn = false, s
   */
   useEffect(() => {
     getPages(paginationObj.currentPage);
-  }, [paginationObj])
+  }, [paginationObj]);
 
   /*
   Function to open the Delete Modal which is used to delete a listing in the hosted listing page.
@@ -72,7 +72,7 @@ const ListingPagination = ({ listingsArray, displayPage, dateFilterOn = false, s
     setSelectedListing({
       id,
       index: (paginationObj.currentPage - 1) * 12 + index
-    })
+    });
     setConfirmationModalContent('Are you sure you want to delete this listing');
     setOpenDeleteConfirmationModal(true);
   }
@@ -84,8 +84,8 @@ const ListingPagination = ({ listingsArray, displayPage, dateFilterOn = false, s
     setSelectedListing({
       id,
       index: (paginationObj.currentPage - 1) * 12 + index
-    })
-    setOpenDatePickerModal(true)
+    });
+    setOpenDatePickerModal(true);
   }
 
   /*
@@ -129,7 +129,7 @@ const ListingPagination = ({ listingsArray, displayPage, dateFilterOn = false, s
         const currentEndDate = datearray[y].endDate;
         const dayDifference = getLuxonDayDifference(currentStartDate, currentEndDate);
         if (dayDifference <= 0) {
-          throw new Error('Booking Start Date must be less than Booking End date')
+          throw new Error('Booking Start Date must be less than Booking End date');
         }
       }
       /*
@@ -162,11 +162,11 @@ const ListingPagination = ({ listingsArray, displayPage, dateFilterOn = false, s
           startDate: dateObj.startDate.toISODate(),
           endDate: dateObj.endDate.toISODate()
         }
-      })
+      });
       await apiCall(`listings/publish/${selectedListing.id}`, 'PUT', { availability: dateArrayToBeSubmitted });
       const modifiedListing = [...paginationObj.listingsArray];
       modifiedListing[selectedListing.index].availability = dateArrayToBeSubmitted;
-      setPaginationObj({ ...paginationObj, listingsArray: modifiedListing })
+      setPaginationObj({ ...paginationObj, listingsArray: modifiedListing });
       setOpenDatePickerModal(false);
       modalHeader[1]('Success');
       modalMessage[1]('Succesfully Published Listing');
@@ -216,7 +216,7 @@ const ListingPagination = ({ listingsArray, displayPage, dateFilterOn = false, s
         numberOfPage: newNumberOfPage,
         listingsArray: previousListingArray,
         currentPage: pageToGoTo
-      })
+      });
       modalHeader[1]('Success');
       modalMessage[1]('Succesfully Deleted Listing');
       openModal[1](true);
@@ -234,7 +234,7 @@ const ListingPagination = ({ listingsArray, displayPage, dateFilterOn = false, s
   */
   const getPages = (page) => {
     const sliceStartIndex = (page - 1) * 12;
-    const sliceEndIndex = page === paginationObj.numberOfPage ? paginationObj.listingsArray.length : (page * 12)
+    const sliceEndIndex = page === paginationObj.numberOfPage ? paginationObj.listingsArray.length : (page * 12);
     const dataToDisplay = paginationObj.listingsArray.slice(sliceStartIndex, sliceEndIndex);
     setSlicedListings(dataToDisplay);
   }
@@ -244,14 +244,14 @@ const ListingPagination = ({ listingsArray, displayPage, dateFilterOn = false, s
   component is on, if it is then add the startDate and endDate used as a filter to the query string of the url so that the listing page know to display price per stay instead of price per night
   */
   const navigateToListing = (id) => {
-    navigate(`/listing/${id}${dateFilterOn ? `?startDate=${startDate.toISODate()}&endDate=${endDate.toISODate()}` : ''}`)
+    navigate(`/listing/${id}${dateFilterOn ? `?startDate=${startDate.toISODate()}&endDate=${endDate.toISODate()}` : ''}`);
   }
 
   /*
   Function used to update the paginationObject currentPage value to the new page that the user has visited
   */
   const onChangeButton = (e, page) => {
-    setPaginationObj({ ...paginationObj, currentPage: page })
+    setPaginationObj({ ...paginationObj, currentPage: page });
   }
   return (
     <React.Fragment>

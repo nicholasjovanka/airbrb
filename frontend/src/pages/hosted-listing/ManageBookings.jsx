@@ -47,7 +47,7 @@ const ManageBookings = () => {
       }
     }
     getListingDetail();
-  }, [])
+  }, []);
 
   /*
   useEffect that will update the listing object when the bookings array is modified by the BookingPagination component as the user may approve
@@ -61,7 +61,7 @@ const ManageBookings = () => {
       const updatedlistingObject = { ...listingDetail, profit: amountOfProfit, daysBooked: amountOfDayBooked }
       setListingDetail(updatedlistingObject);
     }
-  }, [bookings])
+  }, [bookings]);
 
   /*
   Function to get the amount of day a listing is booked along with its profit in the current year

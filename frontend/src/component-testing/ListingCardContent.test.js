@@ -95,33 +95,33 @@ describe('ListingCardContent', () => {
     render(<ListingCardContent listing={fakeListingObject} />);
 
     // Checks if the title rendered
-    const listingTitle = screen.getByText(/Test Title/i)
+    const listingTitle = screen.getByText(/Test Title/i);
     expect(listingTitle).toBeInTheDocument();
 
     // Checks if the Listing Type is rendered
-    const listingType = screen.getByText(/Test Type/i)
+    const listingType = screen.getByText(/Test Type/i);
     expect(listingType).toBeInTheDocument();
 
     // Checks to ensure the number of beds is not rendered
-    const numberOfBeds = screen.queryByLabelText(/Number of Beds/i)
+    const numberOfBeds = screen.queryByLabelText(/Number of Beds/i);
     expect(numberOfBeds).toBeNull();
 
     // Checks to ensure the number of bedroom rendered and the value is correct
-    const numberOfBedroom = screen.getByLabelText(/Number of Bedrooms/i)
+    const numberOfBedroom = screen.getByLabelText(/Number of Bedrooms/i);
     expect(numberOfBedroom).toBeInTheDocument();
-    const numberOfBedroomText = screen.getByText(/2/i)
+    const numberOfBedroomText = screen.getByText(/2/i);
     expect(numberOfBedroomText).toBeInTheDocument();
 
     // Checks if the number of bathroom is rendered
-    const numberOfBathroom = screen.getByText(/^10/i)
+    const numberOfBathroom = screen.getByText(/^10/i);
     expect(numberOfBathroom).toBeInTheDocument();
 
     // Checks if the listing price is rendered
-    const listingPrice = screen.getByText(/500 AUD\/Night/i)
+    const listingPrice = screen.getByText(/500 AUD\/Night/i);
     expect(listingPrice).toBeInTheDocument();
 
     // Checks if the Address i rendered
-    const listingAddress = screen.getByText(/Test Street, Test City, Test State Test Postcode, Test Country/i)
+    const listingAddress = screen.getByText(/Test Street, Test City, Test State Test Postcode, Test Country/i);
     expect(listingAddress).toBeInTheDocument();
 
     /*
@@ -132,7 +132,7 @@ describe('ListingCardContent', () => {
     expect(averageRating).toBeInTheDocument();
 
     // Check if the number of reviews is rendered
-    const numberOfReviews = screen.getByText(/Test Street, Test City, Test State Test Postcode, Test Country/i)
+    const numberOfReviews = screen.getByText(/Test Street, Test City, Test State Test Postcode, Test Country/i);
     expect(numberOfReviews).toBeInTheDocument();
   });
 
@@ -149,17 +149,17 @@ describe('ListingCardContent', () => {
     render(<ListingCardContent listing={modifiedListingObject} displayPage='hostedlisting' />);
 
     // Checks to ensure the number of bedroom is not rendered
-    const numberOfBedroom = screen.queryByLabelText(/Number of Bedrooms/i)
+    const numberOfBedroom = screen.queryByLabelText(/Number of Bedrooms/i);
     expect(numberOfBedroom).toBeNull();
 
     // Checks to ensure the number of beds is rendered and the value it render is correct
-    const numberOfBeds = screen.getByLabelText(/Number of Beds/i)
+    const numberOfBeds = screen.getByLabelText(/Number of Beds/i);
     expect(numberOfBeds).toBeInTheDocument();
-    const numberOfBedsText = screen.getByText(/20/i)
+    const numberOfBedsText = screen.getByText(/20/i);
     expect(numberOfBedsText).toBeInTheDocument();
 
     // Check to ensure that if there is no review that the component will display the no review text
-    const noReviewText = screen.getByText(/No Reviews/i)
+    const noReviewText = screen.getByText(/No Reviews/i);
     expect(noReviewText).toBeInTheDocument();
   });
 })

@@ -12,7 +12,7 @@ const Navbar = ({ loggedIn, setLoggedIn }) => {
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
   const [pages, setPages] = useState(['Home', 'Hosted Listings']);
-  const [settings, setSettings] = useState(['Profile', 'Logout'])
+  const [settings, setSettings] = useState(['Profile', 'Logout']);
   /*
   useEffect that checks if the user is logged in. If the user is logged in then show the hosted listing link/button/menu in the Navigation Menu in the navbar that allows
   the user to navigate to the hosted listing page, additionaly also show a logout button in the settings menu at the right side of the navbar (The one that
@@ -24,10 +24,10 @@ const Navbar = ({ loggedIn, setLoggedIn }) => {
       setPages(['Home']);
       setSettings(['Login', 'Register']);
     } else {
-      setPages(['Home', 'Hosted Listings'])
+      setPages(['Home', 'Hosted Listings']);
       setSettings(['Logout']);
     }
-  }, [loggedIn])
+  }, [loggedIn]);
 
   /*
   Function that opens the navigation menu for mobile view
@@ -101,7 +101,7 @@ const Navbar = ({ loggedIn, setLoggedIn }) => {
     <AppBar position='fixed'>
     <Container maxWidth='xl'>
       <Toolbar disableGutters>
-        <OtherHousesIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+        <OtherHousesIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} aria-label='Website Logo' />
         <Typography
           variant='h6'
           noWrap

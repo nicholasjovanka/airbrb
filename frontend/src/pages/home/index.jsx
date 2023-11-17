@@ -61,7 +61,7 @@ const Home = () => {
         listingWithDetails = listingWithDetails.filter((listing) => listing.availability.length > 0) // Filter so that only listings that has availability (live listings) is shown
         listingWithDetails = listingWithDetails.map((listing) => { // Add the average rating field and number of beds field to each listing
           return addAverageRatingAndNumberOfBedsToListing(listing);
-        })
+        });
         if (loggedIn[0] === true) { // If logged in check for bookings tied to each listing made by the user
           const userEmail = localStorage.getItem('userEmail');
           const bookings = await apiCall('bookings', 'GET'); // Get all bookings
@@ -86,7 +86,7 @@ const Home = () => {
               const listingWithBookingIndex = listingWithDetails.map(listing => listing.id).indexOf(bookingListingId);
               const splicedListing = listingWithDetails.splice(listingWithBookingIndex, 1); // Remove the listing with booking from the listingWithDetails array to prevent the same listing displayed more than once
               const listingWithStatus = { ...splicedListing[0], status: bookingTiedToUser[i].status };
-              listingsWithBooking.push(listingWithStatus)
+              listingsWithBooking.push(listingWithStatus);
               listingWithMultipleBooking.push(bookingListingId);
             }
           }
@@ -104,7 +104,7 @@ const Home = () => {
       }
     }
     getListings();
-  }, [loggedIn[0]])
+  }, [loggedIn[0]]);
 
   /*
   Function that update the searchQuery state object based on the the changes in  value of the the search bar text input
@@ -130,7 +130,7 @@ const Home = () => {
   */
   const handleSearchBarEnter = (event) => {
     if (event.keyCode === 13) {
-      searchFilter()
+      searchFilter();
     }
   }
 
@@ -138,7 +138,7 @@ const Home = () => {
   Function that handles the date changes input for the date filter
   */
   const handleDatesInput = (newValue, fieldname) => {
-    setExtraFilterObj({ ...extraFilterObj, [fieldname]: newValue })
+    setExtraFilterObj({ ...extraFilterObj, [fieldname]: newValue });
   };
 
   /*

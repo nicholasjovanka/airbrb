@@ -30,7 +30,7 @@ const Listing = () => {
   const [userReview, setUserReview] = useState({
     comment: '',
     rating: null
-  })
+  });
   const [reviews, setReviews] = useState([]);
   const [originalReviews, setOriginalReviews] = useState([]);
   const [openBookingModal, setOpenBookingModal] = useState(false);
@@ -70,7 +70,7 @@ const Listing = () => {
   */
   useEffect(() => {
     filterReviews();
-  }, [originalReviews])
+  }, [originalReviews]);
 
   /*
   useEffect that will update the reviews displayed by the RatingPagination component based on changes to the ratingFilter which is triggered when
@@ -78,7 +78,7 @@ const Listing = () => {
   */
   useEffect(() => {
     filterReviews();
-  }, [ratingFilter])
+  }, [ratingFilter]);
 
   /*
   Function that gets all the bookings tied to the current logged in user which will be passed to the BookingPagination component
@@ -86,7 +86,7 @@ const Listing = () => {
   const getUserListingBookings = async () => {
     if (loggedIn[0]) {
       const userEmail = localStorage.getItem('userEmail');
-      setCurrentUser(userEmail)
+      setCurrentUser(userEmail);
       const bookings = await apiCall('bookings', 'GET');
       let bookingTiedToUser = bookings.data.bookings.filter((booking) => booking.owner === userEmail && booking.listingId === id);
       bookingTiedToUser = addDurationAndDateToBookingArray(bookingTiedToUser);
@@ -130,7 +130,7 @@ const Listing = () => {
     try {
       openBackdrop[1](true);
       if (userReview.rating === null) {
-        throw new Error('Please give a rating score')
+        throw new Error('Please give a rating score');
       }
       const newReview = {
         user: currentUser,
@@ -146,7 +146,7 @@ const Listing = () => {
       setUserReview({
         comment: '',
         rating: null
-      })
+      });
       modalHeader[1]('Success');
       modalMessage[1]('Succesfully Added a New Review');
       openModal[1](true);
@@ -174,7 +174,7 @@ const Listing = () => {
       const dayDifference = getLuxonDayDifference(startDate, endDate);
       // Validate the date submitted by the user as they may bypass the MUI date picker using keyboard
       if (dayDifference <= 0) {
-        throw new Error('Booking Start Date must be less than Booking End date')
+        throw new Error('Booking Start Date must be less than Booking End date');
       }
       if (getLuxonDayDifference(minDate, startDate) < 0) {
         throw new Error('Booking Start Date is less then the start date of the currently selected available date range');
@@ -196,7 +196,7 @@ const Listing = () => {
         },
         totalPrice
       }
-      await apiCall(`bookings/new/${id}`, 'POST', requestBody)
+      await apiCall(`bookings/new/${id}`, 'POST', requestBody);
       await getUserListingBookings();
       modalHeader[1]('Success');
       modalMessage[1]('Succesfully Created a booking for this listing');

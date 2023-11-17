@@ -24,7 +24,7 @@ const Login = () => {
   */
   const handleLogin = async () => {
     try {
-      openBackdrop[1](true)
+      openBackdrop[1](true);
       const response = await apiCall('user/auth/login', 'POST', {
         email,
         password

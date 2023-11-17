@@ -28,7 +28,7 @@ const ListingForm = ({ mode, buttonSubmitFunction, existingListingObject }) => {
       thumbnail: '',
       url: '',
       files: []
-    })
+    });
   const { openModal, modalHeader, modalMessage } = useContext(StoreContext);
 
   const [bedroomField, setBedroomField] = useState([{ type: 'Private', beds: 1 },]);
@@ -66,7 +66,7 @@ const ListingForm = ({ mode, buttonSubmitFunction, existingListingObject }) => {
 
   useEffect(() => {
     resetForm();
-  }, [existingListingObject])
+  }, [existingListingObject]);
 
   const handleAddAmenities = () => {
     setAmenitiesField([...amenitiesField, '']);
@@ -112,15 +112,15 @@ const ListingForm = ({ mode, buttonSubmitFunction, existingListingObject }) => {
       }
       const requiredAmountOfFiles = type === 'thumbnail' ? 1 : 6;
       if (files.length > requiredAmountOfFiles) {
-        throw new Error(`Amount of files exceeded for ${type}, only ${requiredAmountOfFiles} image is needed`)
+        throw new Error(`Amount of files exceeded for ${type}, only ${requiredAmountOfFiles} image is needed`);
       }
       for (const file of files) {
         const fileBase64 = await fileToDataUrl(file);
         if (type === 'thumbnail') {
           setFormFields({ ...formFields, thumbnail: fileBase64 });
         } else {
-          newFileNameArray.push(file.name)
-          filesBase64.push(fileBase64)
+          newFileNameArray.push(file.name);
+          filesBase64.push(fileBase64);
         }
       }
       if (type === 'files') {

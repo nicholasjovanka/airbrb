@@ -110,7 +110,7 @@ const BookingPagination = ({ bookingArray, setBookingArray, viewMode = false }) 
       minWidth: 100,
       align: 'left',
     }
-  ])
+  ]);
   const [selectedBooking, setSelectedBooking] = useState({
     id: '',
     index: 0,
@@ -120,7 +120,7 @@ const BookingPagination = ({ bookingArray, setBookingArray, viewMode = false }) 
     bookings: [],
     page: 0,
     rowsPerPage: 5
-  })
+  });
 
   const { openModal, modalHeader, modalMessage } = useContext(StoreContext);
 
@@ -144,9 +144,9 @@ const BookingPagination = ({ bookingArray, setBookingArray, viewMode = false }) 
           label: 'Actions',
           minWidth: 100,
           align: 'left',
-        }])
+        }]);
     }
-  }, [viewMode])
+  }, [viewMode]);
 
   /*
   Use Effect to initially populate the bookings attribute inside the paginationObj state.
@@ -158,12 +158,12 @@ const BookingPagination = ({ bookingArray, setBookingArray, viewMode = false }) 
   */
   useEffect(() => {
     if (initialLoad) {
-      setPaginationObj({ ...paginationObj, bookings: bookingArray })
+      setPaginationObj({ ...paginationObj, bookings: bookingArray });
       if (bookingArray.length > 0 && !viewMode) {
         setInitialLoad(false);
       }
     }
-  }, [bookingArray])
+  }, [bookingArray]);
 
   /*
   Use Effect to rerender the bookings table based on the object inside the paginationObj.
@@ -171,7 +171,7 @@ const BookingPagination = ({ bookingArray, setBookingArray, viewMode = false }) 
   */
   useEffect(() => {
     getPages(paginationObj.page);
-  }, [paginationObj])
+  }, [paginationObj]);
 
   /*
   Use Effect to filter the bookings that is displayed in the bookings table based on the filter that the user select
@@ -183,7 +183,7 @@ const BookingPagination = ({ bookingArray, setBookingArray, viewMode = false }) 
       const filteredBookings = bookingArray.filter((booking) => booking.status === statusFilter);
       setPaginationObj({ ...paginationObj, page: 0, bookings: filteredBookings });
     }
-  }, [statusFilter])
+  }, [statusFilter]);
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
@@ -202,7 +202,7 @@ const BookingPagination = ({ bookingArray, setBookingArray, viewMode = false }) 
   */
   const getPages = (newPage) => {
     const slicedBookingsArray = paginationObj.rowsPerPage > 0 ? paginationObj.bookings.slice(newPage * paginationObj.rowsPerPage, newPage * paginationObj.rowsPerPage + paginationObj.rowsPerPage) : paginationObj.bookings;
-    setBookingsToDisplay(slicedBookingsArray)
+    setBookingsToDisplay(slicedBookingsArray);
   }
 
   /*
@@ -229,9 +229,9 @@ const BookingPagination = ({ bookingArray, setBookingArray, viewMode = false }) 
       id: bookingObj.id,
       index: paginationObj.page * paginationObj.rowsPerPage + index,
       action
-    })
-    setConfirmationModalContent(`Are you sure you want to ${action} Booking from ${bookingObj.owner} at ${bookingObj.date} `)
-    setOpenConfirmationModal(true)
+    });
+    setConfirmationModalContent(`Are you sure you want to ${action} Booking from ${bookingObj.owner} at ${bookingObj.date} `);
+    setOpenConfirmationModal(true);
   }
 
   /*

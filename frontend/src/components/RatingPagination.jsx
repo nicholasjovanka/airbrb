@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Card, CardContent, Pagination, Typography, Rating } from '@mui/material';
 import { basePaginationStyling } from '../utils/styles';
+import { isoDateToDDMMYYYY } from '../utils/utils';
 
 /*
 Component that allows the user to Paginate the ratings that is available from the ratingArray prop.
@@ -15,7 +16,7 @@ const RatingPagination = ({ ratingArray }) => {
     numberOfPage: 1,
     ratingArray: [],
     currentPage: 1
-  })
+  });
 
   /*
   useEffect to detect changes to the rating array which in turn will re-render the rating displayed by the component,
@@ -26,8 +27,8 @@ const RatingPagination = ({ ratingArray }) => {
       numberOfPage: Math.ceil(ratingArray.length / 6),
       ratingArray,
       currentPage: 1
-    })
-  }, [ratingArray])
+    });
+  }, [ratingArray]);
 
   /*
   useEffect to detect changes to the paginationObj so that the component
@@ -36,7 +37,7 @@ const RatingPagination = ({ ratingArray }) => {
   */
   useEffect(() => {
     getPages(paginationObj.currentPage);
-  }, [paginationObj])
+  }, [paginationObj]);
 
   /*
   Function used for pagination that will slice the ratingArray inside the pagination object. Will be triggered
@@ -44,7 +45,7 @@ const RatingPagination = ({ ratingArray }) => {
   */
   const getPages = (page) => {
     const sliceStartIndex = (page - 1) * 6;
-    const sliceEndIndex = page === paginationObj.numberOfPage ? paginationObj.ratingArray.length : (page * 6)
+    const sliceEndIndex = page === paginationObj.numberOfPage ? paginationObj.ratingArray.length : (page * 6);
     const dataToDisplay = paginationObj.ratingArray.slice(sliceStartIndex, sliceEndIndex);
     setSlicedRatings(dataToDisplay);
   }
@@ -54,7 +55,7 @@ const RatingPagination = ({ ratingArray }) => {
   a rerender through the useEffect above.
   */
   const onChangeButton = (e, page) => {
-    setPaginationObj({ ...paginationObj, currentPage: page })
+    setPaginationObj({ ...paginationObj, currentPage: page });
   }
   return (
     <React.Fragment>
@@ -68,7 +69,7 @@ const RatingPagination = ({ ratingArray }) => {
                         {review.user}
                     </Typography>
                     <Typography gutterBottom variant='subtitle1' component='div' color='text.secondary'>
-                        Posted On: {review.postedOn}
+                        Posted On: {isoDateToDDMMYYYY(review.postedOn)}
                     </Typography>
                     <Rating name='read-only' value={review.rating} readOnly sx={{ display: 'flex', my: 1 }}/>
                     <Typography variant='body1'>

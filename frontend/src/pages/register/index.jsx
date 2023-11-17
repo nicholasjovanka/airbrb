@@ -25,7 +25,7 @@ const Register = () => {
   */
   const handleRegister = async () => {
     try {
-      openBackdrop[1](true)
+      openBackdrop[1](true);
       // Validation to ensure the user name is not empty
       if (name.trim().length === 0) {
         throw new Error('Name Cannot Be Empty');
@@ -56,7 +56,7 @@ const Register = () => {
       loggedIn[1](true); // Set the loggedIn state inside the loggedIn object from the StoreContext to signify that the user is logged in
       navigate('/home');
     } catch (error) {
-      openBackdrop[1](false)
+      openBackdrop[1](false);
       modalHeader[1]('Error');
       const errorMessage = error.response ? error.response.data.error : error.message;
       modalMessage[1](errorMessage);
