@@ -9,7 +9,7 @@ This component is used for both the RatingModal component and the listing detail
 Props Explanation;
 - ratingArray: Array containing the rating object which will be displayed and paginated by the component
 */
-const ReviewPagination = ({ ratingArray }) => {
+const RatingPagination = ({ ratingArray }) => {
   const [slicedRatings, setSlicedRatings] = useState([]);
   const [paginationObj, setPaginationObj] = useState({
     numberOfPage: 1,
@@ -86,4 +86,4 @@ const ReviewPagination = ({ ratingArray }) => {
   )
 }
 
-export default ReviewPagination
+export default RatingPagination

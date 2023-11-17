@@ -46,6 +46,7 @@ const RatingTooltip = ({ passedListing, openRatingModalFunction, children }) => 
   */
   useEffect(() => {
     if (listing !== null && listing.reviews.length > 0) {
+      // Array storing the rating, index 0 will store the amount of rating that has 1 as the rating value, index 1 for rating with value 2 and so on
       let ratingArray = [
         {
           rating: 1,
