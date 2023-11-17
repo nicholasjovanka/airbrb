@@ -258,19 +258,19 @@ const Home = () => {
           <Grid item xs={12} xl={2} lg={3} md={5} >
             <Box sx={{ display: 'flex', flexDirection: 'row', gap: 1, height: '100%' }}>
               <Box sx= {{ flexGrow: 1 }}>
-                <Typography variant='h6'>Filter by Availability Date </Typography>
+                <Typography variant='h6'>Filter by Minimum and Maximum Date </Typography>
                 <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
                 <LocalizationProvider dateAdapter={AdapterLuxon} adapterLocale='en-gb'>
                   <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, justifyContent: 'center' }}>
                     <Box>
                       <Typography>
-                        Start Date
+                        Min Date
                       </Typography>
                       <DatePicker disableHighlightToday maxDate={extraFilterObj.endDate.minus({ days: 1 })} value={extraFilterObj.startDate} onChange={(newValue) => { handleDatesInput(newValue, 'startDate') }}/>
                     </Box>
                     <Box>
                       <Typography>
-                        End Date
+                        Max Date
                       </Typography>
                       <DatePicker disableHighlightToday minDate={extraFilterObj.startDate.plus({ days: 1 })} value={extraFilterObj.endDate} onChange={(newValue) => { handleDatesInput(newValue, 'endDate') }}/>
                     </Box>
