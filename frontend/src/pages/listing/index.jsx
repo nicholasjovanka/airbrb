@@ -5,7 +5,7 @@ import { visuallyHidden } from '@mui/utils';
 import { apiCall, getLuxonDayDifference, addDurationAndDateToBookingArray, addAverageRatingAndNumberOfBedsToListing } from '../../utils/utils';
 import { DateTime } from 'luxon';
 import { StoreContext } from '../../utils/states';
-import ImageCard from '../../components/ImageCard';
+import MediaCard from '../../components/MediaCard';
 import BathtubIcon from '@mui/icons-material/Bathtub';
 import BedroomParentIcon from '@mui/icons-material/BedroomParent';
 import BedIcon from '@mui/icons-material/Bed';
@@ -222,9 +222,9 @@ const Listing = () => {
             <Typography variant='h4' gutterBottom sx={{ textAlign: 'center' }} >{listing.title}</Typography>
           </Grid>
           <Grid item xs={12} md={6} sx={{ height: '100%', my: 'auto' }}>
-            <ImageCard type='image' src={ listing.thumbnail } sx={{ mb: 2 }} />
+            <MediaCard type='image' src={ listing.thumbnail } sx={{ mb: 2 }} />
             { listing.metadata.url !== '' && (
-              <ImageCard type= 'video' src={ listing.metadata.url}/>
+              <MediaCard type= 'video' src={ listing.metadata.url}/>
             )}
           </Grid>
           <Grid item xs={12} md={6} sx={{ display: 'flex', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>

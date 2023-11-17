@@ -10,7 +10,7 @@ import YouTubeIcon from '@mui/icons-material/YouTube';
 import { StoreContext } from '../utils/states';
 import { fileToDataUrl } from '../utils/utils';
 import ImageCarousel from './ImageCarousel';
-import ImageCard from './ImageCard';
+import MediaCard from './MediaCard';
 import { VisuallyHiddenInput } from '../utils/styles';
 
 const ListingForm = ({ mode, buttonSubmitFunction, existingListingObject }) => {
@@ -382,7 +382,7 @@ const ListingForm = ({ mode, buttonSubmitFunction, existingListingObject }) => {
                 Reset Image
               </Button>
             </Box>
-            <ImageCard key={null} src={formFields.thumbnail} sx={{ my: 1 }}/>
+            <MediaCard src={formFields.thumbnail} sx={{ my: 1 }}/>
           </Grid>
           <Grid item xs={12}>
             <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>

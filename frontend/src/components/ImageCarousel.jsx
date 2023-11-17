@@ -1,6 +1,6 @@
 import React from 'react';
 import Carousel from 'react-material-ui-carousel'
-import ImageCard from './ImageCard';
+import MediaCard from './MediaCard';
 
 /*
 Image Carousel Component used in the ListingForm Component and Listing Detail page which is used to display a carousel that allows the user to browse multiple image
@@ -34,7 +34,7 @@ const ImageCarousel = ({ images }) => {
         }}
         >
             {
-                images.map((image, i) => <ImageCard key={i} src={image} />)
+                images.map((image, i) => <MediaCard key={i} src={image} usedInCarousel={true} index={i + 1} />)
             }
         </Carousel>
   )
